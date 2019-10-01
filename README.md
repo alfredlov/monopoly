@@ -1,7 +1,7 @@
 # monopoly - R
 R-script which analyses simulated games of monopoly and figures the optimal strategy.
 
-## Version 1 of the script is meant to:
+## Version 0.1:
 
 * Run a simulation of a two-player game of Monopoly.
 
