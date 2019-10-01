@@ -14,5 +14,3 @@ No-housing on street.
 Repeat simulation x-times.
 
 Log statistics of winning and losing strategy. 
-
-test
