@@ -6,6 +6,7 @@
 source('functions v0.1.R') #importer funksjoner 
 
 #NB pass på variabler: globale = << og lokale = <
+#NB test enkeltfunksjoner fra dette dokumentet, ikke 'functions vx.x.R'
 initGame <- function(){
   #---------------- Settings -------------------
   N <<- 2 #spillere
