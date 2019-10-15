@@ -1,10 +1,10 @@
 # Monopoly simulation
 
 #import gameboard as dataset
-
+board <- read.csv("../monopoly_data simple.csv")
 
 n <- 2 #spillere
-
+currentPlayer <- 0 #aktuell spiller
 
 
 # loop game
