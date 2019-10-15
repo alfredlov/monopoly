@@ -16,7 +16,7 @@ currentPlayer <- 0 #aktuell spiller
       #definere én strategi pr spiller
       #velg hvem som starter (variabel i dataframe som har verdi)
   #start game, for løkke som går så lenge begge spillere har penger > 0
-    #kast terning
+    #kast terningaaaa
     #kjør håndter ny posisjon 
 
 ##kommentar
