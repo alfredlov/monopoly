@@ -1,4 +1,7 @@
-# Monopoly simulation
+##---------------------------------------------------------
+## Monopoly Simulation
+## Version 1.0
+##---------------------------------------------------------
 
 #import gameboard as dataset
 board <- read.csv("../monopoly_data simple.csv")
