@@ -16,3 +16,4 @@ currentPlayer <- 0 #aktuell spiller
     #kast terning
     #kjør håndter ny posisjon 
 
+##kommentar
