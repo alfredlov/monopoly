@@ -5,18 +5,17 @@
 
 #import gameboard as dataset
 board <- read.csv("../monopoly_data simple.csv")
-
-n <- 2 #spillere
 currentPlayer <- 0 #aktuell spiller
 
-# loop game
-  #init game 
-    #definere data.frame for spillere
-      #slik at alt resetes hver gang
-      #definere én strategi pr spiller
-      #velg hvem som starter (variabel i dataframe som har verdi)
-  #start game, for løkke som går så lenge begge spillere har penger > 0
-    #kast terningaaaa
-    #kjør håndter ny posisjon 
+initGame <- function(){
+  N <<- 2 #spillere
+  id <- c(1:N) #som vektor til data.frame
+  strategy <- c(1, 2) #strategier for spillere, spiller 1 får første verdi som strategi etc..
+  startCap <- 2000 #startkapital for spillere, 'Cap' for capital
+  fortune <- rep(startCap, times=N)
+  roundCap <- 200 #penger for å passere start
+  version <- 1 #sette hvilken versjon av spillet å kjøre(?)
+  active <- rep(1, times=N)
+  players <<- data.frame(id, strategy, fortune, active)
+}
 
-##kommentar
