@@ -20,27 +20,50 @@ throwDice <- function(){
   
 }
 
+##--------------------------------------------------------------------------------
+## move: Handles the changing the position of the players on the board.
+## Increments cur_position by what is given by the dices. Handles discontinuity 
+## at Go and also handles adding $ to balance of players when passing Go. 
+##--------------------------------------------------------------------------------
 move <- function(x){#endre position for cur_player i players data.frame
   cur_position <- players$position[cur_player]
   if(cur_position + x > nrow(board)){
     y <- nrow(board) - cur_position
     players$position[cur_player] <<- x - y
     players$fortune[cur_player] <<- players$fortune[cur_player] + roundCap
-    cat(sprintf("Player %s moved %s tiles to position %s, and passed Start",cur_player, x, x-y))
+    cat(sprintf("Player %s moved %s tiles to position %s, and passed Go.",cur_player, x, x-y))
   } else{
     players$position[cur_player] <<- cur_position + x
-    cat(sprintf("Player %s moved %s tiles to position %s",cur_player, x, cur_position + x))
+    cat(sprintf("Player %s moved %s tiles to position %s.",cur_player, x, cur_position + x))
   }
 } 
 
+
+##--------------------------------------------------------------------------------
+## processPos: Handles actions and consequences of moving to a tile.
+## -  If the tile is not a property, the player will be subject to an automatic action 
+##    (which can be no action at all if the tile is blank).
+## -  If the property is owned by someone else the player that landed on the tile has to pay a toll. 
+##    A seperate function deals with the specifics of paying. 
+## -  If the person cannot afford a free property nothing happens and the turn moves to the next player.
+## -  If the player lands on a tile, that is a property, is free and he can afford. 
+##--------------------------------------------------------------------------------
 processPos <- function(){#håndter posisjon for spiller cur_player, leder til flere sub-funksjoner
   if(board$prop[players$position[cur_player]] == 1){ #sjekk om bolig
     if(board$eier[players$position[cur_player]] == 0){ #sjekk om ledig
       if(board$price[players$position[cur_player]] < players$fortune[cur_player]){ #sjekk om råd
         
       }
+      
+      ##Her skjer det vel ingenting siden personen ikke kan kjøpe leiligheten. Den blir effektivt en blank tile. 
+      
     }
+    
+    ## Må skrive her en funkjson som tar for seg å betale spillerem for å ha landet på deres eiendom
+    
   }
+  
+  ## Må skrive her hva som skjer når det ikke er en eiendom.... 
 } 
 
 checkPlayerLoss <- function(){#sjekk hvis cur_player har tapt
