@@ -34,7 +34,13 @@ move <- function(x){#endre position for cur_player i players data.frame
 } 
 
 processPos <- function(){#håndter posisjon for spiller cur_player, leder til flere sub-funksjoner
-  
+  if(board$prop[players$position[cur_player]] == 1){ #sjekk om bolig
+    if(board$eier[players$position[cur_player]] == 0){ #sjekk om ledig
+      if(board$price[players$position[cur_player]] < players$fortune[cur_player]){ #sjekk om råd
+        
+      }
+    }
+  }
 } 
 
 checkPlayerLoss <- function(){#sjekk hvis cur_player har tapt
