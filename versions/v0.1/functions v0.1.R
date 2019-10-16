@@ -2,7 +2,7 @@
 ## FUNCTIONS v.0.1.R
 ## Constains the functions used in order to model the game. 
 ## The functions modelling the differing strategies are contained 
-##  in a seperate script. 
+## in a seperate script. 
 ##--------------------------------------------------------------------------------
 
 ##--------------------------------------------------------------------------------
