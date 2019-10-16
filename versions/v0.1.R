@@ -1,6 +1,6 @@
 ##---------------------------------------------------------
 ## Monopoly Simulation
-## Version 1.0
+## Version 0.1
 ##---------------------------------------------------------
 
 source('functions v0.1.R') #importer funksjoner 
