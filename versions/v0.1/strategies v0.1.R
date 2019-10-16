@@ -1,3 +1,8 @@
+##--------------------------------------------------------------------------------
+## STRATEGIES v.0.1.R
+## Constains the player strategies.
+##--------------------------------------------------------------------------------
+
 runStrategy <- function(){
   strategyName <- paste("strategy", players$strategy[cur_player], sep="")
   if(get(strategyName)() == TRUE){
