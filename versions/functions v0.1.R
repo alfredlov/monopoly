@@ -9,6 +9,7 @@
 ## throwDice: Simulates the throwing of two dice.
 ## output: Returns an integer between 2 and 12. 
 ##--------------------------------------------------------------------------------
+source('strategies v0.1.R')
 throwDice <- function(){
   dice <- sum(sample(1:6, size = 2, replace = TRUE))
   return(dice)
@@ -26,23 +27,30 @@ move <- function(x){#endre position for cur_player i players data.frame
     y <- nrow(board) - cur_position
     players$position[cur_player] <<- x - y
     players$fortune[cur_player] <<- players$fortune[cur_player] + roundCap
-    cat(sprintf("Player %s moved %s tiles to position %s, and passed Start",cur_player, x, x-y))
+    #cat(sprintf("Player %s moved %s tiles to position %s, and passed Start",cur_player, x, x-y))
   } else{
     players$position[cur_player] <<- cur_position + x
-    cat(sprintf("Player %s moved %s tiles to position %s",cur_player, x, cur_position + x))
+    #cat(sprintf("Player %s moved %s tiles to position %s",cur_player, x, cur_position + x))
   }
 } 
 
 processPos <- function(){#håndter posisjon for spiller cur_player, leder til flere sub-funksjoner
-  if(board$prop[players$position[cur_player]] == 1){ #sjekk om bolig
-    if(board$owner[players$position[cur_player]] == 0){ #sjekk om ledig
-      if(board$price[players$position[cur_player]] <= players$fortune[cur_player]){ #sjekk om råd
+  position <- players$position[cur_player]
+  if(board$prop[position] == 1){ #sjekk om bolig
+    if(board$owner[position] == 0){ #sjekk om ledig
+      if(board$price[position] <= players$fortune[cur_player]){ #sjekk om råd
         #kjør strategi
+        runStrategy()
       }else{
         #ikke råd
       }
     }else{
       #betal leie
+      owner <- board$owner[position]
+      if(owner != cur_player){
+        players$fortune[owner] <<- players$fortune[owner] + board$rent[position]
+        players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]
+      }
     }
   }else{
     #dette er ikke en bolig
@@ -52,7 +60,7 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
 checkPlayerLoss <- function(){#sjekk hvis cur_player har tapt
   if(players$fortune[cur_player] < 0){
     players$active[cur_player] <<- 0
-    cat(sprintf("Player %s ran out of cash!", cur_player))
+    #cat(sprintf("Player %s ran out of cash!", cur_player))
   }
 }
 
@@ -61,7 +69,7 @@ checkGameOver <- function(){#sjekk om spillet er over
     game_over <<- TRUE
     winner <- players$id[players$active==TRUE]
     winnerS <- players$strategy[players$active==TRUE]
-    cat(sprintf("Player %s won, using strategy %s", winner, winnerS))
+    #cat(sprintf("Player %s won, using strategy %s", winner, winnerS))
   }
 } 
 
@@ -71,5 +79,5 @@ setNextPlayer <- function(){#endre cur_player til neste
   } else {
     cur_player <<- cur_player + 1
   }
-  cat(sprintf("Player %s's turn",cur_player))
+  #cat(sprintf("Player %s's turn",cur_player))
 }
