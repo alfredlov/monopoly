@@ -57,7 +57,8 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
   position <- players$position[cur_player]
   if(board$prop[position] == 1){ #sjekk om bolig
     processProp() #håndtere landet på bolig
-  }else{
+  }
+  if(board$prop[position] == 2){
     #dette er ikke en bolig
   }
   
@@ -79,9 +80,6 @@ processProp <- function(){
       players$fortune[owner] <<- players$fortune[owner] + board$rent[position]
       players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]
     }
-    
-    ##Her skjer det vel ingenting siden personen ikke kan kjøpe leiligheten. Den blir effektivt en blank tile. 
-    
   }
 }
 
