@@ -1,4 +1,4 @@
-position,name,price,rent,eier,"prop(1=norm, 2=util, 3=rr, 4=chance, 5=autopay)"
+position,name,price,rent,eier,prop
 1,Start,,,,5
 2,Mediterranean Avenue,60,2,0,1
 3,Baltic Avenue,60,4,0,1
