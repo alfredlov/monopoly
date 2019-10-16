@@ -25,6 +25,7 @@ move <- function(x){#endre position for cur_player i players data.frame
   if(cur_position + x > nrow(board)){
     y <- nrow(board) - cur_position
     players$position[cur_player] <<- x - y
+    players$fortune[cur_player] <<- players$fortune[cur_player] + roundCap
     cat(sprintf("Player %s moved %s tiles to position %s, and passed Start",cur_player, x, x-y))
   } else{
     players$position[cur_player] <<- cur_position + x
