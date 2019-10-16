@@ -1,10 +1,23 @@
-#Funksjoner for main dokumentet
+##--------------------------------------------------------------------------------
+## FUNCTIONS v.0.1.R
+## Constains the functions used in order to model the game. 
+## The functions modelling the differing strategies are contained 
+##  in a seperate script. 
+##--------------------------------------------------------------------------------
 
-throwDice <- function(){#kast terning og lagre resultat
-  dice <- sample(1:6, size = 1, replace = TRUE) + sample(1:6, size = 1, replace = TRUE)
+##--------------------------------------------------------------
+## throwDice: Simulates the throwing of two dice.
+## output: Returns an integer between 2 and 12. 
+##--------------------------------------------------------------
+throwDice <- function(){
+  dice <- sum(sample(1:6, size = 2, replace = TRUE))
   return(dice)
+  
+  ##Vurder å slette disse kommentarene!!
   #simuler kast m/ 2 terninger, se hist nedenfor for bevis 
   #hist(replicate(1000, sample(1:6, size = 1, replace = TRUE) + sample(1:6, size = 1, replace = TRUE)))
+  #hist(replicate(100000, sum(sample(1:6, size = 2, replace = TRUE))))
+  
 }
 
 move <- function(x){#endre position for cur_player i players data.frame
@@ -26,7 +39,7 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
 checkPlayerLoss <- function(){#sjekk hvis cur_player har tapt
   if(players$fortune[cur_player] < 0){
     players$active[cur_player] <<- 0
-    cat(sprintf("Player %s ran out of cash", cur_player))
+    cat(sprintf("Player %s ran out of cash!", cur_player))
   }
 }
 
