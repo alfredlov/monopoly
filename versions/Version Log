@@ -4,7 +4,7 @@
 
 * Run a simulation of a two-player game of Monopoly.
 
-* Pick a random strategy for each player (ranging from naïve to advanced).
+* 2 strategies, 1 buys all and the other buys with 50% chance
 
 * Only street-tiles available.
 
@@ -13,3 +13,10 @@
 * Repeat simulation x-times.
 
 * Log statistics of winning and losing strategy.
+
+
+## Version 0.2:
+
+* Add special tiles like boats
+
+
