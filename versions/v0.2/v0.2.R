@@ -4,7 +4,7 @@
 ##---------------------------------------------------------
 
 source('functions v0.2.R') #importer funksjoner 
-
+list.files()
 #NB pass på variabler: globale = << og lokale = <
 #NB test enkeltfunksjoner fra dette dokumentet, ikke 'functions vx.x.R'
 initGame <- function(){
@@ -23,10 +23,13 @@ initGame <- function(){
   players <<- data.frame(id, strategy, fortune, active, position) #data.frame m/ oversikt over spillerne
 }
 
+##---------------------------------------------------------
+## Main-function.
+##---------------------------------------------------------
 startGame <- function(){
   fortune1 <<- c()
   fortune2 <<- c()
-  board <<- read.csv("monopoly_data v0.2.csv") #importer/reset gameboard som data.frame
+  board <<- read.csv("monopoly_data v0.1.csv") #importer/reset gameboard som data.frame
                                                     #tile 1 er start!
   initGame() #reset verdier for spillet(start på nytt)
   cur_player <<- sample(1:N, 1) #velg tilfeldig startspiller, neglesjere first-mover
