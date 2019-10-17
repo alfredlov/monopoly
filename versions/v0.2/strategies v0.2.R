@@ -53,10 +53,30 @@ strategy2 <- function(){
 ##  Buys all properties as long as price < 70% of total income.
 ##-----------------------------------------------------------------------------------
 strategy3 <- function(){
-  #if property price/income <= 70%
-  # buy, treturn true, else return false. 
-  players$position[cur_player]
-  players$
+  
+
+  if(board$price[players$position[cur_player]]/players$fortune[cur_player] <= 0.5){
+    return(TRUE)
+  }else{
+    return(FALSE)
+  }
+}
+
+##-----------------------------------------------------------------------------------
+##  Strategy 4: Middle of the road
+##  Only buys regular properties on the 2nd and 3rd part of the board. 
+## These are either purple, orange, red, orange...
+##-----------------------------------------------------------------------------------
+strategy4 <- function(){
+  
+
+  
+  if(board$color[players$position[cur_player]] == 'purple' || board$color[players$position[cur_player]] == 'orange' || 
+     board$color[players$position[cur_player]] == 'red' || board$color[players$position[cur_player]] == 'yellow'){
+    return(TRUE)
+  }else{
+    return(FALSE)
+  }
 }
 
 
