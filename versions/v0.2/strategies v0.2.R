@@ -12,8 +12,6 @@ runStrategy <- function(){
     board$owner[position] <<- cur_player
     players$fortune[cur_player] <<- players$fortune[cur_player] - board$price[position]
   }
-  ##Case: The strategy tells the player not to buy the property. Do nothing!
-  ##      Droppe denne else-setningen?? Den gjør vel ingenting. 
   else{
     #ikke kjøp
     #print("ikke kjøp")
