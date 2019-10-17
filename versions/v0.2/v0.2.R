@@ -1,18 +1,15 @@
 ##---------------------------------------------------------
 ## Monopoly Simulation - Main script
 ## Version 0.2
-## Monopoly Simulation
-## Version 
 ##---------------------------------------------------------
 
 source('functions v0.2.R') #importer funksjoner 
-
 #NB pass på variabler: globale = << og lokale = <
 #NB test enkeltfunksjoner fra dette dokumentet, ikke 'functions vx.x.R'
 initGame <- function(){
   #---------------- Settings -------------------
   N <<- 2 #spillere
-  strategy <- c(1, 2) #strategier for spillere, spiller 1 får første verdi som strategi etc..
+  strategy <- c(5, 1) #strategier for spillere, spiller 1 får første verdi som strategi etc..
   startCap <- 700 #startkapital for spillere, 'Cap' for capital
   roundCap <<- 10 #penger for å passere start
   version <- 2 #sette hvilken versjon av spillet å kjøre(?)
@@ -25,6 +22,9 @@ initGame <- function(){
   players <<- data.frame(id, strategy, fortune, active, position) #data.frame m/ oversikt over spillerne
 }
 
+##---------------------------------------------------------
+## Main-function.
+##---------------------------------------------------------
 startGame <- function(){
   fortune1 <<- c()
   fortune2 <<- c()
@@ -56,13 +56,13 @@ startGame <- function(){
       fortune2 <<- c(fortune2, players$fortune[2])
     }
   }
-  plot(x=1:length(fortune1), y=fortune1, type = "b", ylab="Fortune", xlab="Throws") +
-    lines(x=1:length(fortune2), y=fortune2)
+  #plot(x=1:length(fortune1), y=fortune1, type = "b", ylab="Fortune", xlab="Throws") +
+  #  lines(x=1:length(fortune2), y=fortune2)
   
   #lengde <<- c(lengde, length(fortune1)/2)
 }
 
-startGame()
+##startGame()
 
 #---------------
 #Mål hvor mange runder spillet går
@@ -72,3 +72,23 @@ startGame()
 #mean(lengde)
 #lengde <- lengde[lengde<=200]
 #hist(lengde, breaks=20)
+
+## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRAT SOM ER BEST
+k=200
+winners = 1:k*0
+for (i in 1:k) {
+  startGame()
+  winners[i] <- winner
+}
+
+hist(winners)
+table(winners)
+
+pbinom(135, size = 200, prob = 0.5)
+
+##Plot the results!!!
+plot(x=1:length(fortune1), y = fortune1, ylim=c(0, max(c(fortune1, fortune2))))
+lines(x=1:length(fortune2), y = fortune2)
+print("number of props")
+print(length(board$owner[board$owner==1]))
+print(length(board$owner[board$owner==2]))
