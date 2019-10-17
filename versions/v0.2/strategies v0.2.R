@@ -57,4 +57,3 @@ strategy3 <- function(){
   # buy, treturn true, else return false. 
   players$position[cur_player]
   players$
-}
