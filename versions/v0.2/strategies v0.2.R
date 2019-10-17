@@ -6,12 +6,7 @@
 ## runStrategy: Runs the current player's predefined strategy
 runStrategy <- function(){
   strategyName <- paste("strategy", players$strategy[cur_player], sep="")
-  ##Case: The strategy tells the player to buy the property by returning true.
-  ##      Changes the owner variable for the property and deducts the price of 
-  ##      the property from the fortune of the current player. 
-  ##      Det er mulig å forkorte denne koden!!!!
   if(get(strategyName)() == TRUE){
-    #kjøp
     #cat(sprintf("kjøp %s",Sys.time()))
     position <- players$position[cur_player]
     board$owner[position] <<- cur_player
