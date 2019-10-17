@@ -4,9 +4,7 @@
 ## The functions modelling the differing strategies are contained in strategies-script. 
 ##--------------------------------------------------------------------------------
 
-
 ##--------------------------------------------------------------------------------
-## Housekeeping: importing libraries and sources the strategies-script. 
 ##--------------------------------------------------------------------------------
 source('strategies v0.2.R')
 library(dplyr)
@@ -39,7 +37,6 @@ move <- function(x){
     players$position[cur_player] <<- x - y
     players$fortune[cur_player] <<- players$fortune[cur_player] + roundCap
     #cat(sprintf("Player %s moved %s tiles to position %s, and passed Go.",cur_player, x, x-y))
-  }else{
     players$position[cur_player] <<- cur_position + x
     #cat(sprintf("Player %s moved %s tiles to position %s",cur_player, x, cur_position + x))
   }
@@ -55,7 +52,6 @@ move <- function(x){
 ## -  If the person cannot afford a free property nothing happens and the turn moves to the next player.
 ## -  If the player lands on a tile, that is a property, is free and he can afford. 
 ##--------------------------------------------------------------------------------
-processPos <- function(){#håndter posisjon for spiller cur_player, leder til flere sub-funksjoner
   position <- players$position[cur_player]
   if(board$prop[position] == 1){ #sjekk om bolig
     processProp() #håndtere landet på bolig
