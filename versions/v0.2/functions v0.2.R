@@ -63,10 +63,18 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
   ## Må skrive her hva som skjer når det ikke er en eiendom.... 
 } 
 
+
+##--------------------------------------------------------------------------------
+## processTrain: 
+##--------------------------------------------------------------------------------
 processTrain <- function(){
   
 }
 
+
+##--------------------------------------------------------------------------------
+## processProp: 
+##--------------------------------------------------------------------------------
 processProp <- function(){
   position <- players$position[cur_player]
   if(board$owner[position] == 0){ #sjekk om ledig
@@ -109,27 +117,45 @@ processProp <- function(){
   }
 }
 
+##--------------------------------------------------------------------------------
+## checkPlayerLoss: Checks to see if player has lost by seeing if balance is negative. 
+##--------------------------------------------------------------------------------
 checkPlayerLoss <- function(){#sjekk hvis cur_player har tapt
   if(players$fortune[cur_player] < 0){
     players$active[cur_player] <<- 0
+    
+    ##SLETT??
     #cat(sprintf("Player %s ran out of cash!", cur_player))
   }
 }
 
-checkGameOver <- function(){#sjekk om spillet er over
+##--------------------------------------------------------------------------------
+## checkGameOver: Checks to see if game is over, by checking how many players remain in game. 
+## -  Sets game_over to true and sets match_winner to be the only remaining player, also records player's strategy. 
+##--------------------------------------------------------------------------------
+checkGameOver <- function(){
   if(length(players$active[players$active==TRUE])==1){
     game_over <<- TRUE
     winner <- players$id[players$active==TRUE]
     winnerS <- players$strategy[players$active==TRUE]
+    
+    ##SLETT??
     #cat(sprintf("Player %s won, using strategy %s", winner, winnerS))
   }
 } 
 
-setNextPlayer <- function(){#endre cur_player til neste
+##--------------------------------------------------------------------------------
+## setNextPlayer: Handles player's turn-taking.
+## -  Sets cur_player to next player in player-dataframe, unless we're at the last player, 
+##    then circle back to player 1.
+##--------------------------------------------------------------------------------
+setNextPlayer <- function(){
   if(cur_player == N){
     cur_player <<- 1
   } else {
     cur_player <<- cur_player + 1
   }
+  
+  ##SLETT??
   #cat(sprintf("Player %s's turn",cur_player))
 }
