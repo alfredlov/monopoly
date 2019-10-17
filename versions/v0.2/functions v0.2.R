@@ -66,7 +66,7 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
     processProp() #håndtere landet på bolig
   }
   if(board$prop[position] == 3){
-    #processTrain() #håndtere landet på tog
+    processTrain() #håndtere landet på tog
   }
   
   ## Må skrive her hva som skjer når det ikke er en eiendom.... 
@@ -87,8 +87,11 @@ processTrain <- function(){
   }else{
     owner <- board$owner[position]
     if(owner != cur_player){
-      players$fortune[owner] <<- players$fortune[owner] + board$rent[position]
-      players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]
+      NoT <- nrow(board[board$prop  == "3" & board$owner == owner,]) #hvor mange tog eieren av dette toget eier
+      
+      players$fortune[owner] <<- players$fortune[owner] + board$rent[position]*2^(NoT-1)
+      players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]*2^(NoT-1)
+      cat(sprintf("TOOG, spiller %s eier %s tog, spiller %s betaler %s", owner, NoT, cur_player, board$rent[position]*2^(NoT-1)))
     }
   }
 }
@@ -112,8 +115,6 @@ processProp <- function(){
     if(owner != cur_player){
       #sjekke om den som eier gaten også eier alle i samme farge
       NoC <- nrow(board[board$color  == board$color[position],]) #hvor mange gater i den fargen
-      
-      ##JEG ANTAR OWNER1 SKAL VÆRE OWNER???
       NoCo <- nrow(board[board$color  == board$color[position] & board$owner == owner,]) #hvor mange gater i den fargen som blir eid av eieren av denne gaten
       #------------ <Alternativt> -------------------
                 #colorOfPosition <- board$color[position]
