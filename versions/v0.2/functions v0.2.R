@@ -51,23 +51,35 @@ move <- function(x){#endre position for cur_player i players data.frame
 ## -  If the player lands on a tile, that is a property, is free and he can afford. 
 ##--------------------------------------------------------------------------------
 processPos <- function(){#håndter posisjon for spiller cur_player, leder til flere sub-funksjoner
-  position <- players$position[cur_player]
+  position <<- players$position[cur_player]
   if(board$prop[position] == 1){ #sjekk om bolig
     processProp() #håndtere landet på bolig
   }
   if(board$prop[position] == 3){
-    processTrain() #håndtere landet på tog
+    #processTrain() #håndtere landet på tog
   }
   
   ## Må skrive her hva som skjer når det ikke er en eiendom.... 
 } 
 
 processTrain <- function(){
-  
+  if(board$owner[position] == 0){ #sjekk om ledig
+    if(board$price[position] <= players$fortune[cur_player]){ #sjekk om råd
+      #kjør strategi
+      runStrategy()
+    }else{
+      #ikke råd
+    }
+  }else{
+    owner <- board$owner[position]
+    if(owner != cur_player){
+      players$fortune[owner] <<- players$fortune[owner] + board$rent[position]
+      players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]
+    }
+  }
 }
 
 processProp <- function(){
-  position <- players$position[cur_player]
   if(board$owner[position] == 0){ #sjekk om ledig
     if(board$price[position] <= players$fortune[cur_player]){ #sjekk om råd
       #kjør strategi
@@ -97,12 +109,12 @@ processProp <- function(){
         #en annen spiller en den som landet her eier alle av denne fargen, dobbel leie
         players$fortune[owner] <<- players$fortune[owner] + board$rent[position]*2
         players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]*2
-        print("DOBBEL LEIE")
-        cat(sprintf("DOBBEL, spiller %s eier hele %s", owner, board$color[position]))
+        #print("DOBBEL LEIE")
+        #cat(sprintf("DOBBEL, spiller %s eier hele %s", owner, board$color[position]))
       }else{
         players$fortune[owner] <<- players$fortune[owner] + board$rent[position]
         players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]
-        print("LEIE")
+        #print("LEIE")
       }
     }
   }
