@@ -4,13 +4,12 @@
 ##---------------------------------------------------------
 
 source('functions v0.2.R') #importer funksjoner 
-list.files()
 #NB pass på variabler: globale = << og lokale = <
 #NB test enkeltfunksjoner fra dette dokumentet, ikke 'functions vx.x.R'
 initGame <- function(){
   #---------------- Settings -------------------
   N <<- 2 #spillere
-  strategy <- c(1, 2) #strategier for spillere, spiller 1 får første verdi som strategi etc..
+  strategy <- c(4, 3) #strategier for spillere, spiller 1 får første verdi som strategi etc..
   startCap <- 700 #startkapital for spillere, 'Cap' for capital
   roundCap <<- 10 #penger for å passere start
   version <- 2 #sette hvilken versjon av spillet å kjøre(?)
@@ -29,7 +28,7 @@ initGame <- function(){
 startGame <- function(){
   fortune1 <<- c()
   fortune2 <<- c()
-  board <<- read.csv("monopoly_data v0.1.csv") #importer/reset gameboard som data.frame
+  board <<- read.csv("monopoly_data v0.2.csv") #importer/reset gameboard som data.frame
                                                     #tile 1 er start!
   initGame() #reset verdier for spillet(start på nytt)
   cur_player <<- sample(1:N, 1) #velg tilfeldig startspiller, neglesjere first-mover
@@ -63,7 +62,7 @@ startGame <- function(){
   #lengde <<- c(lengde, length(fortune1))
 }
 
-startGame()
+##startGame()
 
 #---------------
 #Mål hvor mange runder spillet går
@@ -73,3 +72,16 @@ startGame()
 #mean(lengde)
 #lengde <- lengde[lengde<=200]
 #hist(lengde, breaks=20)
+
+winners = 1:1000*0
+for (i in 1:1000) {
+  startGame()
+  winners[i] <- 
+}
+
+##Plot the results!!!
+plot(x=1:length(fortune1), y = fortune1, ylim=c(0, max(c(fortune1, fortune2))))
+lines(x=1:length(fortune2), y = fortune2)
+print("number of props")
+print(length(board$owner[board$owner==1]))
+print(length(board$owner[board$owner==2]))
