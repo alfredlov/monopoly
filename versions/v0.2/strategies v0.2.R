@@ -3,8 +3,6 @@
 ## Version 0.2
 ##---------------------------------------------------------
 
-
-
 ## runStrategy: Runs the current player's predefined strategy
 runStrategy <- function(){
   strategyName <- paste("strategy", players$strategy[cur_player], sep="")
