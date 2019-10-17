@@ -99,6 +99,9 @@ processProp <- function(){
     if(owner != cur_player){
       #sjekke om den som eier gaten også eier alle i samme farge
       NoC <- nrow(board[board$color  == board$color[position],]) #hvor mange gater i den fargen
+      
+      ##JEG ANTAR OWNER1 SKAL VÆRE OWNER???
+      NoCo <- nrow(board[board$color  == board$color[position] & board$owner == owner,]) #hvor mange gater i den fargen som blir eid av eieren av denne gaten
       #------------ <Alternativt> -------------------
                 #colorOfPosition <- board$color[position]
                 #NoC2 <- board %>%
@@ -146,7 +149,10 @@ checkGameOver <- function(){
     winner <- players$id[players$active==TRUE]
     winnerS <- players$strategy[players$active==TRUE]
     
+    
     ##SLETT??
+    print(winner)
+    
     #cat(sprintf("Player %s won, using strategy %s", winner, winnerS))
   }
 } 
