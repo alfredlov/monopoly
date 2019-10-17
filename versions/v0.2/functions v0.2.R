@@ -62,107 +62,80 @@ move <- function(x){
 
 processPos <- function(){#håndter posisjon for spiller cur_player, leder til flere sub-funksjoner
   position <<- players$position[cur_player]
-  if(board$prop[position] == 1){ #sjekk om bolig
-    processProp() #håndtere landet på bolig
+  if(board$prop[position] %in% c(1,2,3,4)){
+      if(board$owner[position] == 0){ #sjekk om ledig
+        if(board$price[position] <= players$fortune[cur_player]){ #sjekk om råd
+          #kjør strategi
+          runStrategy()
+        }else{
+          #ikke råd
+        }
+      }else{
+        owner <<- board$owner[position]
+        if(owner != cur_player){
+          if(board$prop[position] == 1){ #sjekk om bolig
+            processProp() #håndtere landet på bolig
+          }
+          if(board$prop[position] == 2){
+            processUtil() #håndtere landet på utility
+          }
+          if(board$prop[position] == 3){
+            processTrain() #håndtere landet på tog
+          }
+        }
+      }
   }
-  if(board$prop[position] == 2){
-    processUtil() #håndtere landet på utility
-  }
-  if(board$prop[position] == 3){
-    processTrain() #håndtere landet på tog
-  }
-  
   ## Må skrive her hva som skjer når det ikke er en eiendom.... 
 } 
 ##--------------------------------------------------------------------------------
 ## processUtil: 
 ##--------------------------------------------------------------------------------
 processUtil <- function(){
-  if(board$owner[position] == 0){ #sjekk om ledig
-    if(board$price[position] <= players$fortune[cur_player]){ #sjekk om råd
-      #kjør strategi
-      runStrategy()
-    }else{
-      #ikke råd
-    }
-  }else{
-    owner <- board$owner[position]
-    if(owner != cur_player){
-      NoT <- nrow(board[board$prop  == "2" & board$owner == owner,]) #hvor mange tog eieren av dette toget eier
-      utilR <- c(4, 10) #multipliers for landing on a util
-      dice_res <- throwDice() #kast terning
-      players$fortune[owner] <<- players$fortune[owner] + dice_res*utilR[NoT] #formelen for tog-leie er 25*2^(x-1). D gir rekken 1,2,4,8. drd en ganger 25 m/ for å få leieprisene 25,50,100,200
-      players$fortune[cur_player] <<- players$fortune[cur_player] - dice_res*utilR[NoT]
-      cat(sprintf("UTILITY, spiller %s eier %s util, spiller %s kastet %s og betaler %s   ", owner, NoT, cur_player, dice_res, dice_res*utilR[NoT]))
-    }
-  }
+  NoT <- nrow(board[board$prop  == "2" & board$owner == owner,]) #hvor mange tog eieren av dette toget eier
+  utilR <- c(4, 10) #multipliers for landing on a util
+  dice_res <- throwDice() #kast terning
+  players$fortune[owner] <<- players$fortune[owner] + dice_res*utilR[NoT] #formelen for tog-leie er 25*2^(x-1). D gir rekken 1,2,4,8. drd en ganger 25 m/ for å få leieprisene 25,50,100,200
+  players$fortune[cur_player] <<- players$fortune[cur_player] - dice_res*utilR[NoT]
+  cat(sprintf("UTILITY, spiller %s eier %s util, spiller %s kastet %s og betaler %s   ", owner, NoT, cur_player, dice_res, dice_res*utilR[NoT]))
 }
 
 ##--------------------------------------------------------------------------------
 ## processTrain: 
 ##--------------------------------------------------------------------------------
 processTrain <- function(){
-  if(board$owner[position] == 0){ #sjekk om ledig
-    if(board$price[position] <= players$fortune[cur_player]){ #sjekk om råd
-      #kjør strategi
-      runStrategy()
-    }else{
-      #ikke råd
-    }
-  }else{
-    owner <- board$owner[position]
-    if(owner != cur_player){
-      ##KOMMENTAR: Dette går jo evt an å hardcode...
-      
-      NoT <- nrow(board[board$prop  == "3" & board$owner == owner,]) #hvor mange tog eieren av dette toget eier
-      players$fortune[owner] <<- players$fortune[owner] + board$rent[position]*2^(NoT-1) #formelen for tog-leie er 25*2^(x-1). D gir rekken 1,2,4,8. drd en ganger 25 m/ for å få leieprisene 25,50,100,200
-      players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]*2^(NoT-1)
-      #cat(sprintf("TOOG, spiller %s eier %s tog, spiller %s betaler %s", owner, NoT, cur_player, board$rent[position]*2^(NoT-1)))
-    }
-  }
+  NoT <- nrow(board[board$prop  == "3" & board$owner == owner,]) #hvor mange tog eieren av dette toget eier
+  players$fortune[owner] <<- players$fortune[owner] + board$rent[position]*2^(NoT-1) #formelen for tog-leie er 25*2^(x-1). D gir rekken 1,2,4,8. drd en ganger 25 m/ for å få leieprisene 25,50,100,200
+  players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]*2^(NoT-1)
+  #cat(sprintf("TOOG, spiller %s eier %s tog, spiller %s betaler %s", owner, NoT, cur_player, board$rent[position]*2^(NoT-1)))
 }
 
 ##--------------------------------------------------------------------------------
 ## processProp: 
 ##--------------------------------------------------------------------------------
 processProp <- function(){
-  if(board$owner[position] == 0){ #sjekk om ledig
-    if(board$price[position] <= players$fortune[cur_player]){ #sjekk om råd
-      #kjør strategi
-      runStrategy()
-    }else{
-      #ikke råd
-    }
+  #sjekke om den som eier gaten også eier alle i samme farge
+  NoC <- nrow(board[board$color  == board$color[position],]) #hvor mange gater i den fargen
+  NoCo <- nrow(board[board$color  == board$color[position] & board$owner == owner,]) #hvor mange gater i den fargen som blir eid av eieren av denne gaten
+  #------------ <Alternativt> -------------------
+            #colorOfPosition <- board$color[position]
+            #NoC2 <- board %>%
+              #filter(color %in% colorOfPosition) %>%
+              #nrow()
+          
+            #NoCo2 <- board %>%
+              #filter(owner %in% owner1, color %in% colorOfPosition) %>%
+              #nrow()
+  #------------ </Alternativt> ------------------
+  if(NoC == NoCo){
+    #en annen spiller en den som landet her eier alle av denne fargen, dobbel leie
+    players$fortune[owner] <<- players$fortune[owner] + board$rent[position]*2
+    players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]*2
+    #print("DOBBEL LEIE")
+    #cat(sprintf("DOBBEL, spiller %s eier hele %s", owner, board$color[position]))
   }else{
-    #betal leie
-    #sjekke om en selv eier gaten
-    owner <- board$owner[position]
-    if(owner != cur_player){
-      #sjekke om den som eier gaten også eier alle i samme farge
-      NoC <- nrow(board[board$color  == board$color[position],]) #hvor mange gater i den fargen
-      NoCo <- nrow(board[board$color  == board$color[position] & board$owner == owner,]) #hvor mange gater i den fargen som blir eid av eieren av denne gaten
-      #------------ <Alternativt> -------------------
-                #colorOfPosition <- board$color[position]
-                #NoC2 <- board %>%
-                  #filter(color %in% colorOfPosition) %>%
-                  #nrow()
-              
-                #NoCo2 <- board %>%
-                  #filter(owner %in% owner1, color %in% colorOfPosition) %>%
-                  #nrow()
-      #------------ </Alternativt> ------------------
-      if(NoC == NoCo){
-        #en annen spiller en den som landet her eier alle av denne fargen, dobbel leie
-        players$fortune[owner] <<- players$fortune[owner] + board$rent[position]*2
-        players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]*2
-        #print("DOBBEL LEIE")
-        #cat(sprintf("DOBBEL, spiller %s eier hele %s", owner, board$color[position]))
-      }else{
-        players$fortune[owner] <<- players$fortune[owner] + board$rent[position]
-        players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]
-        #print("LEIE")
-      }
-    }
+    players$fortune[owner] <<- players$fortune[owner] + board$rent[position]
+    players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]
+    #print("LEIE")
   }
 }
 
