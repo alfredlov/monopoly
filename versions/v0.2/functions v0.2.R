@@ -146,8 +146,8 @@ checkPlayerLoss <- function(){#sjekk hvis cur_player har tapt
 checkGameOver <- function(){
   if(length(players$active[players$active==TRUE])==1){
     game_over <<- TRUE
-    winner <- players$id[players$active==TRUE]
-    winnerS <- players$strategy[players$active==TRUE]
+    winner <<- players$id[players$active==TRUE]
+    winnerS <<- players$strategy[players$active==TRUE]
     
     
     ##SLETT??
