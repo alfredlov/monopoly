@@ -45,5 +45,4 @@ strategy2 <- function(){
 strategy3 <- function(){
   #if property price/income <= 70%
   # buy, treturn true, else return false. 
-  
 }
