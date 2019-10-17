@@ -23,7 +23,8 @@ throwDice <- function(){
 
 ##--------------------------------------------------------------------------------
 ## move: Handles the changing the position of the players on the board.
-## Increments cur_position by what is given by the dices. Handles discontinuity 
+## input: x = number given by dice throw
+## Increments position variable of player by what is given by the dices. Handles discontinuity 
 ## at Go and also handles adding $ to balance of players when passing Go. 
 ##--------------------------------------------------------------------------------
 move <- function(x){#endre position for cur_player i players data.frame
