@@ -9,7 +9,7 @@ source('functions v0.2.R') #importer funksjoner
 initGame <- function(){
   #---------------- Settings -------------------
   N <<- 2 #spillere
-  strategy <- c(4, 3) #strategier for spillere, spiller 1 får første verdi som strategi etc..
+  strategy <- c(5, 1) #strategier for spillere, spiller 1 får første verdi som strategi etc..
   startCap <- 700 #startkapital for spillere, 'Cap' for capital
   roundCap <<- 10 #penger for å passere start
   version <- 2 #sette hvilken versjon av spillet å kjøre(?)
@@ -56,8 +56,8 @@ startGame <- function(){
       fortune2 <<- c(fortune2, players$fortune[2])
     }
   }
-  plot(x=1:length(fortune1), y=fortune1, type = "b", ylab="Fortune", xlab="Throws") +
-    lines(x=1:length(fortune2), y=fortune2)
+  #plot(x=1:length(fortune1), y=fortune1, type = "b", ylab="Fortune", xlab="Throws") +
+  #  lines(x=1:length(fortune2), y=fortune2)
   
   #lengde <<- c(lengde, length(fortune1))
 }
@@ -73,11 +73,18 @@ startGame <- function(){
 #lengde <- lengde[lengde<=200]
 #hist(lengde, breaks=20)
 
-winners = 1:1000*0
-for (i in 1:1000) {
+## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRAT SOM ER BEST
+k=200
+winners = 1:k*0
+for (i in 1:k) {
   startGame()
-  winners[i] <- 
+  winners[i] <- winner
 }
+
+hist(winners)
+table(winners)
+
+pbinom(135, size = 200, prob = 0.5)
 
 ##Plot the results!!!
 plot(x=1:length(fortune1), y = fortune1, ylim=c(0, max(c(fortune1, fortune2))))
