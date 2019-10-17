@@ -63,7 +63,7 @@ startGame <- function(){
   plot(x=1:length(fortune1), y=fortune1, type = "b", ylab="Fortune", xlab="Throws") +
     lines(x=1:length(fortune2), y=fortune2)
   
-  #lengde <<- c(lengde, length(fortune1)/2)
+  lengde <<- c(lengde, length(fortune1)/2)
 }
 
 ##startGame()
