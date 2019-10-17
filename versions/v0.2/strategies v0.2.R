@@ -69,8 +69,7 @@ strategy3 <- function(){
 ##-----------------------------------------------------------------------------------
 strategy4 <- function(){
   
-
-  
+  ##FORENKLE??
   if(board$color[players$position[cur_player]] == 'purple' || board$color[players$position[cur_player]] == 'orange' || 
      board$color[players$position[cur_player]] == 'red' || board$color[players$position[cur_player]] == 'yellow'){
     return(TRUE)
@@ -78,5 +77,19 @@ strategy4 <- function(){
     return(FALSE)
   }
 }
+
+##-----------------------------------------------------------------------------------
+##  Strategy 5: Red & Orange
+##-----------------------------------------------------------------------------------
+strategy5 <- function(){
+  
+  ##FORENKLE??
+  if(board$color[players$position[cur_player]] == 'orange' || board$color[players$position[cur_player]] == 'red'){
+    return(TRUE)
+  }else{
+    return(FALSE)
+  }
+}
+
 
 
