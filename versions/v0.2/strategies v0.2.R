@@ -31,7 +31,6 @@ strategy1 <- function(){
 ##  Simple strategy of buying all properties the player lands on with probability 0.5.
 ##-----------------------------------------------------------------------------------
 strategy2 <- function(){
-  if(sample(0:1, 1) == 1){
     return(TRUE)
   }else{
     return(FALSE)
