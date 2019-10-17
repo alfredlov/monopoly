@@ -1,21 +1,25 @@
 ##--------------------------------------------------------------------------------
 ## FUNCTIONS v.0.2.R
 ## Constains the functions used in order to model the game. 
-## The functions modelling the differing strategies are contained 
-##  in a seperate script. 
+## The functions modelling the differing strategies are contained in strategies-script. 
 ##--------------------------------------------------------------------------------
+
+
+##--------------------------------------------------------------------------------
+## Housekeeping: importing libraries and sources the strategies-script. 
+##--------------------------------------------------------------------------------
+source('strategies v0.2.R')
+library(dplyr)
 
 ##--------------------------------------------------------------------------------
 ## throwDice: Simulates the throwing of two dice.
 ## output: Returns an integer between 2 and 12. 
 ##--------------------------------------------------------------------------------
-source('strategies v0.2.R')
-library(dplyr)
 throwDice <- function(){
   dice <- sum(sample(1:6, size = 2, replace = TRUE))
   return(dice)
   
-  ##Vurder å slette disse kommentarene!!
+  ##SLETT??
   #simuler kast m/ 2 terninger, se hist nedenfor for bevis 
   #hist(replicate(1000, sample(1:6, size = 1, replace = TRUE) + sample(1:6, size = 1, replace = TRUE)))
   #hist(replicate(100000, sum(sample(1:6, size = 2, replace = TRUE))))
@@ -23,12 +27,12 @@ throwDice <- function(){
 }
 
 ##--------------------------------------------------------------------------------
-## move: Handles the changing the position of the players on the board.
+## move: Handles the changing the position of the players on the board, by altering board-dataframe.
 ## input: x = number given by dice throw
-## Increments position variable of player by what is given by the dices. Handles discontinuity 
-## at Go and also handles adding $ to balance of players when passing Go. 
+## -  Increments position variable of player by what is given by the dices. 
+## -  Handles discontinuity at Go and also handles adding $ to balance of players when passing Go. 
 ##--------------------------------------------------------------------------------
-move <- function(x){#endre position for cur_player i players data.frame
+move <- function(x){
   cur_position <- players$position[cur_player]
   if(cur_position + x > nrow(board)){
     y <- nrow(board) - cur_position
