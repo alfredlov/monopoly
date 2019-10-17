@@ -6,6 +6,7 @@
 source('functions v0.2.R') #importer funksjoner 
 #NB pass på variabler: globale = << og lokale = <
 #NB test enkeltfunksjoner fra dette dokumentet, ikke 'functions vx.x.R'
+
 initGame <- function(){
   #---------------- Settings -------------------
   N <<- 2 #spillere
@@ -36,6 +37,9 @@ startGame <- function(){
   
   ptm <- Sys.time() #timer
   while (game_over == FALSE) { #loop så lenge ikke én er vinnner
+    
+    ##Statistikkinnhenting!!
+    ##Variabler som lagrer hvor stor in
     if(cur_player == 1){
     fortune1 <<- c(fortune1, players$fortune[1])
     }else{
@@ -73,18 +77,24 @@ startGame <- function(){
 #lengde <- lengde[lengde<=200]
 #hist(lengde, breaks=20)
 
-## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRAT SOM ER BEST
+## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRATEGI SOM ER BEST
 k=200
 winners = 1:k*0
+numberOfRounds <- 1:k*0
+
 for (i in 1:k) {
   startGame()
   winners[i] <- winner
+  numberOfRounds[i] <- length(fortune1)
 }
 
 hist(winners)
 table(winners)
 
 pbinom(135, size = 200, prob = 0.5)
+
+## Number of rounds
+hist(numberOfRounds, breaks=60)
 
 ##Plot the results!!!
 plot(x=1:length(fortune1), y = fortune1, ylim=c(0, max(c(fortune1, fortune2))))
