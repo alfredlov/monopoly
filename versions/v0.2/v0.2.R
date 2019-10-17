@@ -28,7 +28,7 @@ initGame <- function(){
 startGame <- function(){
   fortune1 <<- c()
   fortune2 <<- c()
-  board <<- read.csv("monopoly_data v0.1.csv") #importer/reset gameboard som data.frame
+  board <<- read.csv("monopoly_data v0.2.csv") #importer/reset gameboard som data.frame
                                                     #tile 1 er start!
   initGame() #reset verdier for spillet(start på nytt)
   cur_player <<- sample(1:N, 1) #velg tilfeldig startspiller, neglesjere first-mover
@@ -55,8 +55,8 @@ startGame <- function(){
       fortune2 <<- c(fortune2, players$fortune[2])
     }
   }
-  #plot(x=1:length(fortune1), y=fortune1, type = "b", ylab="Fortune", xlab="Throws") +
-    #lines(x=1:length(fortune2), y=fortune2)
+  plot(x=1:length(fortune1), y=fortune1, type = "b", ylab="Fortune", xlab="Throws") +
+    lines(x=1:length(fortune2), y=fortune2)
   
   #lengde <<- c(lengde, length(fortune1))
 }
