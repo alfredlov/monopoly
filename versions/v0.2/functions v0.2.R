@@ -87,6 +87,8 @@ processTrain <- function(){
   }else{
     owner <- board$owner[position]
     if(owner != cur_player){
+      ##KOMMENTAR: Dette går jo evt an å hardcode...
+      
       NoT <- nrow(board[board$prop  == "3" & board$owner == owner,]) #hvor mange tog eieren av dette toget eier
       
       players$fortune[owner] <<- players$fortune[owner] + board$rent[position]*2^(NoT-1)
