@@ -61,6 +61,7 @@ startGame <- function(){
   #lengde <<- c(lengde, length(fortune1))
 }
 
+startGame()
 
 #---------------
 #Mål hvor mange runder spillet går
