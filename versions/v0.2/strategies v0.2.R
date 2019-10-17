@@ -3,15 +3,24 @@
 ## Version 0.2
 ##---------------------------------------------------------
 
+##--------------------------------------------------------------------------------
 ## runStrategy: Runs the current player's predefined strategy
+##  - If the given player's strategy-function returns TRUE, 
+##    set the owner variable of the property to TRUE. 
+##--------------------------------------------------------------------------------
+
 runStrategy <- function(){
   strategyName <- paste("strategy", players$strategy[cur_player], sep="")
   if(get(strategyName)() == TRUE){
+    
+    #SLETT??
     #cat(sprintf("kjøp %s",Sys.time()))
     position <- players$position[cur_player]
     board$owner[position] <<- cur_player
     players$fortune[cur_player] <<- players$fortune[cur_player] - board$price[position]
   }
+
+  ##SLETT??
   else{
     #ikke kjøp
     #print("ikke kjøp")
@@ -31,6 +40,7 @@ strategy1 <- function(){
 ##  Simple strategy of buying all properties the player lands on with probability 0.5.
 ##-----------------------------------------------------------------------------------
 strategy2 <- function(){
+  if(sample(0:1, prob = c(0.5, 0.5), 1) == 1){
     return(TRUE)
   }else{
     return(FALSE)
@@ -45,4 +55,6 @@ strategy2 <- function(){
 strategy3 <- function(){
   #if property price/income <= 70%
   # buy, treturn true, else return false. 
+  players$position[cur_player]
+  players$
 }
