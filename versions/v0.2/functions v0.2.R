@@ -73,15 +73,9 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
       }else{
         owner <<- board$owner[position]
         if(owner != cur_player){
-          if(board$prop[position] == 1){ #sjekk om bolig
-            processProp() #håndtere landet på bolig
-          }
-          if(board$prop[position] == 2){
-            processUtil() #håndtere landet på utility
-          }
-          if(board$prop[position] == 3){
-            processTrain() #håndtere landet på tog
-          }
+          processNames <- c("Prop", "Util", "Train")
+          strategyName <- paste("process", processNames[board$prop[position]], sep="")
+          get(strategyName)()
         }
       }
   }
