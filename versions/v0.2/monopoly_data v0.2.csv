@@ -1,8 +1,8 @@
 position,name,price,rent,prop,color,owner,autopay
-0,Start,NA,NA,5,white,,
+0,Start,NA,NA,5,white,,0
 1,Mediterranean Avenue,60,2,1,brown,0,
 3,Baltic Avenue,60,4,1,brown,0,
-4,Tax income,,,5,,,−200
+4,Tax income,,,5,,,200
 5,Reading Railroad,200,25,3,white,0,
 6,Oriental Avenue,100,6,1,lblue,0,
 8,Vermont Avenue,100,6,1,lblue,0,
@@ -30,5 +30,5 @@ position,name,price,rent,prop,color,owner,autopay
 34,Pennsynvania Avenue,320,28,1,green,0,
 35,Short Line,200,25,3,white,0,
 37,Park Place,350,35,1,blue,0,
-38,Luxury Tax,,,5,,,−100
+38,Luxury Tax,,,5,,,100
 39,Boardwalk,400,50,1,blue,0,

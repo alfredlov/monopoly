@@ -10,7 +10,7 @@ source('functions v0.2.R') #importer funksjoner
 initGame <- function(){
   #---------------- Settings -------------------
   N <<- 2 #spillere
-  strategy <- c(5, 1) #strategier for spillere, spiller 1 får første verdi som strategi etc..
+  strategy <- c(4, 3) #strategier for spillere, spiller 1 får første verdi som strategi etc..
   startCap <- 700 #startkapital for spillere, 'Cap' for capital
   roundCap <<- 10 #penger for å passere start
   version <- 2 #sette hvilken versjon av spillet å kjøre(?)
@@ -76,7 +76,8 @@ startGame <- function(){
 #mean(lengde)
 #lengde <- lengde[lengde<=200]
 #hist(lengde, breaks=20, xlim=c(0,360))
-
+replicate(100, startGame())
+hist(lengde, breaks=20, xlim=c(0,360))
 ## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRATEGI SOM ER BEST
 k=200
 winners = 1:k*0

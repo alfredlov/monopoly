@@ -37,7 +37,6 @@ move <- function(x){
     y <- nrow(board) - cur_position
     players$position[cur_player] <<- x - y
     players$fortune[cur_player] <<- players$fortune[cur_player] + roundCap
-    
     ##SLETT??
     #cat(sprintf("Player %s moved %s tiles to position %s, and passed Go.",cur_player, x, x-y))
   }
@@ -79,8 +78,34 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
         }
       }
   }
+  if(board$prop[position] == 5){
+    processAuto()#autopay(taxes)
+  }
+  if(board$prop[position] == 0){
+    processJail()#teleporter til fengsel
+  }
+
   ## Må skrive her hva som skjer når det ikke er en eiendom.... 
 } 
+##--------------------------------------------------------------------------------
+## processJail: 
+##--------------------------------------------------------------------------------
+processJail <- function(){
+  if(board$position[position] == 30){
+    players$position[cur_player] <<- 10 #teleporter til jail
+    #for å holde spilleren i jail trenger vi et element i df for å se om just visiting eller i jail
+    #  og for å se hvor mange kast spilleren har forsøkt å komme ut
+  }
+}
+
+##--------------------------------------------------------------------------------
+## processAuto: 
+##--------------------------------------------------------------------------------
+processAuto <- function(){
+  players$fortune[cur_player] <<- players$fortune[cur_player] - board$autopay[position]
+  #cat(sprintf("AUTOPAY, spiller %s betaler %s til %s", cur_player, board$autopay[position], board$name[position]))
+}
+
 ##--------------------------------------------------------------------------------
 ## processUtil: 
 ##--------------------------------------------------------------------------------
@@ -90,7 +115,7 @@ processUtil <- function(){
   dice_res <- throwDice() #kast terning
   players$fortune[owner] <<- players$fortune[owner] + dice_res*utilR[NoT] #formelen for tog-leie er 25*2^(x-1). D gir rekken 1,2,4,8. drd en ganger 25 m/ for å få leieprisene 25,50,100,200
   players$fortune[cur_player] <<- players$fortune[cur_player] - dice_res*utilR[NoT]
-  cat(sprintf("UTILITY, spiller %s eier %s util, spiller %s kastet %s og betaler %s   ", owner, NoT, cur_player, dice_res, dice_res*utilR[NoT]))
+  #cat(sprintf("UTILITY, spiller %s eier %s util, spiller %s kastet %s og betaler %s   ", owner, NoT, cur_player, dice_res, dice_res*utilR[NoT]))
 }
 
 ##--------------------------------------------------------------------------------
