@@ -59,13 +59,9 @@ move <- function(x){
 ## -  If the person cannot afford a free property nothing happens and the turn moves to the next player.
 ## -  If the player lands on a tile, that is a property, is free and he can afford. 
 ##--------------------------------------------------------------------------------
-<<<<<<< HEAD
+
 processPos <- function(){#håndter posisjon for spiller cur_player, leder til flere sub-funksjoner
   position <<- players$position[cur_player]
-=======
-processPos <- function(){
-  position <- players$position[cur_player]
->>>>>>> origin/master
   if(board$prop[position] == 1){ #sjekk om bolig
     processProp() #håndtere landet på bolig
   }
