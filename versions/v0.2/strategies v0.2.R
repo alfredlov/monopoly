@@ -18,7 +18,6 @@ runStrategy <- function(){
     position <- players$position[cur_player]
     board$owner[position] <<- cur_player
     players$fortune[cur_player] <<- players$fortune[cur_player] - board$price[position]
-  }else{
   }
   ##Case: The strategy tells the player not to buy the property. Do nothing!
   ##      Droppe denne else-setningen?? Den gjør vel ingenting. 
@@ -54,11 +53,6 @@ strategy2 <- function(){
 ##  Buys all properties as long as price < 70% of total income.
 ##-----------------------------------------------------------------------------------
 strategy3 <- function(){
-  if(sample(0:5, 1) == 1){
-    return(TRUE)
-  }else{
-    return(FALSE)
-  }
   #if property price/income <= 70%
   # buy, treturn true, else return false. 
   
