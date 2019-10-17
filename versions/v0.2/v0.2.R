@@ -48,6 +48,7 @@ startGame <- function(){
     checkGameOver() #sjekk om spillet er over
     setNextPlayer() #endre cur_player til neste
     ptm2 <- Sys.time() - ptm
+    #timeour funskjon for å forhindre krasj
     if(ptm2 > 2){
       game_over <- TRUE
       cat(sprintf("time out %s",Sys.time()))

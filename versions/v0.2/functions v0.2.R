@@ -10,6 +10,7 @@
 ## output: Returns an integer between 2 and 12. 
 ##--------------------------------------------------------------------------------
 source('strategies v0.2.R')
+library(dplyr)
 throwDice <- function(){
   dice <- sum(sample(1:6, size = 2, replace = TRUE))
   return(dice)
@@ -54,12 +55,17 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
   if(board$prop[position] == 1){ #sjekk om bolig
     processProp() #håndtere landet på bolig
   }
-  if(board$prop[position] == 2){
-    #dette er ikke en bolig
+  if(board$prop[position] == 3){
+    processTrain() #håndtere landet på tog
   }
   
   ## Må skrive her hva som skjer når det ikke er en eiendom.... 
 } 
+
+processTrain <- function(){
+  
+}
+
 processProp <- function(){
   position <- players$position[cur_player]
   if(board$owner[position] == 0){ #sjekk om ledig
@@ -71,10 +77,33 @@ processProp <- function(){
     }
   }else{
     #betal leie
+    #sjekke om en selv eier gaten
     owner <- board$owner[position]
     if(owner != cur_player){
-      players$fortune[owner] <<- players$fortune[owner] + board$rent[position]
-      players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]
+      #sjekke om den som eier gaten også eier alle i samme farge
+      NoC <- nrow(board[board$color  == board$color[position],]) #hvor mange gater i den fargen
+      NoCo <- nrow(board[board$color  == board$color[position] & board$owner == owner1,]) #hvor mange gater i den fargen som blir eid av eieren av denne gaten
+      #------------ <Alternativt> -------------------
+                #colorOfPosition <- board$color[position]
+                #NoC2 <- board %>%
+                  #filter(color %in% colorOfPosition) %>%
+                  #nrow()
+              
+                #NoCo2 <- board %>%
+                  #filter(owner %in% owner1, color %in% colorOfPosition) %>%
+                  #nrow()
+      #------------ </Alternativt> ------------------
+      if(NoC == NoCo){
+        #en annen spiller en den som landet her eier alle av denne fargen, dobbel leie
+        players$fortune[owner] <<- players$fortune[owner] + board$rent[position]*2
+        players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]*2
+        print("DOBBEL LEIE")
+        cat(sprintf("DOBBEL, spiller %s eier hele %s", owner, board$color[position]))
+      }else{
+        players$fortune[owner] <<- players$fortune[owner] + board$rent[position]
+        players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]
+        print("LEIE")
+      }
     }
   }
 }
