@@ -75,7 +75,7 @@ startGame <- function(){
 #replicate(100, startGame())
 #mean(lengde)
 #lengde <- lengde[lengde<=200]
-#hist(lengde, breaks=20)
+#hist(lengde, breaks=20, xlim=c(0,360))
 
 ## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRATEGI SOM ER BEST
 k=200
