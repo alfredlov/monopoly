@@ -48,11 +48,12 @@ move <- function(x){
     }
     if(players$jailDays[cur_player] %in% c(2,3)){
       players$jailDays[cur_player] <<- players$jailDays[cur_player] - 1
-      #cat(sprintf("Player %s I FENGSEL MINUS EN RUNDE",cur_player))
+      #cat(sprintf("Player %s I FENGSEL MINUS EN RUNDE %s",cur_player, cur_position))
     }
     if(players$jailDays[cur_player] == 0){
       players$position[cur_player] <<- cur_position + x
     }
+    
     ##SLETT??
     #cat(sprintf("Player %s moved %s tiles to position %s",cur_player, x, cur_position + x))
   }
@@ -88,15 +89,21 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
         }
       }
   }
-  if(board$prop[position] == 5){
-    processAuto()#autopay(taxes)
+  if(board$prop[position] %in% c(0,5,6)){
+    processNames <- c("Jail", "Auto", "Free")
+    strategyName <- paste("process", processNames[match(board$prop[position],c(0,5,6))], sep="")
+    get(strategyName)()
   }
-  if(board$prop[position] == 0){
-    processJail()#teleporter til fengsel
-  }
-
   ## Må skrive her hva som skjer når det ikke er en eiendom.... 
 } 
+
+##--------------------------------------------------------------------------------
+## processFree: 
+##--------------------------------------------------------------------------------
+processFree <- function(){
+  
+}
+
 ##--------------------------------------------------------------------------------
 ## processJail: 
 ##--------------------------------------------------------------------------------
