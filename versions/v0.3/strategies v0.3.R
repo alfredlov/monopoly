@@ -10,6 +10,8 @@
 ##--------------------------------------------------------------------------------
 
 runStrategy <- function(){
+  propPrice <<- board$price[players$position[cur_player]]
+  ##propPos <<- board$position[players$position[cur_player]]
   strategyName <- paste("strategy", players$strategy[cur_player], sep="")
   if(get(strategyName)() == TRUE){
     
@@ -18,10 +20,40 @@ runStrategy <- function(){
     position <- players$position[cur_player]
     board$owner[position] <<- cur_player
     players$fortune[cur_player] <<- players$fortune[cur_player] - board$price[position]
-  }
-
-  ##SLETT??
-  else{
+  }else{
+    #####BUDRUNDE
+    #BUDRUNDE FUNKER MEN STRATEGIENE ER IKKE SOFISTIKERTE NOK TIL Å HÅNDTERE DET
+    #DE BRUKER OFTE MER ENN DE HAR OG TAPER
+    #SKRU BUDRUNDER AV/PÅ I initGame()
+    if(bid_Active == TRUE){    
+      bid_over <- FALSE
+      while (bid_over != TRUE) {
+        interestedBuyers <<- c()
+        for (i in 1:nrow(players)) {
+          strategyName <- paste("strategy", players$strategy[i], sep="")
+          interestedBuyers[i] <- get(strategyName)()
+        }
+        if(length(interestedBuyers[interestedBuyers==TRUE]) == 1){
+          bidWinner <<- match(TRUE,interestedBuyers)
+          bid_over <- TRUE
+          position <- players$position[cur_player]
+          board$owner[position] <<- bidWinner
+          players$fortune[bidWinner] <<- players$fortune[bidWinner] - propPrice
+          cat(sprintf("Player %s won auction of %s for %s",bidWinner, position, propPrice))
+        }
+        if(propPrice > board$price[players$position[cur_player]]*3){
+          bidWinner <<- sample(1:length(interestedBuyers[interestedBuyers==TRUE]), 1)
+          bid_over <- TRUE
+          position <- players$position[cur_player]
+          board$owner[position] <<- bidWinner
+          players$fortune[bidWinner] <<- players$fortune[bidWinner] - propPrice
+  
+          cat(sprintf("Player %s won auction of %s on random for %s",bidWinner, position, propPrice))
+        }else{
+          propPrice <<- propPrice * 1.1
+        }
+      }
+    }
     #ikke kjøp
     #print("ikke kjøp")
   }
@@ -47,13 +79,12 @@ strategy2 <- function(){
   }
 }
 
-
 ##-----------------------------------------------------------------------------------
 ##  Strategy 3: Simple conservative
 ##  Buys all properties as long as price < 70% of total income.
 ##-----------------------------------------------------------------------------------
 strategy3 <- function(){
-  if(board$price[players$position[cur_player]]/players$fortune[cur_player] <= 0.5){
+  if(propPrice/players$fortune[cur_player] <= 0.5){
     return(TRUE)
   }else{
     return(FALSE)

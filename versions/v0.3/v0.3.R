@@ -8,11 +8,12 @@
 
 initGame <- function(){
   #---------------- Settings -------------------
-  N <<- 2 #spillere
-  strategy <- c(4, 1) #strategier for spillere, spiller 1 får første verdi som strategi etc..
-  startCap <- 1500 #startkapital for spillere, 'Cap' for capital
-  roundCap <<- 200 #penger for å passere start
+  N <<- 3 #spillere
+  strategy <- c(4, 1, 2) #strategier for spillere, spiller 1 får første verdi som strategi etc..
+  startCap <- 700 #startkapital for spillere, 'Cap' for capital
+  roundCap <<- 10 #penger for å passere start
   version <- 2 #sette hvilken versjon av spillet å kjøre(?)
+  bid_Active <<- FALSE #skru budrunder av/på
   #---------------------------------------------
   
   id <- c(1:N) #som vektor til data.frame
@@ -61,8 +62,8 @@ startGame <- function(){
       fortune2 <<- c(fortune2, players$fortune[2])
     }
   }
-  # plot(x=1:length(fortune1), y=fortune1, type = "b", ylab="Fortune", xlab="Throws") +
-  #   lines(x=1:length(fortune2), y=fortune2)
+   plot(x=1:length(fortune1), y=fortune1, type = "b", ylab="Fortune", xlab="Throws") +
+     lines(x=1:length(fortune2), y=fortune2)
   
   #lengde <<- c(lengde, length(fortune1)/2)
 }
