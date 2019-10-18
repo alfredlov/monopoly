@@ -9,9 +9,9 @@
 initGame <- function(){
   #---------------- Settings -------------------
   N <<- 2 #spillere
-  strategy <- c(4, 3) #strategier for spillere, spiller 1 får første verdi som strategi etc..
-  startCap <- 700 #startkapital for spillere, 'Cap' for capital
-  roundCap <<- 10 #penger for å passere start
+  strategy <- c(1, 4) #strategier for spillere, spiller 1 får første verdi som strategi etc..
+  startCap <- 1500 #startkapital for spillere, 'Cap' for capital
+  roundCap <<- 200 #penger for å passere start
   version <- 2 #sette hvilken versjon av spillet å kjøre(?)
   #---------------------------------------------
   
@@ -61,8 +61,10 @@ startGame <- function(){
       fortune2 <<- c(fortune2, players$fortune[2])
     }
   }
-  plot(x=1:length(fortune1), y=fortune1, type = "b", ylab="Fortune", xlab="Throws") +
-    lines(x=1:length(fortune2), y=fortune2)
+  
+  #Plotting av fortuna gjennom hele spillet.
+# plot(x=1:length(fortune1), y=fortune1, type = "b", ylab="Fortune", xlab="Throws") +
+#   lines(x=1:length(fortune2), y=fortune2)
   
   lengde <<- c(lengde, length(fortune1)/2)
 }
@@ -79,9 +81,9 @@ startGame <- function(){
 #hist(lengde, breaks=20, xlim=c(0,360))
 lengde <<- c()
 replicate(100, startGame())
-hist(lengde, breaks=20, xlim=c(0,360), ylim = c(0,20))
+hist(lengde, breaks=20, xlim=c(0,50), ylim = c(0,50))
 ## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRATEGI SOM ER BEST
-k=200
+k=100
 winners = 1:k*0
 numberOfRounds <- 1:k*0
 
@@ -94,7 +96,8 @@ for (i in 1:k) {
 hist(winners)
 table(winners)
 
-pbinom(135, size = 200, prob = 0.5)
+#plot of cumulative distribution
+#plot(x=0:100, y=pbinom(0:100, size = 100, prob = 0.5))
 
 ## Number of rounds
 hist(numberOfRounds, breaks=60)

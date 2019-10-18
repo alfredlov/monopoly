@@ -94,7 +94,7 @@ for (i in 1:k) {
 hist(winners)
 table(winners)
 
-pbinom(135, size = 200, prob = 0.5)
+pbinom(73, size = 100, prob = 0.5)
 
 ## Number of rounds
 hist(numberOfRounds, breaks=60)
