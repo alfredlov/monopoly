@@ -9,9 +9,9 @@
 initGame <- function(){
   #---------------- Settings -------------------
   N <<- 2 #spillere
-  strategy <- c(4, 3) #strategier for spillere, spiller 1 får første verdi som strategi etc..
-  startCap <- 700 #startkapital for spillere, 'Cap' for capital
-  roundCap <<- 10 #penger for å passere start
+  strategy <- c(4, 1) #strategier for spillere, spiller 1 får første verdi som strategi etc..
+  startCap <- 1500 #startkapital for spillere, 'Cap' for capital
+  roundCap <<- 200 #penger for å passere start
   version <- 2 #sette hvilken versjon av spillet å kjøre(?)
   #---------------------------------------------
   
@@ -27,10 +27,10 @@ initGame <- function(){
 ## Main-function.
 ##---------------------------------------------------------
 startGame <- function(){
-  source('functions v0.2.R') #importer funksjoner 
+  source('functions v0.3.R') #importer funksjoner 
   fortune1 <<- c()
   fortune2 <<- c()
-  board <<- read.csv("monopoly_data v0.2.csv") #importer/reset gameboard som data.frame
+  board <<- read.csv("monopoly_data v0.3.csv") #importer/reset gameboard som data.frame
                                                     #tile 1 er start!
   initGame() #reset verdier for spillet(start på nytt)
   cur_player <<- sample(1:N, 1) #velg tilfeldig startspiller, neglesjere first-mover
@@ -61,10 +61,10 @@ startGame <- function(){
       fortune2 <<- c(fortune2, players$fortune[2])
     }
   }
-  plot(x=1:length(fortune1), y=fortune1, type = "b", ylab="Fortune", xlab="Throws") +
-    lines(x=1:length(fortune2), y=fortune2)
+  # plot(x=1:length(fortune1), y=fortune1, type = "b", ylab="Fortune", xlab="Throws") +
+  #   lines(x=1:length(fortune2), y=fortune2)
   
-  lengde <<- c(lengde, length(fortune1)/2)
+  #lengde <<- c(lengde, length(fortune1)/2)
 }
 
 ##startGame()
@@ -81,7 +81,7 @@ lengde <<- c()
 replicate(100, startGame())
 hist(lengde, breaks=20, xlim=c(0,360), ylim = c(0,20))
 ## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRATEGI SOM ER BEST
-k=200
+k=100
 winners = 1:k*0
 numberOfRounds <- 1:k*0
 
