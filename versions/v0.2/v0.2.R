@@ -3,7 +3,6 @@
 ## Version 0.2
 ##---------------------------------------------------------
 
-source('functions v0.2.R') #importer funksjoner 
 #NB pass på variabler: globale = << og lokale = <
 #NB test enkeltfunksjoner fra dette dokumentet, ikke 'functions vx.x.R'
 
@@ -20,13 +19,15 @@ initGame <- function(){
   fortune <- rep(startCap, times=N)
   active <- rep(1, times=N) #sett spillere som er aktive, alle v/ init
   position <- rep(1, times=N) #tile 1 er start
-  players <<- data.frame(id, strategy, fortune, active, position) #data.frame m/ oversikt over spillerne
+  jailDays <- rep(0, times=N) #tile 1 er start
+  players <<- data.frame(id, strategy, fortune, active, position, jailDays) #data.frame m/ oversikt over spillerne
 }
 
 ##---------------------------------------------------------
 ## Main-function.
 ##---------------------------------------------------------
 startGame <- function(){
+  source('functions v0.2.R') #importer funksjoner 
   fortune1 <<- c()
   fortune2 <<- c()
   board <<- read.csv("monopoly_data v0.2.csv") #importer/reset gameboard som data.frame
@@ -41,9 +42,9 @@ startGame <- function(){
     ##Statistikkinnhenting!!
     ##Variabler som lagrer hvor stor in
     if(cur_player == 1){
-    fortune1 <<- c(fortune1, players$fortune[1])
+      fortune1 <<- c(fortune1, players$fortune[1])
     }else{
-    fortune2 <<- c(fortune2, players$fortune[2])
+      fortune2 <<- c(fortune2, players$fortune[2])
     }
     dice_res <- throwDice() #kast terning og lagre resultat
     move(dice_res) #endre position for cur_player i players data.frame

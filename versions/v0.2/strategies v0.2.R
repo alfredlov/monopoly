@@ -53,8 +53,6 @@ strategy2 <- function(){
 ##  Buys all properties as long as price < 70% of total income.
 ##-----------------------------------------------------------------------------------
 strategy3 <- function(){
-  
-
   if(board$price[players$position[cur_player]]/players$fortune[cur_player] <= 0.5){
     return(TRUE)
   }else{

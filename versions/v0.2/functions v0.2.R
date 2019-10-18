@@ -41,8 +41,18 @@ move <- function(x){
     #cat(sprintf("Player %s moved %s tiles to position %s, and passed Go.",cur_player, x, x-y))
   }
   else{
-    players$position[cur_player] <<- cur_position + x
-    
+    if(players$jailDays[cur_player] == 1){
+      players$jailDays[cur_player] <<- players$jailDays[cur_player] - 1
+      players$position[cur_player] <<- cur_position + x
+      #cat(sprintf("Player %s KOM UT AV GPA TIIID",cur_player))
+    }
+    if(players$jailDays[cur_player] %in% c(2,3)){
+      players$jailDays[cur_player] <<- players$jailDays[cur_player] - 1
+      #cat(sprintf("Player %s I FENGSEL MINUS EN RUNDE",cur_player))
+    }
+    if(players$jailDays[cur_player] == 0){
+      players$position[cur_player] <<- cur_position + x
+    }
     ##SLETT??
     #cat(sprintf("Player %s moved %s tiles to position %s",cur_player, x, cur_position + x))
   }
@@ -92,7 +102,22 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
 ##--------------------------------------------------------------------------------
 processJail <- function(){
   if(board$position[position] == 30){
-    players$position[cur_player] <<- 10 #teleporter til jail
+    players$position[cur_player] <<- 9 #teleporter til jail
+    players$jailDays[cur_player] <<- 3 #kommer ut på 3. runden
+    #cat(sprintf("Player %s moved to jail",cur_player))
+    #for å holde spilleren i jail trenger vi et element i df for å se om just visiting eller i jail
+    #  og for å se hvor mange kast spilleren har forsøkt å komme ut
+  }
+  if(board$position[position] == 10){
+    dice1 <- sample(1:6, size = 1, replace = TRUE)
+    dice2 <- sample(1:6, size = 1, replace = TRUE)
+    if(dice1 == dice2){
+      players$jailDays[cur_player] <<- 0
+      move(dice1 + dice2)
+      #cat(sprintf("Player %s KOM UT AV FENGSEL PGA TERNINGKAST",cur_player))
+    }
+    #cat(sprintf("Player %s KOM ikkkkke UT AV FENGSEL PGA TERNINGKAST",cur_player))
+     #teleporter til jail
     #for å holde spilleren i jail trenger vi et element i df for å se om just visiting eller i jail
     #  og for å se hvor mange kast spilleren har forsøkt å komme ut
   }
@@ -180,7 +205,11 @@ checkGameOver <- function(){
     winner <<- players$id[players$active==TRUE]
     winnerS <<- players$strategy[players$active==TRUE]
     
-    
+    if(cur_player == 1){
+      fortune1 <<- c(fortune1, players$fortune[1])
+    }else{
+      fortune2 <<- c(fortune2, players$fortune[2])
+    }
     ##SLETT??
     print(winner)
     
