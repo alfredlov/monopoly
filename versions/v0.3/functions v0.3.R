@@ -15,9 +15,8 @@ library(dplyr)
 ## output: Returns an integer between 2 and 12. 
 ##--------------------------------------------------------------------------------
 throwDice <- function(){
-  dice <- sum(sample(1:6, size = 2, replace = TRUE))
+  dice <- c(sample(1:6, size = 1, replace = TRUE), sample(1:6, size = 1, replace = TRUE))
   return(dice)
-  
   ##SLETT??
   #simuler kast m/ 2 terninger, se hist nedenfor for bevis 
   #hist(replicate(1000, sample(1:6, size = 1, replace = TRUE) + sample(1:6, size = 1, replace = TRUE)))
@@ -144,7 +143,7 @@ processAuto <- function(){
 processUtil <- function(){
   NoT <- nrow(board[board$prop  == "2" & board$owner == owner,]) #hvor mange tog eieren av dette toget eier
   utilR <- c(4, 10) #multipliers for landing on a util
-  dice_res <- throwDice() #kast terning
+  dice_res <- sum(throwDice()) #kast terning
   players$fortune[owner] <<- players$fortune[owner] + dice_res*utilR[NoT] #formelen for tog-leie er 25*2^(x-1). D gir rekken 1,2,4,8. drd en ganger 25 m/ for å få leieprisene 25,50,100,200
   players$fortune[cur_player] <<- players$fortune[cur_player] - dice_res*utilR[NoT]
   #cat(sprintf("UTILITY, spiller %s eier %s util, spiller %s kastet %s og betaler %s   ", owner, NoT, cur_player, dice_res, dice_res*utilR[NoT]))
@@ -196,9 +195,11 @@ processProp <- function(){
 checkPlayerLoss <- function(){#sjekk hvis cur_player har tapt
   if(players$fortune[cur_player] < 0){
     players$active[cur_player] <<- 0
-    
+    return(TRUE)
     ##SLETT??
     #cat(sprintf("Player %s ran out of cash!", cur_player))
+  }else{
+    return(FALSE)
   }
 }
 
@@ -219,7 +220,6 @@ checkGameOver <- function(){
     }
     ##SLETT??
     print(winner)
-    
     #cat(sprintf("Player %s won, using strategy %s", winner, winnerS))
   }
 } 

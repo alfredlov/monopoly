@@ -13,7 +13,7 @@ initGame <- function(){
   startCap <- 700 #startkapital for spillere, 'Cap' for capital
   roundCap <<- 10 #penger for å passere start
   version <- 2 #sette hvilken versjon av spillet å kjøre(?)
-  bid_Active <<- FALSE #skru budrunder av/på
+  bid_Active <<- TRUE #skru budrunder av/på
   #---------------------------------------------
   
   id <- c(1:N) #som vektor til data.frame
@@ -39,7 +39,6 @@ startGame <- function(){
   
   ptm <- Sys.time() #timer
   while (game_over == FALSE) { #loop så lenge ikke én er vinnner
-    
     ##Statistikkinnhenting!!
     ##Variabler som lagrer hvor stor in
     if(cur_player == 1){
@@ -47,10 +46,20 @@ startGame <- function(){
     }else{
       fortune2 <<- c(fortune2, players$fortune[2])
     }
-    dice_res <- throwDice() #kast terning og lagre resultat
-    move(dice_res) #endre position for cur_player i players data.frame
-    processPos() #håndter posisjon for spiller cur_player, leder til flere sub-funksjoner
-    checkPlayerLoss() #sjekk hvis cur_player har tapt
+    av_dices <<- 1 #available dice throws, pga to like = nytt kast..
+    while (av_dices >= 1) {
+      av_dices <<- av_dices - 1
+      dice_res <- throwDice() #kast terning og lagre resultat
+      if(length(unique(dice_res)) == 1){
+        av_dices <<- av_dices + 1
+        print("SLO TO LIKE")
+      }
+      move(sum(dice_res)) #endre position for cur_player i players data.frame
+      processPos() #håndter posisjon for spiller cur_player, leder til flere sub-funksjoner
+      if(checkPlayerLoss() == TRUE){
+        av_dices <<- 0
+      } #sjekk hvis cur_player har tapt
+    }
     checkGameOver() #sjekk om spillet er over
     setNextPlayer() #endre cur_player til neste
     ptm2 <- Sys.time() - ptm
