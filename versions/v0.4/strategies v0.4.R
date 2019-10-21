@@ -32,28 +32,32 @@ runStrategy <- function(){
           filter(active == 1 & fortune > propPrice)
         interested <- rep(0, times=nrow(playersBidDf))
         interestedBuyers <<- data.frame(playersBidDf$id, interested)
-        for (i in 1:nrow(playersBidDf)) {
-          strategyName <- paste("strategy", playersBidDf$strategy[i], sep="")
-          interestedBuyers$interested[i] <- get(strategyName)()
-        }
-        if(length(interestedBuyers$interested[interestedBuyers$interested==TRUE]) == 1){
-          bidWinner <<- interestedBuyers$playersBidDf.id[interestedBuyers$interested==TRUE]
-          bid_over <- TRUE
-          position <- players$position[cur_player]
-          board$owner[position] <<- bidWinner
-          players$fortune[bidWinner] <<- players$fortune[bidWinner] - propPrice
-          cat(sprintf("Player %s won auction of %s for %s",bidWinner, position, propPrice))
-        }
-        if(propPrice > board$price[players$position[cur_player]]*3){
-          bidWinner <<- interestedBuyers[sample(nrow(interestedBuyers), 1),]
-          bid_over <- TRUE
-          position <- players$position[cur_player]
-          board$owner[position] <<- bidWinner$playersBidDf.id
-          players$fortune[bidWinner$playersBidDf.id] <<- players$fortune[bidWinner$playersBidDf.id] - propPrice
-  
-          cat(sprintf("Player %s won auction of %s on random for %s",bidWinner, position, propPrice))
+        if(nrow(playersBidDf) != 0){
+          for (i in 1:nrow(playersBidDf)) {
+            strategyName <- paste("strategy", playersBidDf$strategy[i], sep="")
+            interestedBuyers$interested[i] <- get(strategyName)()
+          }
+          if(length(interestedBuyers$interested[interestedBuyers$interested==TRUE]) == 1){
+            bidWinner <<- interestedBuyers$playersBidDf.id[interestedBuyers$interested==TRUE]
+            bid_over <- TRUE
+            position <- players$position[cur_player]
+            board$owner[position] <<- bidWinner
+            players$fortune[bidWinner] <<- players$fortune[bidWinner] - propPrice
+            cat(sprintf("Player %s won auction of %s for %s",bidWinner, position, propPrice))
+          }
+          if(propPrice > board$price[players$position[cur_player]]*3){
+            bidWinner <<- interestedBuyers[sample(nrow(interestedBuyers), 1),]
+            bid_over <- TRUE
+            position <- players$position[cur_player]
+            board$owner[position] <<- bidWinner$playersBidDf.id
+            players$fortune[bidWinner$playersBidDf.id] <<- players$fortune[bidWinner$playersBidDf.id] - propPrice
+    
+            cat(sprintf("Player %s won auction of %s on random for %s",bidWinner, position, propPrice))
+          }else{
+            propPrice <<- round(propPrice * 1.1)
+          }
         }else{
-          propPrice <<- round(propPrice * 1.1)
+          bid_over <- TRUE
         }
       }
     }
