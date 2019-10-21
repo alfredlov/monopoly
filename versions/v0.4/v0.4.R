@@ -30,23 +30,16 @@ initGame <- function(){
 ## Main-function.
 ##---------------------------------------------------------
 startGame <- function(){
-  ##Mulig alt det under bude inn i init_game....
-  ##Dropp disse deklareringene!! 
-  fortune1 <<- c()
-  fortune2 <<- c()
-  
-  #Holder styr på hvilket kast vi er på...
-  throw <<- 0
-  
-  
   
   board <<- read.csv("monopoly_data v0.4.csv") #importer/reset gameboard som data.frame
-                                                    #tile 1 er start!
-  initGame() #reset verdier for spillet(start på nytt)
-  cur_player <<- sample(1:N, 1) #velg tilfeldig startspiller, neglesjere first-mover
+  
+  initGame()                      # Reset verdier for spillet(start på nytt)
+  
+  cur_player <<- sample(1:N, 1)   # Selects initial player at random. Eliminates potential first-mover (dis)advantage.
+  
   game_over <<- FALSE
   
-  ptm <- Sys.time() #timer
+  ptm <- Sys.time()               # Timer
   while (game_over == FALSE) { #loop så lenge ikke én er vinnner
     
     
