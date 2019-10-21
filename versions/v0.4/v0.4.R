@@ -48,7 +48,7 @@ startGame <- function(){
     }
     av_dices <<- 1 #available dice throws, pga to like = nytt kast..
     equalDicesQount <<- 0 #sjekke hvor mange ganger på rad to like, hvis over tre -> fengsel
-    while (av_dices >= 1) {
+    while (av_dices >= 1 & players$active[cur_player] == 1) {
       av_dices <<- av_dices - 1
       dice_res <- throwDice() #kast terning og lagre resultat
       if(length(unique(dice_res)) == 1){
