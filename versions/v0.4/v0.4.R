@@ -39,7 +39,7 @@ startGame <- function(){
   
   game_over <<- FALSE
   
-  ptm <- Sys.time()               # Timer
+  ptm <- Sys.time()               #Timer
   while (game_over == FALSE) { #loop så lenge ikke én er vinnner
     
     
