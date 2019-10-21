@@ -222,11 +222,6 @@ checkGameOver <- function(){
     winner <<- players$id[players$active==TRUE]
     winnerS <<- players$strategy[players$active==TRUE]
     
-    if(cur_player == 1){
-      fortune1 <<- c(fortune1, players$fortune[1])
-    }else{
-      fortune2 <<- c(fortune2, players$fortune[2])
-    }
     ##SLETT??
     print(winner)
     #cat(sprintf("Player %s won, using strategy %s", winner, winnerS))
