@@ -213,6 +213,8 @@ checkGameOver <- function(){
     winner <<- players$id[players$active==TRUE]
     winnerS <<- players$strategy[players$active==TRUE]
     
+    ##SLETT DETTE UNDER. VI FÅR DATAEN GJENNOM EN DATAFRAME SOM LAGRER FORTUNA DATA GJENNOM HELE SPILLET.
+    
     if(cur_player == 1){
       fortune1 <<- c(fortune1, players$fortune[1])
     }else{

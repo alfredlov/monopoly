@@ -1,6 +1,6 @@
 ##---------------------------------------------------------
 ## Monopoly Simulation - Main script
-## Version 0.2
+## Version 0.3
 ##---------------------------------------------------------
 
 #NB pass på variabler: globale = << og lokale = <
@@ -10,9 +10,9 @@ initGame <- function(){
   #---------------- Settings -------------------
   N <<- 3 #spillere
   strategy <- c(4, 1, 2) #strategier for spillere, spiller 1 får første verdi som strategi etc..
-  startCap <- 700 #startkapital for spillere, 'Cap' for capital
+  startCap <- 1500 #startkapital for spillere, 'Cap' for capital
   roundCap <<- 10 #penger for å passere start
-  version <- 2 #sette hvilken versjon av spillet å kjøre(?)
+  version <- 3 #sette hvilken versjon av spillet å kjøre(?)
   bid_Active <<- TRUE #skru budrunder av/på
   #---------------------------------------------
   
@@ -29,8 +29,16 @@ initGame <- function(){
 ##---------------------------------------------------------
 startGame <- function(){
   source('functions v0.3.R') #importer funksjoner 
+  
+  ##Mulig alt det under bude inn i init_game....
+  ##Dropp disse deklareringene!! 
   fortune1 <<- c()
   fortune2 <<- c()
+  fortune <<-  rep(startCap, N)
+  
+  #Holder styr på hvilket kast vi er på...
+  throw <<- 0
+  
   board <<- read.csv("monopoly_data v0.3.csv") #importer/reset gameboard som data.frame
                                                     #tile 1 er start!
   initGame() #reset verdier for spillet(start på nytt)
@@ -39,6 +47,12 @@ startGame <- function(){
   
   ptm <- Sys.time() #timer
   while (game_over == FALSE) { #loop så lenge ikke én er vinnner
+    
+    
+    #Samler inn statistikk for runden. 
+    throw <<- throw + 1
+    fortune <<- cbind(fortune, players$fortune) 
+    
     ##Statistikkinnhenting!!
     ##Variabler som lagrer hvor stor in
     if(cur_player == 1){
@@ -70,14 +84,21 @@ startGame <- function(){
       fortune1 <<- c(fortune1, players$fortune[1])
       fortune2 <<- c(fortune2, players$fortune[2])
     }
+    
+
+    
   }
    plot(x=1:length(fortune1), y=fortune1, type = "b", ylab="Fortune", xlab="Throws") +
      lines(x=1:length(fortune2), y=fortune2)
   
-  #lengde <<- c(lengde, length(fortune1)/2)
+   
 }
 
-##startGame()
+startGame()
+warnings()
+
+#SLETTER ALLE WARNINGS!
+#assign("last.warning", NULL, envir = baseenv())
 
 #---------------
 #Mål hvor mange runder spillet går
@@ -87,31 +108,31 @@ startGame <- function(){
 #mean(lengde)
 #lengde <- lengde[lengde<=200]
 #hist(lengde, breaks=20, xlim=c(0,360))
-lengde <<- c()
-replicate(100, startGame())
-hist(lengde, breaks=20, xlim=c(0,360), ylim = c(0,20))
+# lengde <<- c()
+# replicate(100, startGame())
+# hist(lengde, breaks=20, xlim=c(0,360), ylim = c(0,20))
 ## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRATEGI SOM ER BEST
-k=100
-winners = 1:k*0
-numberOfRounds <- 1:k*0
-
-for (i in 1:k) {
-  startGame()
-  winners[i] <- winner
-  numberOfRounds[i] <- length(fortune1)
-}
-
-hist(winners)
-table(winners)
-
-pbinom(73, size = 100, prob = 0.5)
-
-## Number of rounds
-hist(numberOfRounds, breaks=60)
-
-##Plot the results!!!
-plot(x=1:length(fortune1), y = fortune1, ylim=c(0, max(c(fortune1, fortune2))))
-lines(x=1:length(fortune2), y = fortune2)
-print("number of props")
-print(length(board$owner[board$owner==1]))
-print(length(board$owner[board$owner==2]))
+# k=100
+# winners = 1:k*0
+# numberOfRounds <- 1:k*0
+# 
+# for (i in 1:k) {
+#   startGame()
+#   winners[i] <- winner
+#   numberOfRounds[i] <- length(fortune1)
+# }
+# 
+# hist(winners)
+# table(winners)
+# 
+# pbinom(73, size = 100, prob = 0.5)
+# 
+# ## Number of rounds
+# hist(numberOfRounds, breaks=60)
+# 
+# ##Plot the results!!!
+# plot(x=1:length(fortune1), y = fortune1, ylim=c(0, max(c(fortune1, fortune2))))
+# lines(x=1:length(fortune2), y = fortune2)
+# print("number of props")
+# print(length(board$owner[board$owner==1]))
+# print(length(board$owner[board$owner==2]))
