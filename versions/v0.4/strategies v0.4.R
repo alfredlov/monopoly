@@ -133,7 +133,7 @@ strategy5 <- function(){
 ##-----------------------------------------------------------------------------------
 strategy6 <- function(){
   ##FORENKLE??
-  if(board$name[players$position[cur_player]] == 'Reading Railroad' || board$name[players$position[cur_player]] == 'Short Line' ||board$name[players$position[cur_player]] == 'B&O Railroad' ||board$name[players$position[cur_player]] == 'Pennsylvania Railroad'){
+  if(board$prop[players$position[cur_player]] == 3){
     return(TRUE)
   }else{
     return(FALSE)

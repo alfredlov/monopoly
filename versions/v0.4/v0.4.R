@@ -10,13 +10,8 @@
 initGame <- function(){
   #------------------------- Settings --------------------------
   setwd("../v0.4")              # Set working directory to correct version number
-<<<<<<< HEAD
-  N <<- 2                       # N = Number of player
-  strategy <- c(4, 1)     # Set player strategies, first parameter sets strategy for player 1, etc...
-=======
   N <<- 4                       # N = Number of player
   strategy <- c(4, 1, 2, 6)     # Set player strategies, first parameter sets strategy for player 1, etc...
->>>>>>> origin/master
   startCap <- 1500              # Sets start capital for all players.
   roundCap <<- 200              # Capital gained frmo passing 'Go'.
   version <- 4                  # Sets game version.
@@ -48,9 +43,6 @@ startGame <- function(){
   
   ptm <- Sys.time()               #Timer
   while (game_over == FALSE) { #loop så lenge ikke én er vinnner
-    
-
-    
     av_dices <<- 1 #available dice throws, pga to like = nytt kast..
     equalDicesQount <<- 0 #sjekke hvor mange ganger på rad to like, hvis over tre -> fengsel
     while (av_dices >= 1 & players$active[cur_player] == 1) {
@@ -110,25 +102,26 @@ startGame <- function(){
    
   ##PRINTFUNKSJON FOR FORTUNE-UTVIKING
   fortune <- t(data.frame(fortune))
-  colnames(fortune)[1:2] <- paste(sprintf("player%s", 1:ncol(fortune)))
+  colnames(fortune)[1:N] <- paste(sprintf("player%s", 1:ncol(fortune)))
 
   
   ################################################################
   ############# PRINTFUNKSJON FOR FORTUNE-UTVIKING ###############
   #############               MED GGPLOT           ###############
   ################################################################
-
-    fortune <- t(data.frame(fortune))
-  colnames(fortune)[1:4] <- paste(sprintf("player%s", 1:ncol(fortune)))
+  
+  ##SLETT??
+  # fortune <- data.frame(fortune)
+  # fortune <- t(data.frame(fortune))
+  # colnames(fortune)[1:N] <- paste(sprintf("player%s", 1:ncol(fortune)))
 
   fortune <- data.frame(fortune)
-  
   fortune %>% 
     ggplot() +
     geom_line(aes(x = 1:nrow(fortune), y = fortune[,1]), color="blue") +
     geom_line(aes(x = 1:nrow(fortune), y = fortune[,2]), color="red") +
-    #geom_line(aes(x = 1:nrow(fortune), y = fortune[,3]), color="orange") +
-    #geom_line(aes(x = 1:nrow(fortune), y = fortune[,4]), color="green") +
+    geom_line(aes(x = 1:nrow(fortune), y = fortune[,3]), color="orange") +
+    geom_line(aes(x = 1:nrow(fortune), y = fortune[,4]), color="green") +
     scale_color_manual(values = c("#00AFBB", "#E7B800")) +
     theme_minimal()
   
