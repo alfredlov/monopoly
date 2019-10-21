@@ -86,11 +86,6 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
         if(owner != cur_player){
           get(strategyName)()
         }
-        if(owner == cur_player & strategyName == "processProp"){
-          if(checkStreetPer(position) == TRUE){
-            #buyHoH()
-          }
-        }
       }
   }
   if(board$prop[position] %in% c(0,5,6)){
@@ -98,7 +93,27 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
     strategyName <- paste("process", processNames[match(board$prop[position],c(0,5,6))], sep="")
     get(strategyName)()
   }
-  ## Må skrive her hva som skjer når det ikke er en eiendom.... 
+  #check if player owns all of a color
+  if(owner == cur_player & strategyName == "processProp"){
+    if(checkStreetPer(position) == TRUE){
+      #buyHoH()
+    }
+  }
+  uniqueC <- unique(board$color[board$color != "" & board$color != "white" & board$color != "grey"])
+  ownsAll <<- c() #liste over farger hvor cur_player eier alle, gitt av for løkken nedenfor
+  for (i in 1:length(uniqueC)) {
+    if(checkStreetPer(uniqueC[i], cur_player) == TRUE){
+      ownsAll <<- c(ownsAll, i)
+    }
+  }
+  if(length(ownsAll) == 1){ #hvis en spiller eier alle av en farge/farger
+    board$houses[board$color == ownsAll[1]] <<- 1
+    leastHouses <- min(board$houses[board$color == ownsAll[1]])
+    colFocus <- sample(1:length(ownsAll), 1)
+  }
+  if(length(ownsAll) > 1){ #hvis en spiller eier alle av en farge/farger
+    colFocus <- sample(1:length(ownsAll), 1)
+  }
 } 
 
 ##--------------------------------------------------------------------------------
@@ -169,7 +184,8 @@ processTrain <- function(){
 ##--------------------------------------------------------------------------------
 processProp <- function(){
   #sjekke om den som eier gaten også eier alle i samme farge
-  if(checkStreetPer(position) == TRUE){
+  color <- board$color[position]
+  if(checkStreetPer(color, owner) == TRUE){
     #en annen spiller en den som landet her eier alle av denne fargen, dobbel leie
     players$fortune[owner] <<- players$fortune[owner] + board$rent[position]*2
     players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]*2
@@ -180,12 +196,13 @@ processProp <- function(){
     players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]
     #print("LEIE")
   }
+  
 }
 
 #sjekk om alle farger blir eid av én spiller
-checkStreetPer <- function(x){
-  NoC <- nrow(board[board$color  == board$color[x],]) #hvor mange gater i den fargen
-  NoCo <- nrow(board[board$color  == board$color[x] & board$owner == owner,]) 
+checkStreetPer <- function(x, y){
+  NoC <- nrow(board[board$color  == x,]) #hvor mange gater i den fargen
+  NoCo <- nrow(board[board$color  == x & board$owner == y,]) 
   if(NoC == NoCo){
     return(TRUE)
   }else{
