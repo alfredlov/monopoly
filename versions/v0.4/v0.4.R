@@ -10,8 +10,8 @@
 initGame <- function(){
   #------------------------- Settings --------------------------
   setwd("../v0.4")              # Set working directory to correct version number
-  N <<- 4                       # N = Number of player
-  strategy <- c(4, 1, 2, 1)     # Set player strategies, first parameter sets strategy for player 1, etc...
+  N <<- 2                       # N = Number of player
+  strategy <- c(4, 1)     # Set player strategies, first parameter sets strategy for player 1, etc...
   startCap <- 1500              # Sets start capital for all players.
   roundCap <<- 200              # Capital gained frmo passing 'Go'.
   version <- 4                  # Sets game version.
@@ -88,15 +88,15 @@ startGame <- function(){
    
   ##PRINTFUNKSJON FOR FORTUNE-UTVIKING
   fortune <- t(data.frame(fortune))
-  colnames(fortune)[1:4] <- paste(sprintf("player%s", 1:ncol(fortune)))
+  colnames(fortune)[1:2] <- paste(sprintf("player%s", 1:ncol(fortune)))
   fortune <- data.frame(fortune)
   
   fortune %>% 
     ggplot() +
     geom_line(aes(x = 1:nrow(fortune), y = fortune[,1]), color="blue") +
     geom_line(aes(x = 1:nrow(fortune), y = fortune[,2]), color="red") +
-    geom_line(aes(x = 1:nrow(fortune), y = fortune[,3]), color="orange") +
-    geom_line(aes(x = 1:nrow(fortune), y = fortune[,4]), color="green") +
+    #geom_line(aes(x = 1:nrow(fortune), y = fortune[,3]), color="orange") +
+    #geom_line(aes(x = 1:nrow(fortune), y = fortune[,4]), color="green") +
     scale_color_manual(values = c("#00AFBB", "#E7B800")) +
     theme_minimal()
   

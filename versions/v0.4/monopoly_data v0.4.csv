@@ -1,35 +1,35 @@
 position,name,price,rent,prop,color,owner,autopay,housePrice,rent1h,rent2h,rent3h,rent4h,rent5h,houses
 0,Start,NA,NA,5,white,,0,,NA,NA,NA,NA,NA,
-1,Mediterranean Avenue,60,2,1,brown,0,,50,10,30,90,160,250,
-3,Baltic Avenue,60,4,1,brown,0,,50,20,60,180,320,450,
+1,Mediterranean Avenue,60,2,1,brown,0,,50,10,30,90,160,250,0
+3,Baltic Avenue,60,4,1,brown,0,,50,20,60,180,320,450,0
 4,Tax income,,,5,,,200,,,,,,,
 5,Reading Railroad,200,25,3,white,0,,,,,,,,
-6,Oriental Avenue,100,6,1,lblue,0,,50,30,90,270,400,550,
-8,Vermont Avenue,100,6,1,lblue,0,,50,30,90,270,400,550,
-9,Connecticut Avenue,120,8,1,lblue,0,,50,40,100,300,450,600,
+6,Oriental Avenue,100,6,1,lblue,0,,50,30,90,270,400,550,0
+8,Vermont Avenue,100,6,1,lblue,0,,50,30,90,270,400,550,0
+9,Connecticut Avenue,120,8,1,lblue,0,,50,40,100,300,450,600,0
 10,In jail/just visiting,,,0,grey,,,,,,,,,
-11,St. Charles Place,140,10,1,purple,0,,100,50,150,450,625,750,
+11,St. Charles Place,140,10,1,purple,0,,100,50,150,450,625,750,0
 12,Electric Company,150,NA,2,white,0,,,,,,,,
-13,States Avenue,140,10,1,purple,0,,100,50,150,450,625,750,
-14,Virginia Avenue,160,12,1,purple,0,,100,60,180,500,700,900,
+13,States Avenue,140,10,1,purple,0,,100,50,150,450,625,750,0
+14,Virginia Avenue,160,12,1,purple,0,,100,60,180,500,700,900,0
 15,Pennsylvania Railroad,200,25,3,white,0,,,,,,,,
-16,St. James Place,180,14,1,orange,0,,100,70,200,550,750,950,
-18,Tennessee Avenue,180,14,1,orange,0,,100,70,200,550,750,950,
-19,New York Avenue,200,16,1,orange,0,,100,80,330,600,800,1000,
+16,St. James Place,180,14,1,orange,0,,100,70,200,550,750,950,0
+18,Tennessee Avenue,180,14,1,orange,0,,100,70,200,550,750,950,0
+19,New York Avenue,200,16,1,orange,0,,100,80,330,600,800,1000,0
 20,Free Parking,,,6,grey,,,,,,,,,
-21,Kentucky Avenue,220,18,1,red,0,,150,90,250,700,875,1050,
-23,Indiana Avenue,220,18,1,red,0,,150,90,250,700,875,1050,
-24,Illinois Avenue,240,20,1,red,0,,150,100,300,750,925,1100,
+21,Kentucky Avenue,220,18,1,red,0,,150,90,250,700,875,1050,0
+23,Indiana Avenue,220,18,1,red,0,,150,90,250,700,875,1050,0
+24,Illinois Avenue,240,20,1,red,0,,150,100,300,750,925,1100,0
 25,B&O Railroad,200,25,3,white,0,,,,,,,,
-26,Atlantic Avenue,260,22,1,yellow,0,,150,110,330,800,975,1150,
-27,Ventnor Avenue,260,22,1,yellow,0,,150,110,330,800,975,1150,
+26,Atlantic Avenue,260,22,1,yellow,0,,150,110,330,800,975,1150,0
+27,Ventnor Avenue,260,22,1,yellow,0,,150,110,330,800,975,1150,0
 28,Water Works,150,,2,white,0,,,,,,,,
-29,Marvin Gardens,280,24,1,yellow,0,,150,120,360,850,1025,1200,
+29,Marvin Gardens,280,24,1,yellow,0,,150,120,360,850,1025,1200,0
 30,Go To Jail,,,0,grey,,,,,,,,,
-31,Pacific Avenue,300,26,1,green,0,,200,130,390,900,1100,1275,
-32,North Carolina Avenue,300,26,1,green,0,,200,130,390,900,1100,1275,
-34,Pennsynvania Avenue,320,28,1,green,0,,200,150,450,1000,1200,1400,
+31,Pacific Avenue,300,26,1,green,0,,200,130,390,900,1100,1275,0
+32,North Carolina Avenue,300,26,1,green,0,,200,130,390,900,1100,1275,0
+34,Pennsynvania Avenue,320,28,1,green,0,,200,150,450,1000,1200,1400,0
 35,Short Line,200,25,3,white,0,,,,,,,,
-37,Park Place,350,35,1,blue,0,,200,175,500,1100,1300,1500,
+37,Park Place,350,35,1,blue,0,,200,175,500,1100,1300,1500,0
 38,Luxury Tax,,,5,,,100,,,,,,,
-39,Boardwalk,400,50,1,blue,0,,200,200,600,1400,1700,2000,
+39,Boardwalk,400,50,1,blue,0,,200,200,600,1400,1700,2000,0
