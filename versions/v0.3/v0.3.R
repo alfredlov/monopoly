@@ -11,13 +11,13 @@ initGame <- function(){
   N <<- 3 #spillere
   strategy <- c(4, 1, 2) #strategier for spillere, spiller 1 får første verdi som strategi etc..
   startCap <- 1500 #startkapital for spillere, 'Cap' for capital
-  roundCap <<- 10 #penger for å passere start
+  roundCap <<- 200 #penger for å passere start
   version <- 3 #sette hvilken versjon av spillet å kjøre(?)
   bid_Active <<- TRUE #skru budrunder av/på
   #---------------------------------------------
   
   id <- c(1:N) #som vektor til data.frame
-  fortune <- rep(startCap, times=N)
+  fortune <<-  rep(startCap, N)
   active <- rep(1, times=N) #sett spillere som er aktive, alle v/ init
   position <- rep(1, times=N) #tile 1 er start
   jailDays <- rep(0, times=N) #tile 1 er start
@@ -34,7 +34,6 @@ startGame <- function(){
   ##Dropp disse deklareringene!! 
   fortune1 <<- c()
   fortune2 <<- c()
-  fortune <<-  rep(startCap, N)
   
   #Holder styr på hvilket kast vi er på...
   throw <<- 0
@@ -48,11 +47,9 @@ startGame <- function(){
   ptm <- Sys.time() #timer
   while (game_over == FALSE) { #loop så lenge ikke én er vinnner
     
+  
     
-    #Samler inn statistikk for runden. 
-    throw <<- throw + 1
-    fortune <<- cbind(fortune, players$fortune) 
-    
+    ##NYESTE KOMMENTAR: SLETT DETTE UNDER. FIKSES GJENNOM FORTUNE-DATAFRAME!!!
     ##Statistikkinnhenting!!
     ##Variabler som lagrer hvor stor in
     if(cur_player == 1){
@@ -60,6 +57,8 @@ startGame <- function(){
     }else{
       fortune2 <<- c(fortune2, players$fortune[2])
     }
+    
+    
     av_dices <<- 1 #available dice throws, pga to like = nytt kast..
     while (av_dices >= 1) {
       av_dices <<- av_dices - 1
@@ -74,13 +73,23 @@ startGame <- function(){
         av_dices <<- 0
       } #sjekk hvis cur_player har tapt
     }
+    
+    #Samler inn statistikk for runden. 
+    throw <<- throw + 1
+    fortune <<- cbind(fortune, players$fortune) 
+    
     checkGameOver() #sjekk om spillet er over
     setNextPlayer() #endre cur_player til neste
     ptm2 <- Sys.time() - ptm
     #timeour funskjon for å forhindre krasj
+    
+
+    
     if(ptm2 > 2){
       game_over <- TRUE
       cat(sprintf("time out %s",Sys.time()))
+      
+      ##SLETT DETTE OGSÅ????
       fortune1 <<- c(fortune1, players$fortune[1])
       fortune2 <<- c(fortune2, players$fortune[2])
     }
@@ -96,6 +105,11 @@ startGame <- function(){
 
 startGame()
 warnings()
+properties
+
+plot(x=fortune[1,], ylim=c(0, max(fortune[1,])))
+lines(plot(x=fortune[2,], ylim=c(0, max(fortune[2,]))))
+lines(plot(x=fortune[3,], ylim=c(0, max(fortune[3,]))))
 
 #SLETTER ALLE WARNINGS!
 #assign("last.warning", NULL, envir = baseenv())
