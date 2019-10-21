@@ -143,5 +143,26 @@ strategy6 <- function(){
   }
 }
 
+##-----------------------------------------------------------------------------------
+##  Strategy 7: Utilities
+##-----------------------------------------------------------------------------------
+strategy7 <- function(){
+  if(board$prop[players$position[cur_player]] == 2){
+    return(TRUE)
+  }else{
+    return(FALSE)
+  }
+}
+
+##-----------------------------------------------------------------------------------
+##  Strategy 8: Railroads + Utilities
+##-----------------------------------------------------------------------------------
+strategy8 <- function(){
+  if(board$prop[players$position[cur_player]] == 2 | board$prop[players$position[cur_player]] == 3){
+    return(TRUE)
+  }else{
+    return(FALSE)
+  }
+}
 
 

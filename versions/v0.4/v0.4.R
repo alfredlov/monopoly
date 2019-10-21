@@ -11,7 +11,7 @@ initGame <- function(){
   #------------------------- Settings --------------------------
   setwd("../v0.4")              # Set working directory to correct version number
   N <<- 4                       # N = Number of player
-  strategy <- c(4, 1, 2, 6)     # Set player strategies, first parameter sets strategy for player 1, etc...
+  strategy <- c(4, 1, 2, 8)     # Set player strategies, first parameter sets strategy for player 1, etc...
   startCap <- 1500              # Sets start capital for all players.
   roundCap <<- 200              # Capital gained frmo passing 'Go'.
   version <- 4                  # Sets game version.
@@ -118,9 +118,6 @@ startGame <- function(){
   # fortune <- t(data.frame(fortune))
   # colnames(fortune)[1:N] <- paste(sprintf("player%s", 1:ncol(fortune)))
 
-  fortune <- t(data.frame(fortune))
-  colnames(fortune)[1:4] <- paste(sprintf("player%s", 1:ncol(fortune)))
-
   fortune <- data.frame(fortune)
   fortune %>% 
     ggplot() +
@@ -152,18 +149,17 @@ startGame()
 # replicate(100, startGame())
 # hist(lengde, breaks=20, xlim=c(0,360), ylim = c(0,20))
 # ## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRATEGI SOM ER BEST
-# k=100
-# winners = 1:k*0
-# numberOfRounds <- 1:k*0
+k=100
+winners = 1:k*0
+numberOfRounds <- 1:k*0
 # 
-# for (i in 1:k) {
-#   startGame()
-#   winners[i] <- winner
-#   numberOfRounds[i] <- length(fortune1)
-# }
-# 
-# hist(winners)
-# table(winners)
+for (i in 1:k) {
+  startGame()
+  winners[i] <- winner
+}
+
+hist(winners)
+table(winners)
 # 
 # pbinom(73, size = 100, prob = 0.5)
 # 
