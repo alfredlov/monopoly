@@ -10,8 +10,8 @@
 initGame <- function(){
   #------------------------- Settings --------------------------
   setwd("../v0.4")              # Set working directory to correct version number
-  N <<- 3                       # N = Number of player
-  strategy <- c(4, 1, 2)        # Set player strategies, first parameter sets strategy for player 1, etc...
+  N <<- 4                       # N = Number of player
+  strategy <- c(4, 1, 2, 1)     # Set player strategies, first parameter sets strategy for player 1, etc...
   startCap <- 1500              # Sets start capital for all players.
   roundCap <<- 200              # Capital gained frmo passing 'Go'.
   version <- 4                  # Sets game version.
@@ -43,17 +43,6 @@ startGame <- function(){
   ptm <- Sys.time()               #Timer
   while (game_over == FALSE) { #loop så lenge ikke én er vinnner
     
-    
-    ##NYESTE KOMMENTAR: SLETT DETTE UNDER. FIKSES GJENNOM FORTUNE-DATAFRAME!!!
-    ##Statistikkinnhenting!!
-    ##Variabler som lagrer hvor stor in
-    if(cur_player == 1){
-      fortune1 <<- c(fortune1, players$fortune[1])
-    }else{
-      fortune2 <<- c(fortune2, players$fortune[2])
-    }
-    
-    
     av_dices <<- 1 #available dice throws, pga to like = nytt kast..
     equalDicesQount <<- 0 #sjekke hvor mange ganger på rad to like, hvis over tre -> fengsel
     while (av_dices >= 1 & players$active[cur_player] == 1) {
@@ -80,7 +69,6 @@ startGame <- function(){
     }
     
     #Samler inn statistikk for runden. 
-    throw <<- throw + 1
     fortune <<- cbind(fortune, players$fortune) 
     
     checkGameOver() #sjekk om spillet er over
@@ -93,49 +81,62 @@ startGame <- function(){
       fortune1 <<- c(fortune1, players$fortune[1])
       fortune2 <<- c(fortune2, players$fortune[2])
     }
+
+    
   }
-   plot(x=1:length(fortune1), y=fortune1, type = "b", ylab="Fortune", xlab="Throws") +
-     lines(x=1:length(fortune2), y=fortune2)
+   
+  ##PRINTFUNKSJON FOR FORTUNE-UTVIKING
+  fortune <- t(data.frame(fortune))
+  colnames(fortune)[1:4] <- paste(sprintf("player%s", 1:ncol(fortune)))
+  fortune <- data.frame(fortune)
   
-  #lengde <<- c(lengde, length(fortune1)/2)
+  fortune %>% 
+    ggplot() +
+    geom_line(aes(x = 1:nrow(fortune), y = fortune[,1]), color="blue") +
+    geom_line(aes(x = 1:nrow(fortune), y = fortune[,2]), color="red") +
+    geom_line(aes(x = 1:nrow(fortune), y = fortune[,3]), color="orange") +
+    geom_line(aes(x = 1:nrow(fortune), y = fortune[,4]), color="green") +
+    scale_color_manual(values = c("#00AFBB", "#E7B800")) +
+    theme_minimal()
+  
 }
 
 
 startGame()
 
-#---------------
-#Mål hvor mange runder spillet går
-#---------------
-#lengde <<- c()
-#replicate(100, startGame())
-#mean(lengde)
-#lengde <- lengde[lengde<=200]
-#hist(lengde, breaks=20, xlim=c(0,360))
-lengde <<- c()
-replicate(100, startGame())
-hist(lengde, breaks=20, xlim=c(0,360), ylim = c(0,20))
-## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRATEGI SOM ER BEST
-k=100
-winners = 1:k*0
-numberOfRounds <- 1:k*0
-
-for (i in 1:k) {
-  startGame()
-  winners[i] <- winner
-  numberOfRounds[i] <- length(fortune1)
-}
-
-hist(winners)
-table(winners)
-
-pbinom(73, size = 100, prob = 0.5)
-
-## Number of rounds
-hist(numberOfRounds, breaks=60)
-
-##Plot the results!!!
-plot(x=1:length(fortune1), y = fortune1, ylim=c(0, max(c(fortune1, fortune2))))
-lines(x=1:length(fortune2), y = fortune2)
-print("number of props")
-print(length(board$owner[board$owner==1]))
-print(length(board$owner[board$owner==2]))
+# #---------------
+# #Mål hvor mange runder spillet går
+# #---------------
+# #lengde <<- c()
+# #replicate(100, startGame())
+# #mean(lengde)
+# #lengde <- lengde[lengde<=200]
+# #hist(lengde, breaks=20, xlim=c(0,360))
+# lengde <<- c()
+# replicate(100, startGame())
+# hist(lengde, breaks=20, xlim=c(0,360), ylim = c(0,20))
+# ## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRATEGI SOM ER BEST
+# k=100
+# winners = 1:k*0
+# numberOfRounds <- 1:k*0
+# 
+# for (i in 1:k) {
+#   startGame()
+#   winners[i] <- winner
+#   numberOfRounds[i] <- length(fortune1)
+# }
+# 
+# hist(winners)
+# table(winners)
+# 
+# pbinom(73, size = 100, prob = 0.5)
+# 
+# ## Number of rounds
+# hist(numberOfRounds, breaks=60)
+# 
+# ##Plot the results!!!
+# plot(x=1:length(fortune1), y = fortune1, ylim=c(0, max(c(fortune1, fortune2))))
+# lines(x=1:length(fortune2), y = fortune2)
+# print("number of props")
+# print(length(board$owner[board$owner==1]))
+# print(length(board$owner[board$owner==2]))
