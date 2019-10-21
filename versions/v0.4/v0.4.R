@@ -99,21 +99,27 @@ startGame <- function(){
     
   }
 
-   
+
+  
+  
   ##PRINTFUNKSJON FOR FORTUNE-UTVIKING
   fortune <- t(data.frame(fortune))
   colnames(fortune)[1:N] <- paste(sprintf("player%s", 1:ncol(fortune)))
 
   
+
   ################################################################
   ############# PRINTFUNKSJON FOR FORTUNE-UTVIKING ###############
   #############               MED GGPLOT           ###############
   ################################################################
-  
+
   ##SLETT??
   # fortune <- data.frame(fortune)
   # fortune <- t(data.frame(fortune))
   # colnames(fortune)[1:N] <- paste(sprintf("player%s", 1:ncol(fortune)))
+
+  fortune <- t(data.frame(fortune))
+  colnames(fortune)[1:4] <- paste(sprintf("player%s", 1:ncol(fortune)))
 
   fortune <- data.frame(fortune)
   fortune %>% 

@@ -46,6 +46,9 @@ runStrategy <- function(){
             cat(sprintf("Player %s won auction of %s for %s",bidWinner, position, propPrice))
           }
           if(propPrice > board$price[players$position[cur_player]]*3){
+            if(length(interestedBuyers$interested[interestedBuyers$interested > 0]) == 0){
+              bid_over <- TRUE
+            }else{
             bidWinner <<- interestedBuyers[sample(nrow(interestedBuyers), 1),]
             bid_over <- TRUE
             position <- players$position[cur_player]
@@ -53,6 +56,7 @@ runStrategy <- function(){
             players$fortune[bidWinner$playersBidDf.id] <<- players$fortune[bidWinner$playersBidDf.id] - propPrice
     
             cat(sprintf("Player %s won auction of %s on random for %s",bidWinner, position, propPrice))
+            }
           }else{
             propPrice <<- round(propPrice * 1.1)
           }
@@ -132,7 +136,6 @@ strategy5 <- function(){
 ##  Strategy 6: Railroads
 ##-----------------------------------------------------------------------------------
 strategy6 <- function(){
-  ##FORENKLE??
   if(board$prop[players$position[cur_player]] == 3){
     return(TRUE)
   }else{
