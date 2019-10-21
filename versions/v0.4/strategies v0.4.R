@@ -165,4 +165,21 @@ strategy8 <- function(){
   }
 }
 
+##-----------------------------------------------------------------------------------
+##  Strategy 9: Railroads + Utilities, then Conservative
+##-----------------------------------------------------------------------------------
+strategy9 <- function(){
+  if(board$prop[players$position[cur_player]] == 2 | board$prop[players$position[cur_player]] == 3){
+    return(TRUE)
+  }else{
+    if(sum(board$owner[board$prop==2 | board$prop==3] > 0) >=5){
+      return(TRUE)
+    }
+    else{
+      return(FALSE)
+    }
+  }
+  
+}
+
 
