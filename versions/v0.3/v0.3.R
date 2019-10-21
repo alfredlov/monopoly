@@ -111,6 +111,8 @@ plot(x=fortune[1,], ylim=c(0, max(fortune[1,])))
 lines(plot(x=fortune[2,], ylim=c(0, max(fortune[2,]))))
 lines(plot(x=fortune[3,], ylim=c(0, max(fortune[3,]))))
 
+table(board$owner)
+
 #SLETTER ALLE WARNINGS!
 #assign("last.warning", NULL, envir = baseenv())
 

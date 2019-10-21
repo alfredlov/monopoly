@@ -1,23 +1,25 @@
 ##---------------------------------------------------------
 ## Monopoly Simulation - Main script
-## Version 0.2
+## Version 0.4
 ##---------------------------------------------------------
 
 #NB pass på variabler: globale = << og lokale = <
 #NB test enkeltfunksjoner fra dette dokumentet, ikke 'functions vx.x.R'
 
+
 initGame <- function(){
-  #---------------- Settings -------------------
-  N <<- 3 #spillere
-  strategy <- c(4, 1, 2) #strategier for spillere, spiller 1 får første verdi som strategi etc..
-  startCap <- 1500 #startkapital for spillere, 'Cap' for capital
-  roundCap <<- 200 #penger for å passere start
-  version <- 4 #sette hvilken versjon av spillet å kjøre(?)
-  bid_Active <<- TRUE #skru budrunder av/på
-  #---------------------------------------------
+  #------------------------- Settings --------------------------
+  setwd("../v0.4")              # Set working directory to correct version number
+  N <<- 3                       # N = Number of player
+  strategy <- c(4, 1, 2)        # Set player strategies, first parameter sets strategy for player 1, etc...
+  startCap <- 1500              # Sets start capital for all players.
+  roundCap <<- 200              # Capital gained frmo passing 'Go'.
+  version <- 4                  # Sets game version.
+  bid_Active <<- TRUE           # Turn bidding on and off.
+  #-------------------------------------------------------------
   
   id <- c(1:N) #som vektor til data.frame
-  fortune <- rep(startCap, times=N)
+  fortune <<- rep(startCap, times=N)
   active <- rep(1, times=N) #sett spillere som er aktive, alle v/ init
   position <- rep(1, times=N) #tile 1 er start
   jailDays <- rep(0, times=N) #tile 1 er start
@@ -28,9 +30,16 @@ initGame <- function(){
 ## Main-function.
 ##---------------------------------------------------------
 startGame <- function(){
-  source('functions v0.4.R') #importer funksjoner 
+  ##Mulig alt det under bude inn i init_game....
+  ##Dropp disse deklareringene!! 
   fortune1 <<- c()
   fortune2 <<- c()
+  
+  #Holder styr på hvilket kast vi er på...
+  throw <<- 0
+  
+  
+  
   board <<- read.csv("monopoly_data v0.4.csv") #importer/reset gameboard som data.frame
                                                     #tile 1 er start!
   initGame() #reset verdier for spillet(start på nytt)
@@ -39,6 +48,9 @@ startGame <- function(){
   
   ptm <- Sys.time() #timer
   while (game_over == FALSE) { #loop så lenge ikke én er vinnner
+    
+    
+    ##NYESTE KOMMENTAR: SLETT DETTE UNDER. FIKSES GJENNOM FORTUNE-DATAFRAME!!!
     ##Statistikkinnhenting!!
     ##Variabler som lagrer hvor stor in
     if(cur_player == 1){
@@ -46,6 +58,8 @@ startGame <- function(){
     }else{
       fortune2 <<- c(fortune2, players$fortune[2])
     }
+    
+    
     av_dices <<- 1 #available dice throws, pga to like = nytt kast..
     equalDicesQount <<- 0 #sjekke hvor mange ganger på rad to like, hvis over tre -> fengsel
     while (av_dices >= 1 & players$active[cur_player] == 1) {
@@ -70,6 +84,11 @@ startGame <- function(){
         av_dices <<- 0
       } #sjekk hvis cur_player har tapt
     }
+    
+    #Samler inn statistikk for runden. 
+    throw <<- throw + 1
+    fortune <<- cbind(fortune, players$fortune) 
+    
     checkGameOver() #sjekk om spillet er over
     setNextPlayer() #endre cur_player til neste
     ptm2 <- Sys.time() - ptm
@@ -87,7 +106,8 @@ startGame <- function(){
   #lengde <<- c(lengde, length(fortune1)/2)
 }
 
-##startGame()
+
+startGame()
 
 #---------------
 #Mål hvor mange runder spillet går
