@@ -10,8 +10,13 @@
 initGame <- function(){
   #------------------------- Settings --------------------------
   setwd("../v0.4")              # Set working directory to correct version number
+<<<<<<< HEAD
   N <<- 2                       # N = Number of player
   strategy <- c(4, 1)     # Set player strategies, first parameter sets strategy for player 1, etc...
+=======
+  N <<- 4                       # N = Number of player
+  strategy <- c(4, 1, 2, 6)     # Set player strategies, first parameter sets strategy for player 1, etc...
+>>>>>>> origin/master
   startCap <- 1500              # Sets start capital for all players.
   roundCap <<- 200              # Capital gained frmo passing 'Go'.
   version <- 4                  # Sets game version.
@@ -20,6 +25,7 @@ initGame <- function(){
   
   id <- c(1:N) #som vektor til data.frame
   fortune <<- rep(startCap, times=N)
+  nProps <<- rep(0, times=N)
   active <- rep(1, times=N) #sett spillere som er aktive, alle v/ init
   position <- rep(1, times=N) #tile 1 er start
   jailDays <- rep(0, times=N) #tile 1 er start
@@ -70,13 +76,28 @@ startGame <- function(){
       } #sjekk hvis cur_player har tapt
     }
     
-    #Samler inn statistikk for runden. 
-    fortune <<- cbind(fortune, players$fortune) 
+    ################################################################
+    ############# Samler inn statistikk for runden.  ###############
+    ################################################################
+    
+    # Samler inn fortune-data.
+    fortune <<- cbind(fortune, players$fortune)
+    
+    # Samler inn eiendoms-data.
+    curProps <- rep(0, N)
+    for (i in 1:N) {
+      curProps[i] <- length(board$owner[(board$owner==i) & !(is.na(board$owner))])
+    }
+    nProps <<- cbind(nProps, curProps)
+    
+    ################################################################
+    #############    Slutt: Statistikkinnsamling     ###############
+    ################################################################
     
     checkGameOver() #sjekk om spillet er over
     setNextPlayer() #endre cur_player til neste
     ptm2 <- Sys.time() - ptm
-    #timeour funskjon for å forhindre krasj
+    #timeout funskjon for å forhindre krasj
     if(ptm2 > 2){
       game_over <- TRUE
       cat(sprintf("time out %s",Sys.time()))
@@ -85,10 +106,21 @@ startGame <- function(){
 
     
   }
+
    
   ##PRINTFUNKSJON FOR FORTUNE-UTVIKING
   fortune <- t(data.frame(fortune))
   colnames(fortune)[1:2] <- paste(sprintf("player%s", 1:ncol(fortune)))
+
+  
+  ################################################################
+  ############# PRINTFUNKSJON FOR FORTUNE-UTVIKING ###############
+  #############               MED GGPLOT           ###############
+  ################################################################
+
+    fortune <- t(data.frame(fortune))
+  colnames(fortune)[1:4] <- paste(sprintf("player%s", 1:ncol(fortune)))
+
   fortune <- data.frame(fortune)
   
   fortune %>% 
@@ -100,6 +132,9 @@ startGame <- function(){
     scale_color_manual(values = c("#00AFBB", "#E7B800")) +
     theme_minimal()
   
+  ################################################################
+  #############        SLUTT FORTUNE-PRINT         ###############
+  ################################################################
 }
 
 
