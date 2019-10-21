@@ -43,6 +43,8 @@ startGame <- function(){
   ptm <- Sys.time()               #Timer
   while (game_over == FALSE) { #loop så lenge ikke én er vinnner
     
+
+    
     av_dices <<- 1 #available dice throws, pga to like = nytt kast..
     equalDicesQount <<- 0 #sjekke hvor mange ganger på rad to like, hvis over tre -> fengsel
     while (av_dices >= 1 & players$active[cur_player] == 1) {
@@ -99,6 +101,7 @@ startGame <- function(){
     theme_minimal()
   
 }
+
 
 
 startGame()
