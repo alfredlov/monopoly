@@ -30,7 +30,8 @@ initGame <- function(){
 ## Main-function.
 ##---------------------------------------------------------
 startGame <- function(){
-
+  source('functions v0.4.R')
+  
   board <<- read.csv("monopoly_data v0.4.csv") #importer/reset gameboard som data.frame
   
   initGame()                      # Reset verdier for spillet(start på nytt)
