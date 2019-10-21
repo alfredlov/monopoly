@@ -78,8 +78,7 @@ startGame <- function(){
     if(ptm2 > 2){
       game_over <- TRUE
       cat(sprintf("time out %s",Sys.time()))
-      fortune1 <<- c(fortune1, players$fortune[1])
-      fortune2 <<- c(fortune2, players$fortune[2])
+
     }
 
     
