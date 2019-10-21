@@ -29,7 +29,7 @@ runStrategy <- function(){
       bid_over <- FALSE
       while (bid_over != TRUE) {
         playersBidDf <- players %>%
-          filter(active == 1)
+          filter(active == 1 & fortune > propPrice)
         interested <- rep(0, times=nrow(playersBidDf))
         interestedBuyers <<- data.frame(playersBidDf$id, interested)
         for (i in 1:nrow(playersBidDf)) {
@@ -53,7 +53,7 @@ runStrategy <- function(){
   
           cat(sprintf("Player %s won auction of %s on random for %s",bidWinner, position, propPrice))
         }else{
-          propPrice <<- propPrice * 1.1
+          propPrice <<- round(propPrice * 1.1)
         }
       }
     }
