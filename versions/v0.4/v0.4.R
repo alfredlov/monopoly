@@ -12,8 +12,8 @@ initGame <- function(){
   setwd("../v0.4")              # Set working directory to correct version number
   N <<- 3                       # N = Number of player
   strategy <- c(4, 1, 2)        # Set player strategies, first parameter sets strategy for player 1, etc...
-  startCap <- 1500              # Sets start capital for all players.
-  roundCap <<- 200              # Capital gained frmo passing 'Go'.
+  startCap <- 500              # Sets start capital for all players.
+  roundCap <<- 10              # Capital gained frmo passing 'Go'.
   version <- 4                  # Sets game version.
   bid_Active <<- TRUE           # Turn bidding on and off.
   #-------------------------------------------------------------
@@ -38,8 +38,7 @@ startGame <- function(){
   #Holder styr på hvilket kast vi er på...
   throw <<- 0
   
-  
-  
+  source('functions v0.4.R')
   board <<- read.csv("monopoly_data v0.4.csv") #importer/reset gameboard som data.frame
                                                     #tile 1 er start!
   initGame() #reset verdier for spillet(start på nytt)
@@ -58,7 +57,6 @@ startGame <- function(){
     }else{
       fortune2 <<- c(fortune2, players$fortune[2])
     }
-    
     
     av_dices <<- 1 #available dice throws, pga to like = nytt kast..
     equalDicesQount <<- 0 #sjekke hvor mange ganger på rad to like, hvis over tre -> fengsel

@@ -200,11 +200,13 @@ checkPlayerLoss <- function(){#sjekk hvis cur_player har tapt
   if(players$fortune[cur_player] < 0){
     players$active[cur_player] <<- 0
     
-    #MÅ SETTE OWNER = 0 PÅ ALLE GATER SPILLEREN Som røyk ut eide
-    
+    board %>%
+      mutate(owner=replace(owner, owner==cur_player, 0)) %>%
+      as.data.frame()
+    cat(sprintf("Player %s ran out of cash!", cur_player))
     return(TRUE)
     ##SLETT??
-    #cat(sprintf("Player %s ran out of cash!", cur_player))
+
   }else{
     return(FALSE)
   }
