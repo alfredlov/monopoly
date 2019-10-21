@@ -94,11 +94,6 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
     get(strategyName)()
   }
   #check if player owns all of a color
-  if(owner == cur_player & strategyName == "processProp"){
-    if(checkStreetPer(position) == TRUE){
-      #buyHoH()
-    }
-  }
   uniqueC <- unique(board$color[board$color != "" & board$color != "white" & board$color != "grey"])
   ownsAll <<- c() #liste over farger hvor cur_player eier alle, gitt av for løkken nedenfor
   for (i in 1:length(uniqueC)) {
@@ -107,8 +102,12 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
     }
   }
   if(length(ownsAll) == 1){ #hvis en spiller eier alle av en farge/farger
-    board$houses[board$color == ownsAll[1]] <<- 1
-    leastHouses <- min(board$houses[board$color == ownsAll[1]])
+    housesInCol <- board$houses[board$color == uniqueC[1]]
+    if(length(housesInCol) == 0){
+      sample(1:length(board$color[board$color == uniqueC[1]]))
+    }
+    minHouses <- min(board$houses[board$color == ownsAll[1]])
+    tileswithMin <- board$houses[board$color == ownsAll[1] & board$houses == minHouses]
     colFocus <- sample(1:length(ownsAll), 1)
   }
   if(length(ownsAll) > 1){ #hvis en spiller eier alle av en farge/farger
