@@ -74,7 +74,7 @@ runStrategy <- function(){
 ##  Strategy 1: Greedy Naive
 ##  Simple naïve strategy which involves buying all properties the player lands on. 
 ##-----------------------------------------------------------------------------------
-strategy1 <- function(){
+strategy1 <- function(x){
   return(TRUE)
 }
 
@@ -82,7 +82,7 @@ strategy1 <- function(){
 ##  Strategy 2: Probabilistic greedy naive
 ##  Simple strategy of buying all properties the player lands on with probability 0.5.
 ##-----------------------------------------------------------------------------------
-strategy2 <- function(){
+strategy2 <- function(x){
   if(sample(0:1, prob = c(0.5, 0.5), 1) == 1){
     return(TRUE)
   }else{
@@ -94,7 +94,7 @@ strategy2 <- function(){
 ##  Strategy 3: Simple conservative
 ##  Buys all properties as long as price < 70% of total income.
 ##-----------------------------------------------------------------------------------
-strategy3 <- function(){
+strategy3 <- function(x){
   if(propPrice/players$fortune[cur_player] <= 0.5){
     return(TRUE)
   }else{
@@ -107,7 +107,7 @@ strategy3 <- function(){
 ##  Only buys regular properties on the 2nd and 3rd part of the board. 
 ## These are either purple, orange, red, orange...
 ##-----------------------------------------------------------------------------------
-strategy4 <- function(){
+strategy4 <- function(x){
   
   ##FORENKLE??
   if(board$color[players$position[cur_player]] == 'purple' || board$color[players$position[cur_player]] == 'orange' || 
@@ -121,7 +121,7 @@ strategy4 <- function(){
 ##-----------------------------------------------------------------------------------
 ##  Strategy 5: Red & Orange
 ##-----------------------------------------------------------------------------------
-strategy5 <- function(){
+strategy5 <- function(x){
   
   ##FORENKLE??
   if(board$color[players$position[cur_player]] == 'orange' || board$color[players$position[cur_player]] == 'red'){
@@ -135,7 +135,7 @@ strategy5 <- function(){
 ##-----------------------------------------------------------------------------------
 ##  Strategy 6: Railroads
 ##-----------------------------------------------------------------------------------
-strategy6 <- function(){
+strategy6 <- function(x){
   if(board$prop[players$position[cur_player]] == 3){
     return(TRUE)
   }else{
@@ -146,7 +146,7 @@ strategy6 <- function(){
 ##-----------------------------------------------------------------------------------
 ##  Strategy 7: Utilities
 ##-----------------------------------------------------------------------------------
-strategy7 <- function(){
+strategy7 <- function(x){
   if(board$prop[players$position[cur_player]] == 2){
     return(TRUE)
   }else{
@@ -157,7 +157,7 @@ strategy7 <- function(){
 ##-----------------------------------------------------------------------------------
 ##  Strategy 8: Railroads + Utilities
 ##-----------------------------------------------------------------------------------
-strategy8 <- function(){
+strategy8 <- function(x){
   if(board$prop[players$position[cur_player]] == 2 | board$prop[players$position[cur_player]] == 3){
     return(TRUE)
   }else{
@@ -168,7 +168,7 @@ strategy8 <- function(){
 ##-----------------------------------------------------------------------------------
 ##  Strategy 9: Railroads + Utilities, then Conservative
 ##-----------------------------------------------------------------------------------
-strategy9 <- function(){
+strategy9 <- function(x){
   if(board$prop[players$position[cur_player]] == 2 | board$prop[players$position[cur_player]] == 3){
     return(TRUE)
   }else{

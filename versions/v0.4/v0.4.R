@@ -36,12 +36,9 @@ startGame <- function(){
   board <<- read.csv("monopoly_data v0.4.csv") #importer/reset gameboard som data.frame
   
   initGame()                      # Reset verdier for spillet(start på nytt)
-  
   cur_player <<- sample(1:N, 1)   # Selects initial player at random. Eliminates potential first-mover (dis)advantage.
-  
   game_over <<- FALSE
-  
-  ptm <- Sys.time()               #Timer
+  ptm <- Sys.time()  #Timer
   while (game_over == FALSE) { #loop så lenge ikke én er vinnner
     av_dices <<- 1 #available dice throws, pga to like = nytt kast..
     equalDicesQount <<- 0 #sjekke hvor mange ganger på rad to like, hvis over tre -> fengsel
@@ -90,7 +87,7 @@ startGame <- function(){
     setNextPlayer() #endre cur_player til neste
     ptm2 <- Sys.time() - ptm
     #timeout funskjon for å forhindre krasj
-    if(ptm2 > 2){
+    if(ptm2 > 4){
       game_over <- TRUE
       cat(sprintf("time out %s",Sys.time()))
 

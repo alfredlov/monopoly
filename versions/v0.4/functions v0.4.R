@@ -108,9 +108,13 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
     housesInCol <- board$houses[board$color == uniqueC[ownsAll[1]]]
     wTB <- max(board$position[board$color == uniqueC[ownsAll[1]] & board$houses == min(housesInCol)])
     if(players$fortune[cur_player] - board$housePrice[board$position == wTB] > 0){
-      board$houses[board$position == wTB] <<- board$houses[board$position == wTB] + 1 
-      players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$position == wTB]
-      print("KJØPT HUS")
+      propPrice <<- board$housePrice[board$position == wTB]
+      strategyName <- paste("strategy", players$strategy[cur_player], sep="")
+      if(get(strategyName)("HOUSE") == TRUE){ #KJØPER BARE HUS OM TRUE FRA STRATEGI
+        board$houses[board$position == wTB] <<- board$houses[board$position == wTB] + 1 
+        players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$position == wTB]
+        print("KJØPT HUS")
+      }
     }
   }
   if(length(ownsAll) > 1){ #hvis en spiller eier alle av en farge/farger
@@ -118,8 +122,13 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
     housesInCol <- board$houses[board$color == uniqueC[ownsAll[colFocus]]]
     wTB <- max(board$position[board$color == uniqueC[ownsAll[colFocus]] & board$houses == min(housesInCol)])
     if(players$fortune[cur_player] - board$housePrice[board$position == wTB] > 0){
-      board$houses[board$position == wTB] <<- board$houses[board$position == wTB] + 1 
-      players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$position == wTB]
+      propPrice <<- board$housePrice[board$position == wTB]
+      strategyName <- paste("strategy", players$strategy[cur_player], sep="")
+      if(get(strategyName)("HOUSE") == TRUE){
+        board$houses[board$position == wTB] <<- board$houses[board$position == wTB] + 1 
+        players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$position == wTB]
+        print("KJØPT HUS")
+      }    
     }
   }
 } 
@@ -234,6 +243,7 @@ checkPlayerLoss <- function(){#sjekk hvis cur_player har tapt
     players$active[cur_player] <<- 0
     
     board <<- board %>%
+      mutate(houses=replace(houses, owner==cur_player, 0)) %>%
       mutate(owner=replace(owner, owner==cur_player, 0)) %>%
       as.data.frame()
     cat(sprintf("Player %s ran out of cash!", cur_player))
