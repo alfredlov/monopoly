@@ -8,18 +8,23 @@
 
 
 initGame <- function(){
+  #require(neuralnet)
+  nn=neuralnet(X1~X5+X1500+X0+X0.1,data=logForNN, hidden=0,act.fct = "logistic", linear.output = FALSE, stepmax=1e6)
   #------------------------- Settings --------------------------
   setwd("../v0.4")              # Set working directory to correct version number
-  N <<- 4                       # N = Number of player
-  strategy <- c(1, 3, 8, 9)     # Set player strategies, first parameter sets strategy for player 1, etc...
+  N <<- 2                      # N = Number of player
+  strategy <- c(sample(1:9, 1), 100) # Set player strategies, first parameter sets strategy for player 1, etc...
+  #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
   startCap <- 1500              # Sets start capital for all players.
   roundCap <<- 200              # Capital gained frmo passing 'Go'.
   version <- 4                  # Sets game version.
   bid_Active <<- TRUE           # Turn bidding on and off.
   #-------------------------------------------------------------
   
+  #logForNN <<- data.frame()
   id <- c(1:N) #som vektor til data.frame
   fortune <<- rep(startCap, times=N)
+  nHouses <<- rep(0, times=N)
   nProps <<- rep(0, times=N)
   active <- rep(1, times=N) #sett spillere som er aktive, alle v/ init
   position <- rep(1, times=N) #tile 1 er start
@@ -30,6 +35,7 @@ initGame <- function(){
 ##---------------------------------------------------------
 ## Main-function.
 ##---------------------------------------------------------
+#logForNN <- data.frame()
 startGame <- function(){
   source('functions v0.4.R')
   library(ggplot2)
@@ -48,14 +54,14 @@ startGame <- function(){
       if(length(unique(dice_res)) == 1){
         av_dices <<- av_dices + 1
         equalDicesQount <<- equalDicesQount + 1
-        print("SLO TO LIKE")
+        #print("SLO TO LIKE")
       }
       if(equalDicesQount > 2){
         av_dices <<- 0
         equalDicesQount <<- 0
         players$position[cur_player] <<- 9 #teleporter til jail
         players$jailDays[cur_player] <<- 3 #kommer ut på 3. runden
-        print("to like tre ganger = fengsel")
+        #print("to like tre ganger = fengsel")
       }else{
         move(sum(dice_res)) #endre position for cur_player i players data.frame
         processPos() #håndter posisjon for spiller cur_player, leder til flere sub-funksjoner
@@ -79,6 +85,17 @@ startGame <- function(){
     }
     nProps <<- cbind(nProps, curProps)
     
+    # Samler inn hus-data.
+    curHouses <- rep(0, N)
+    for (i in 1:N) {
+      sumHouses <- sum(board$houses[(board$owner==i) & !(is.na(board$owner))  & !(is.na(board$houses))])
+      # sumHouses <- board %>%
+      #   filter(owner==i) %>%
+      #   summarize(sum(houses))
+      curHouses[i] <- sumHouses
+    }
+    nHouses <<- cbind(nHouses, curHouses)
+    
     ################################################################
     #############    Slutt: Statistikkinnsamling     ###############
     ################################################################
@@ -88,9 +105,10 @@ startGame <- function(){
     ptm2 <- Sys.time() - ptm
     #timeout funskjon for å forhindre krasj
     if(ptm2 > 4){
-      game_over <- TRUE
       cat(sprintf("time out %s",Sys.time()))
-
+      players$active[players$id != players$id[players$fortune == max(players$fortune)]] <<- 0
+      checkGameOver()
+      game_over <- TRUE
     }
 
     
@@ -120,19 +138,48 @@ startGame <- function(){
     ggplot() +
     geom_line(aes(x = 1:nrow(fortune), y = fortune[,1]), color="blue") +
     geom_line(aes(x = 1:nrow(fortune), y = fortune[,2]), color="red") +
-    geom_line(aes(x = 1:nrow(fortune), y = fortune[,3]), color="orange") +
-    geom_line(aes(x = 1:nrow(fortune), y = fortune[,4]), color="green") +
+    #geom_line(aes(x = 1:nrow(fortune), y = fortune[,3]), color="orange") +
+    #geom_line(aes(x = 1:nrow(fortune), y = fortune[,4]), color="green") +
     scale_color_manual(values = c("#00AFBB", "#E7B800")) +
     theme_minimal()
-  
   ################################################################
   #############        SLUTT FORTUNE-PRINT         ###############
   ################################################################
 }
 
-
-
 startGame()
+
+################################################################
+#############           START NN DATA             ###############
+################################################################
+
+#write.csv(logForNN,'logForNN2.csv')
+#logForNN <<- data.frame(matrix(NA, 0, 5))
+
+replicate(20, buildDataBaseforNN())
+
+buildDataBaseforNN <- function(){
+  startGame()
+  for(y in 1:N){
+    #cat(sprintf("N: %s \n", y))
+    bol <- as.numeric(fortune[y,][seq(1, length(fortune[y,]), 5)])
+    dola <- as.numeric(nProps[y,][seq(1, length(nProps[y,]), 5)])
+    aola <- as.numeric(nHouses[y,][seq(1, length(nHouses[y,]), 5)])
+    cola <- c()
+    wola <- c(rep(players$active[y], times=length(bol)))
+    #cat(sprintf("length bol: %s \n", length(bol)))
+    for(j in 1:length(bol)){
+      #cat(sprintf("j: %s \n", j*5))
+      logForNN <<- rbind(logForNN, c(j*5, bol[j], dola[j], aola[j], wola[j]))
+    }
+    #logForNN <<- matrix(cola, bol, dola, wola, ncol = 5, nrow = length(bol))
+  }
+  colnames(logForNN) <- c("throws", "saldo", "streets", "houses", "win")
+}
+
+################################################################
+#############          SLUTT NN DATA             ###############
+################################################################
 
 # #---------------
 # #Mål hvor mange runder spillet går
@@ -146,12 +193,13 @@ startGame()
 # replicate(100, startGame())
 # hist(lengde, breaks=20, xlim=c(0,360), ylim = c(0,20))
 # ## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRATEGI SOM ER BEST
-k=100
+k=5
 winners = 1:k*0
 numberOfRounds <- 1:k*0
 # 
 for (i in 1:k) {
   startGame()
+  buildDataBaseforNN()
   winners[i] <- winner
 }
 

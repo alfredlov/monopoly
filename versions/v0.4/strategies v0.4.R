@@ -179,7 +179,74 @@ strategy9 <- function(x){
       return(FALSE)
     }
   }
-  
+}
+#strategy100()
+#ai-strategi
+strategy100 <- function(x){
+  if(length(fortune) > 5){
+    aprox.position <- round(length(fortune[cur_player,])/5)
+  }else{
+    prox.position <- 5
+  }
+  #scenario 1 - ikke kjøp
+  houses <- sum(board$houses[(board$owner==cur_player) & !(is.na(board$owner))  & !(is.na(board$houses))])
+  balance1 <- players$fortune[cur_player]
+  properties1 <- length(board$owner[(board$owner==cur_player) & !(is.na(board$owner))])
+  if(!missing(x)){
+    #print("not missing")
+    #scenario 2 - kjøp
+    balance2 <- players$fortune[cur_player] - board$housePrice[players$position[cur_player]]
+    houses2 <- sum(board$houses[(board$owner==cur_player) & !(is.na(board$owner))  & !(is.na(board$houses))])+ 1
+    
+    x5 <- c(aprox.position, aprox.position)
+    x1500 <- c(balance1, balance2)
+    x0 <- c(properties1, properties1)
+    x0.1 <- c(houses, houses2)
+    
+    test=data.frame(x5,x1500, x0, x0.1)
+    Predict=neuralnet::compute(nn,test)
+    Predict$net.result
+    
+    for (i in 1:2) {
+      if(is.na(Predict$net.result[i])){
+        Predict$net.result[i] <- 0
+      }
+    }
+    if(Predict$net.result[1] > Predict$net.result[2]){
+      #cat(sprintf("predrict %s %s", Predict$net.result[1], Predict$net.result[2]))
+      return(FALSE)
+    }else{
+      #cat(sprintf("predrict %s %s", Predict$net.result[1], Predict$net.result[2]))
+      return(TRUE)
+    }
+  }else{
+    #print("missing")
+    #scenario 2 - kjøp
+    balance2 <- players$fortune[cur_player] - propPrice
+    properties2 <- length(board$owner[(board$owner==cur_player) & !(is.na(board$owner))]) + 1
+    
+    x5 <- c(aprox.position, aprox.position)
+    x1500 <- c(balance1, balance2)
+    x0 <- c(properties1, properties2)
+    x0.1 <- c(houses, houses)
+    
+    test=data.frame(x5,x1500, x0, x0.1)
+    Predict=neuralnet::compute(nn,test)
+    Predict$net.result
+    
+    for (i in 1:2) {
+      if(is.na(Predict$net.result[i])){
+        Predict$net.result[i] <- 0
+      }
+    }
+    if(Predict$net.result[1] > Predict$net.result[2]){
+      return(FALSE)
+      #cat(sprintf("predrict %s %s", Predict$net.result[1], Predict$net.result[2]))
+    }else{
+      return(TRUE)
+      #cat(sprintf("predrict %s %s", Predict$net.result[1], Predict$net.result[2]))
+    }
+  }
 }
 
 

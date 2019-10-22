@@ -94,7 +94,6 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
     get(strategyName)()
   }
   #check if player owns all of a color
-  cur_player <- 1
   uniqueC <- unique(board$color[board$color != "" & board$color != "white" & board$color != "grey"])
   ownsAll <<- c() #liste over farger hvor cur_player eier alle, gitt av for løkken nedenfor
   for (i in 1:length(uniqueC)) {
@@ -102,33 +101,39 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
       ownsAll <<- c(ownsAll, i)
     }
   }
-  
+  cur_player <- 2
   if(length(ownsAll) == 1){ #hvis en spiller eier alle av en farge/farger
-    print("ALFRED")
+    #print("ALFRED")
     housesInCol <- board$houses[board$color == uniqueC[ownsAll[1]]]
-    wTB <- max(board$position[board$color == uniqueC[ownsAll[1]] & board$houses == min(housesInCol)])
-    if(players$fortune[cur_player] - board$housePrice[board$position == wTB] > 0){
-      propPrice <<- board$housePrice[board$position == wTB]
-      strategyName <- paste("strategy", players$strategy[cur_player], sep="")
-      if(get(strategyName)("HOUSE") == TRUE){ #KJØPER BARE HUS OM TRUE FRA STRATEGI
-        board$houses[board$position == wTB] <<- board$houses[board$position == wTB] + 1 
-        players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$position == wTB]
-        print("KJØPT HUS")
+    sQuery <- board$position[board$color == uniqueC[ownsAll[1]] & board$houses == min(housesInCol) & board$houses < 5]
+    if(length(sQuery) != 0){
+      wTB <- max(sQuery)
+      if(players$fortune[cur_player] - board$housePrice[board$position == wTB] > 0){
+        propPrice <<- board$housePrice[board$position == wTB]
+        strategyName <- paste("strategy", players$strategy[cur_player], sep="")
+        if(get(strategyName)("HOUSE") == TRUE){ #KJØPER BARE HUS OM TRUE FRA STRATEGI
+          board$houses[board$position == wTB] <<- board$houses[board$position == wTB] + 1 
+          players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$position == wTB]
+          #print("KJØPT HUS")
+        }
       }
     }
   }
   if(length(ownsAll) > 1){ #hvis en spiller eier alle av en farge/farger
     colFocus <- sample(1:length(ownsAll), 1)
     housesInCol <- board$houses[board$color == uniqueC[ownsAll[colFocus]]]
-    wTB <- max(board$position[board$color == uniqueC[ownsAll[colFocus]] & board$houses == min(housesInCol)])
-    if(players$fortune[cur_player] - board$housePrice[board$position == wTB] > 0){
-      propPrice <<- board$housePrice[board$position == wTB]
-      strategyName <- paste("strategy", players$strategy[cur_player], sep="")
-      if(get(strategyName)("HOUSE") == TRUE){
-        board$houses[board$position == wTB] <<- board$houses[board$position == wTB] + 1 
-        players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$position == wTB]
-        print("KJØPT HUS")
-      }    
+    sQuery <- board$position[board$color == uniqueC[ownsAll[colFocus]] & board$houses == min(housesInCol) & board$houses < 5]
+    if(length(sQuery) != 0){
+      wTB <- max(sQuery)
+      if(players$fortune[cur_player] - board$housePrice[board$position == wTB] > 0){
+        propPrice <<- board$housePrice[board$position == wTB]
+        strategyName <- paste("strategy", players$strategy[cur_player], sep="")
+        if(get(strategyName)("HOUSE") == TRUE){
+          board$houses[board$position == wTB] <<- board$houses[board$position == wTB] + 1 
+          players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$position == wTB]
+          print("KJØPT HUS")
+        }    
+      }
     }
   }
 } 
