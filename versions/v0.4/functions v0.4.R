@@ -192,10 +192,7 @@ processTrain <- function(){
 ##--------------------------------------------------------------------------------
 processProp <- function(){
   #sjekke om den som eier gaten også eier alle i samme farge
-  position <- 8
-  color <<- board$color[board$position == position]
-  color <- factor(color)
-  owner <- 1
+  color <<- as.character(board$color[position])
   if(checkStreetPer(color, owner) == TRUE){
     #en annen spiller en den som landet her eier alle av denne fargen, dobbel leie
     if(board$houses[position] > 0){
@@ -206,8 +203,9 @@ processProp <- function(){
     }else{
       players$fortune[owner] <<- players$fortune[owner] + board$rent[position]*2
       players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]*2
+      print("DOBBEL LEIE")
     }
-    #print("DOBBEL LEIE")
+
     #cat(sprintf("DOBBEL, spiller %s eier hele %s", owner, board$color[position]))
   }else{
     players$fortune[owner] <<- players$fortune[owner] + board$rent[position]
