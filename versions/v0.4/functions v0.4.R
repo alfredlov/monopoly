@@ -114,7 +114,10 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
         if(get(strategyName)("HOUSE") == TRUE){ #KJØPER BARE HUS OM TRUE FRA STRATEGI
           board$houses[board$position == wTB] <<- board$houses[board$position == wTB] + 1 
           players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$position == wTB]
+          gatherStat("house", 1)
           #print("KJØPT HUS")
+        }else{
+          gatherStat("house", 0)
         }
       }
     }
@@ -131,7 +134,10 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
         if(get(strategyName)("HOUSE") == TRUE){
           board$houses[board$position == wTB] <<- board$houses[board$position == wTB] + 1 
           players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$position == wTB]
-          print("KJØPT HUS")
+          gatherStat("house", 1)
+          #print("KJØPT HUS")
+        }else{
+          gatherStat("house", 0)
         }    
       }
     }
@@ -246,7 +252,7 @@ checkStreetPer <- function(x, y){
 checkPlayerLoss <- function(){#sjekk hvis cur_player har tapt
   if(players$fortune[cur_player] < 0){
     players$active[cur_player] <<- 0
-    
+    board2 <<- board
     board <<- board %>%
       mutate(houses=replace(houses, owner==cur_player, 0)) %>%
       mutate(owner=replace(owner, owner==cur_player, 0)) %>%

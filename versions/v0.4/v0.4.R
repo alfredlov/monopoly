@@ -9,11 +9,20 @@
 
 initGame <- function(){
   #require(neuralnet)
-  nn=neuralnet(X1~X5+X1500+X0+X0.1,data=logForNN, hidden=0,act.fct = "logistic", linear.output = FALSE, stepmax=1e6)
+  #nn strategi 100, ser på sammenheng mellom seier og [posisjon, saldo, ant. hus, ant eiendommer]
+  #nn=neuralnet(X1~X5+X1500+X0+X0.1,data=logForNN, hidden=0,act.fct = "logistic", linear.output = FALSE, stepmax=1e6)
+  #nn strategi 101, ser på sammenheng mellom seier og [ant. hus, ant eiendommer]
+  #nn=neuralnet(X1~X3+X0,data=logForNN2, hidden=1,act.fct = "logistic", linear.output = FALSE, stepmax=1e6)
+  #nn strategi 102, ser på sammenheng mellom seier og [ant. hus pr farge, ant eiendommer pr farge]
+  #nn=neuralnet(win~brown+lblue+purple+orange+red+yellow+green+blue+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses,data=logForNN3, hidden=c(10,10, 10, 10, 10),act.fct = "logistic", linear.output = FALSE, stepmax=1e6)
+  #nn strategi 103, ser på sammenheng mellom seier og [ant. hus pr farge, ant eiendommer pr farge]
+  #nn=neuralnet(win~throws+fortune+brown+lblue+purple+orange+red+yellow+green+blue+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+buyStreet+buyHouse,data=logForNN4, hidden=c(3,2),act.fct = "logistic", linear.output = FALSE, stepmax=1e4, lifesign="full")
+  
+  #plot(nn)
   #------------------------- Settings --------------------------
   setwd("../v0.4")              # Set working directory to correct version number
   N <<- 2                      # N = Number of player
-  strategy <- c(sample(1:9, 1), 100) # Set player strategies, first parameter sets strategy for player 1, etc...
+  strategy <- c(sample(1:9, 1), sample(1:9, 1)) # Set player strategies, first parameter sets strategy for player 1, etc...
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
   startCap <- 1500              # Sets start capital for all players.
   roundCap <<- 200              # Capital gained frmo passing 'Go'.
@@ -21,15 +30,16 @@ initGame <- function(){
   bid_Active <<- TRUE           # Turn bidding on and off.
   #-------------------------------------------------------------
   
-  #logForNN <<- data.frame()
+  logForNN4temp <<- data.frame(matrix(NA, 0, 21))
   id <- c(1:N) #som vektor til data.frame
+  throws <<- rep(0, times=N)
   fortune <<- rep(startCap, times=N)
   nHouses <<- rep(0, times=N)
   nProps <<- rep(0, times=N)
   active <- rep(1, times=N) #sett spillere som er aktive, alle v/ init
   position <- rep(1, times=N) #tile 1 er start
   jailDays <- rep(0, times=N) #tile 1 er start
-  players <<- data.frame(id, strategy, fortune, active, position, jailDays) #data.frame m/ oversikt over spillerne
+  players <<- data.frame(id, strategy, fortune, active, position, jailDays, throws) #data.frame m/ oversikt over spillerne
 }
 
 ##---------------------------------------------------------
@@ -75,6 +85,9 @@ startGame <- function(){
     ############# Samler inn statistikk for runden.  ###############
     ################################################################
     
+    players$throws[cur_player] <<- players$throws[cur_player] + 1
+    
+    
     # Samler inn fortune-data.
     fortune <<- cbind(fortune, players$fortune)
     
@@ -107,6 +120,7 @@ startGame <- function(){
     if(ptm2 > 4){
       cat(sprintf("time out %s",Sys.time()))
       players$active[players$id != players$id[players$fortune == max(players$fortune)]] <<- 0
+      players$active[players$id == players$id[players$fortune == max(players$fortune)]] <<- 0
       checkGameOver()
       game_over <- TRUE
     }
@@ -153,10 +167,18 @@ startGame()
 #############           START NN DATA             ###############
 ################################################################
 
-#write.csv(logForNN,'logForNN2.csv')
+#write.csv(logForNN,'logForNN3.csv')
 #logForNN <<- data.frame(matrix(NA, 0, 5))
+#logForNN2 <<- data.frame(matrix(NA, 0, 5))
+#logForNN3 <<- data.frame(matrix(NA, 0, 17))
 
-replicate(20, buildDataBaseforNN())
+#logForNN4 <<- data.frame(matrix(NA, 0, 24))
+
+replicate(200, buildDataBaseforNN())
+replicate(20, buildDataBaseforNN2())
+replicate(200, buildDataBaseforNN3())
+
+replicate(100, buildDataBaseforNN4())
 
 buildDataBaseforNN <- function(){
   startGame()
@@ -177,6 +199,51 @@ buildDataBaseforNN <- function(){
   colnames(logForNN) <- c("throws", "saldo", "streets", "houses", "win")
 }
 
+buildDataBaseforNN2 <- function(){
+  startGame()
+  for(y in 1:N){
+    #cat(sprintf("N: %s \n", y))
+    #bol <- as.numeric(fortune[y,][seq(1, length(fortune[y,]), 5)])
+    dola <- max(nProps[y,][seq(1, length(nProps[y,]), 5)])
+    aola <- max(nHouses[y,][seq(1, length(nHouses[y,]), 5)])
+    wola <- c(players$active[y])
+
+    logForNN2 <<- rbind(logForNN2, c(dola, aola, wola))
+    #logForNN <<- matrix(cola, bol, dola, wola, ncol = 5, nrow = length(bol))
+  }
+  #colnames(logForNN2) <- c("throws", "saldo", "streets", "houses", "win")
+}
+buildDataBaseforNN3 <- function(){
+  startGame()
+  for(y in 1:N){
+    
+    uniqueC <- unique(board$color[board$color != "" & board$color != "white" & board$color != "grey"])
+    streetColFreq <<- c()
+    houseColFreq <<- c()
+    for (i in 1:length(uniqueC)) {
+      NoC <- nrow(board2[board$color  == uniqueC[i],]) #hvor mange gater i den fargen
+      NoCo <- nrow(board2[board$color  == uniqueC[i] & board2$owner == y,]) 
+      streetColFreq <<- c(streetColFreq, NoCo)
+      
+      sumHouses <- sum(board2$houses[(board2$owner==y) & !(is.na(board2$owner))  & !(is.na(board2$houses)) & board2$color  == uniqueC[i]])
+      houseColFreq <<- c(houseColFreq, sumHouses)
+    }
+    wola <- c(players$active[y])
+    
+    logForNN3 <<- rbind(logForNN3, c(streetColFreq, houseColFreq, wola))
+  }
+  colnames(logForNN3) <- c(as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "win")
+}
+
+buildDataBaseforNN4 <- function(){
+  startGame()
+  logForNN4temp <<- logForNN4temp %>%
+    mutate(win = ifelse(id == winner, 1, 0))
+  logForNN4 <<- rbind(logForNN4, logForNN4temp)
+    
+  colnames(logForNN4) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "id", "win")
+}
+
 ################################################################
 #############          SLUTT NN DATA             ###############
 ################################################################
@@ -193,13 +260,14 @@ buildDataBaseforNN <- function(){
 # replicate(100, startGame())
 # hist(lengde, breaks=20, xlim=c(0,360), ylim = c(0,20))
 # ## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRATEGI SOM ER BEST
-k=5
+plot(nn)
+k=50
 winners = 1:k*0
 numberOfRounds <- 1:k*0
 # 
 for (i in 1:k) {
   startGame()
-  buildDataBaseforNN()
+  #buildDataBaseforNN()
   winners[i] <- winner
 }
 
