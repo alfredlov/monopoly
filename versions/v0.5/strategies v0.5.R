@@ -97,6 +97,61 @@ runStrategy <- function(){
   }
 }
 
+runHouseStrategy <- function(){
+  #check if player owns all of a color
+  uniqueC <- unique(board$color[board$color != "" & board$color != "white" & board$color != "grey"])
+  ownsAll <<- c() #liste over farger hvor cur_player eier alle, gitt av for løkken nedenfor
+  for (i in 1:length(uniqueC)) {
+    if(checkStreetPer(uniqueC[i], cur_player) == TRUE){
+      ownsAll <<- c(ownsAll, i)
+    }
+  }
+  
+  if(length(ownsAll) > 0){ #hvis en spiller eier alle av en farge/farger
+    #print("ALFRED")
+    if(players$fortune[cur_player] - board$housePrice[board$position == wTB] > 0){
+      propPrice <<- board$housePrice[board$position == wTB]
+      strategyName <- paste("strategy", players$houseStrategy[cur_player], sep="")
+      if(get(strategyName)() == TRUE){ #KJØPER BARE HUS OM TRUE FRA STRATEGI
+        board$houses[board$position == wTB] <<- board$houses[board$position == wTB] + 1 
+        players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$position == wTB]
+        gatherStat("house", 1)
+        #print("KJØPT HUS")
+      }else{
+        gatherStat("house", 0)
+      }
+    }
+  }
+  
+  # housesInCol <- board$houses[board$color == uniqueC[ownsAll[1]]]
+  # sQuery <- board$position[board$color == uniqueC[ownsAll[1]] & board$houses == min(housesInCol) & board$houses < 5]
+  # if(length(sQuery) != 0){
+  #   wTB <- max(sQuery)
+  #   
+  # }
+  
+  # if(length(ownsAll) > 1){ #hvis en spiller eier alle av en farge/farger
+  #   colFocus <- sample(1:length(ownsAll), 1)
+  #   housesInCol <- board$houses[board$color == uniqueC[ownsAll[colFocus]]]
+  #   sQuery <- board$position[board$color == uniqueC[ownsAll[colFocus]] & board$houses == min(housesInCol) & board$houses < 5]
+  #   if(length(sQuery) != 0){
+  #     wTB <- max(sQuery)
+  #     if(players$fortune[cur_player] - board$housePrice[board$position == wTB] > 0){
+  #       propPrice <<- board$housePrice[board$position == wTB]
+  #       strategyName <- paste("strategy", players$houseStrategy[cur_player], sep="")
+  #       if(get(strategyName)() == TRUE){
+  #         board$houses[board$position == wTB] <<- board$houses[board$position == wTB] + 1 
+  #         players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$position == wTB]
+  #         gatherStat("house", 1)
+  #         #print("KJØPT HUS")
+  #       }else{
+  #         gatherStat("house", 0)
+  #       }    
+  #     }
+  #   }
+  # }
+}
+
 ##-----------------------------------------------------------------------------------
 ##  Strategy 1: Greedy Naive
 ##  Simple naïve strategy which involves buying all properties the player lands on. 
@@ -243,6 +298,15 @@ strategyH2 <- function(){
 
 ##-----------------------------------------------------------------------------------
 ##  Strategy H3: Timid
+##-----------------------------------------------------------------------------------
+
+strategyH3 <- function(){
+  
+  
+}
+
+##-----------------------------------------------------------------------------------
+##  Strategy HALFRED: Timid
 ##-----------------------------------------------------------------------------------
 
 strategyH3 <- function(){
