@@ -6,7 +6,6 @@
 #NB pass på variabler: globale = << og lokale = <
 #NB test enkeltfunksjoner fra dette dokumentet, ikke 'functions vx.x.R'
 
-
 initGame <- function(i){
   #require(neuralnet)
   #nn strategi 100, ser på sammenheng mellom seier og [posisjon, saldo, ant. hus, ant eiendommer]
@@ -32,6 +31,7 @@ initGame <- function(i){
   version <- 4                  # Sets game version.
   bid_Active <<- TRUE           # Turn bidding on and off.
   collectStats <<- TRUE           # Turn bidding on and off.
+  enableAiData <<- TRUE         #Turn AI on/off
   #-------------------------------------------------------------
   
   logForNN4temp <<- data.frame(matrix(NA, 0, 24))
@@ -179,7 +179,7 @@ startGame(2)
 #logForNN3 <<- data.frame(matrix(NA, 0, 17))
 
 #logForNN4 <<- data.frame(matrix(NA, 0, 24))
-
+if(enableAiData == TRUE){
 replicate(200, buildDataBaseforNN())
 replicate(20, buildDataBaseforNN2())
 replicate(200, buildDataBaseforNN3())
@@ -255,7 +255,7 @@ buildDataBaseforNN4 <- function(){
     
   colnames(logForNN4) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "id", "win")
 }
-
+}
 ################################################################
 #############          SLUTT NN DATA             ###############
 ################################################################
@@ -283,8 +283,6 @@ for (i in 1:s) {
   for (j in 1:k) {
     a <<- a + 1
     startGame(i)
-    #buildDataBaseforNN4()
-    #buildDataBaseforNN()
     winners[a] <- winnerS
   }
 }
