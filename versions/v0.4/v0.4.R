@@ -21,13 +21,14 @@ initGame <- function(){
   #plot(nn)
   #------------------------- Settings --------------------------
   setwd("../v0.4")              # Set working directory to correct version number
-  N <<- 2                      # N = Number of player
+  N <<- 2                       # N = Number of player
   strategy <- c(sample(1:9, 1), sample(1:9, 1)) # Set player strategies, first parameter sets strategy for player 1, etc...
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
   startCap <- 1500              # Sets start capital for all players.
   roundCap <<- 200              # Capital gained frmo passing 'Go'.
   version <- 4                  # Sets game version.
   bid_Active <<- TRUE           # Turn bidding on and off.
+  collectStats <<- TRUE         # Turns stats collecting on and off. 
   #-------------------------------------------------------------
   
   logForNN4temp <<- data.frame(matrix(NA, 0, 21))
