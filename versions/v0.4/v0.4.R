@@ -28,7 +28,6 @@ initGame <- function(){
   roundCap <<- 200              # Capital gained frmo passing 'Go'.
   version <- 4                  # Sets game version.
   bid_Active <<- TRUE           # Turn bidding on and off.
-  collectStats <<- TRUE         # Turns stats collecting on and off. 
   #-------------------------------------------------------------
   
   logForNN4temp <<- data.frame(matrix(NA, 0, 21))
