@@ -117,7 +117,6 @@ runHouseStrategy <- function(){
         placesToBuy <<- board %>%
           filter(owner == cur_player & color %in% ownsAll & housePrice < players$fortune[cur_player] & houses < 5) %>%
           select(name, color, houses, housePrice)
-        print("AA")
       if(length(placesToBuy$name) == 0){
         considerBuy <<- FALSE
       }else{
@@ -267,7 +266,6 @@ strategy10 <- function(){
   factor <- 1.001
   capitalReq <- 1500
   if(currentThrow<=5 | fortune > 5000){
-    print(currentThrow)
     return(TRUE)
   }
   else{
