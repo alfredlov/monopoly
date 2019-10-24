@@ -7,32 +7,19 @@
 #NB test enkeltfunksjoner fra dette dokumentet, ikke 'functions vx.x.R'
 
 initGame <- function(i){
-  #require(neuralnet)
-  #nn strategi 100, ser på sammenheng mellom seier og [posisjon, saldo, ant. hus, ant eiendommer]
-  #nn=neuralnet(X1~X5+X1500+X0+X0.1,data=logForNN, hidden=0,act.fct = "logistic", linear.output = FALSE, stepmax=1e6)
-  #nn strategi 101, ser på sammenheng mellom seier og [ant. hus, ant eiendommer]
-  #nn=neuralnet(X1~X3+X0,data=logForNN2, hidden=1,act.fct = "logistic", linear.output = FALSE, stepmax=1e6)
-  #nn strategi 102, ser på sammenheng mellom seier og [ant. hus pr farge, ant eiendommer pr farge]
-  #nn=neuralnet(win~brown+lblue+purple+orange+red+yellow+green+blue+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses,data=logForNN3, hidden=c(10,10, 10, 10, 10),act.fct = "logistic", linear.output = FALSE, stepmax=1e6)
-  #nn strategi 103, ser på sammenheng mellom seier og [ant. hus pr farge, ant eiendommer pr farge]
-  #replica_NN <- top_n(logForNN4, 50000, throws)
-    
-  #nn=neuralnet(win~throws+fortune+white+brown+lblue+purple+orange+red+yellow+green+blue+whitehouses+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+buyStreet+buyHouse,data=logForNN4, hidden=c(2),act.fct = "logistic", linear.output = FALSE, stepmax=1e6, lifesign="full")
-  #nn=neuralnet(win~throws+fortune+white+brown+lblue+purple+orange+red+yellow+green+blue+whitehouses+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+buyStreet+buyHouse,data=replica_NN, hidden=c(1),act.fct = "tanh", linear.output = FALSE, stepmax=1e6, lifesign="full")
   
-  #gwplot(nn)
   #------------------------- Settings --------------------------
   setwd("../v0.4.1")              # Set working directory to correct version number
-  N <<- 2                      # N = Number of player
-  strategy <- c(1, 8) # Set player strategies, first parameter sets strategy for player 1, etc...
+  N <<- 2                         # N = Number of player
+  strategy <- c(7, 9)             # Set player strategies, first parameter sets strategy for player 1, etc...
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
-  startCap <- 1500              # Sets start capital for all players.
-  roundCap <<- 200              # Capital gained frmo passing 'Go'.
-  version <- 4                  # Sets game version.
-  bid_Active <<- TRUE           # Turn bidding on and off.
-  collectStats <<- TRUE           # Turn bidding on and off.
-  enableAiData <<- TRUE         #Turn AI on/off
-  printResult <<- TRUE           # Turn bidding on and off.
+  startCap <- 1500                # Sets start capital for all players.
+  roundCap <<- 200                # Capital gained frmo passing 'Go'.
+  version <- 4                    # Sets game version.
+  bid_Active <<- TRUE             # Turn bidding on and off.
+  collectStats <<- TRUE           # Turns collecting stats on and off. 
+  enableAiData <<- FALSE          # Turn AI on/off
+  printResult <<- TRUE            # Turns printing result on and off. 
   #-------------------------------------------------------------
   
   logForNN4temp <<- data.frame(matrix(NA, 0, 24))
@@ -45,12 +32,31 @@ initGame <- function(i){
   position <- rep(1, times=N) #tile 1 er start
   jailDays <- rep(0, times=N) #tile 1 er start
   players <<- data.frame(id, strategy, fortune, active, position, jailDays, throws) #data.frame m/ oversikt over spillerne
+  
+  ##########################################################################
+  #### AI STUFF  ##########################################################
+  ##########################################################################
+  
+  #require(neuralnet)
+  #nn strategi 100, ser på sammenheng mellom seier og [posisjon, saldo, ant. hus, ant eiendommer]
+  #nn=neuralnet(X1~X5+X1500+X0+X0.1,data=logForNN, hidden=0,act.fct = "logistic", linear.output = FALSE, stepmax=1e6)
+  #nn strategi 101, ser på sammenheng mellom seier og [ant. hus, ant eiendommer]
+  #nn=neuralnet(X1~X3+X0,data=logForNN2, hidden=1,act.fct = "logistic", linear.output = FALSE, stepmax=1e6)
+  #nn strategi 102, ser på sammenheng mellom seier og [ant. hus pr farge, ant eiendommer pr farge]
+  #nn=neuralnet(win~brown+lblue+purple+orange+red+yellow+green+blue+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses,data=logForNN3, hidden=c(10,10, 10, 10, 10),act.fct = "logistic", linear.output = FALSE, stepmax=1e6)
+  #nn strategi 103, ser på sammenheng mellom seier og [ant. hus pr farge, ant eiendommer pr farge]
+  #replica_NN <- top_n(logForNN4, 50000, throws)
+  
+  #nn=neuralnet(win~throws+fortune+white+brown+lblue+purple+orange+red+yellow+green+blue+whitehouses+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+buyStreet+buyHouse,data=logForNN4, hidden=c(2),act.fct = "logistic", linear.output = FALSE, stepmax=1e6, lifesign="full")
+  #nn=neuralnet(win~throws+fortune+white+brown+lblue+purple+orange+red+yellow+green+blue+whitehouses+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+buyStreet+buyHouse,data=replica_NN, hidden=c(1),act.fct = "tanh", linear.output = FALSE, stepmax=1e6, lifesign="full")
+  
+  #gwplot(nn)  
+  
 }
 
 ##---------------------------------------------------------
 ## Main-function.
 ##---------------------------------------------------------
-#logForNN <- data.frame()
 startGame <- function(i){
   source('functions v0.4.R')
   library(ggplot2)
@@ -89,27 +95,27 @@ startGame <- function(i){
     ################################################################
     ############# Samler inn statistikk for runden.  ###############
     ################################################################
+  
+    # SLETT?!?
     
+    # Samler inn data om antall kast, formue og antall eiendommer, og hus.
+    #Kast
     players$throws[cur_player] <<- players$throws[cur_player] + 1
     
-    
-    # Samler inn fortune-data.
+    #Formue
     fortune <<- cbind(fortune, players$fortune)
     
-    # Samler inn eiendoms-data.
+    #Eiendom
     curProps <- rep(0, N)
     for (i in 1:N) {
       curProps[i] <- length(board$owner[(board$owner==i) & !(is.na(board$owner))])
     }
     nProps <<- cbind(nProps, curProps)
     
-    # Samler inn hus-data.
+    # Hus
     curHouses <- rep(0, N)
     for (i in 1:N) {
       sumHouses <- sum(board$houses[(board$owner==i) & !(is.na(board$owner))  & !(is.na(board$houses))])
-      # sumHouses <- board %>%
-      #   filter(owner==i) %>%
-      #   summarize(sum(houses))
       curHouses[i] <- sumHouses
     }
     nHouses <<- cbind(nHouses, curHouses)
@@ -137,14 +143,13 @@ startGame <- function(i){
 
 
   
-  
-  ##PRINTFUNKSJON FOR FORTUNE-UTVIKING
-  #SLETT?
+  # 
+  # ##PRINTFUNKSJON FOR FORTUNE-UTVIKING
+  # #SLETT?
   fortune <- t(data.frame(fortune))
   colnames(fortune)[1:N] <- paste(sprintf("player%s", 1:ncol(fortune)))
-
-  
-
+  # 
+  # 
   ################################################################
   ############## PRINTFUNKSJON FOR FORTUNE-UTVIKING ##############
   ##############            MED GGPLOT              ##############
@@ -274,22 +279,23 @@ buildDataBaseforNN4 <- function(){
 # ## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRATEGI SOM ER BEST
 plot(nn)
 k=100
-s=9
-winners = 1:s*k*0
+#s=9
+winners = 1:k*0
 numberOfRounds <- 1:k*0
 # 
 a <<- 0
-for (i in 1:s) {
-  for (j in 1:k) {
-    a <<- a + 1
-    startGame(i)
-    winners[a] <- winnerS
-  }
+for (j in 1:k) {
+  a <<- a + 1
+  startGame()
+  winners[j] <- winnerS
 }
 
 
 hist(winners)
+##SLETT!!!
 table(winners)
+pbinom(68, 100, prob=0.5)
+
 # 
 # pbinom(73, size = 100, prob = 0.5)
 # 
