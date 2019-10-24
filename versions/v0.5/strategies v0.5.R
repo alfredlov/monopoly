@@ -115,11 +115,11 @@ runHouseStrategy <- function(){
     considerBuy <- TRUE
     while (considerBuy == TRUE) {
         placesToBuy <<- board %>%
-          filter(owner == cur_player & color %in% ownsAll & housePrice < players$fortune[cur_player] & houses < 5) %>%
-          select(name, color, houses, housePrice) %>%
-          group_by(color) %>%
-          filter(houses == min(houses)) %>%
-          ungroup()
+        filter(owner == cur_player & color %in% ownsAll & housePrice < players$fortune[cur_player] & houses < 5) %>%
+        select(name, color, houses, housePrice) %>%
+        group_by(color) %>%
+        filter(houses == min(houses)) %>%
+        ungroup()
 
       if(length(placesToBuy$name) == 0){
         considerBuy <<- FALSE
@@ -132,6 +132,7 @@ runHouseStrategy <- function(){
           #print("KJØPT HUS")
         }else{
           gatherStat("house", 0)
+
         }
       }
     }
