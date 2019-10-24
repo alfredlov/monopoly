@@ -94,9 +94,7 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
     processName <- paste("process", processNames[match(board$prop[position],c(0,5,6))], sep="")
     get(processName)()
   }
-
   runHouseStrategy()
-  
 } 
 
 ##--------------------------------------------------------------------------------
