@@ -58,6 +58,8 @@ move <- function(x){
 } 
 
 
+
+
 ##--------------------------------------------------------------------------------
 ## processPos: Handles actions and consequences of moving to a tile.
 ## -  If the tile is not a property, the player will be subject to an automatic action 
@@ -70,7 +72,7 @@ move <- function(x){
 
 processPos <- function(){#håndter posisjon for spiller cur_player, leder til flere sub-funksjoner
   position <<- players$position[cur_player]
-  if(board$prop[position] %in% c(1,2,3,4)){
+  if(board$prop[position] %in% c(1,2,3)){
       if(board$owner[position] == 0){ #sjekk om ledig
         if(board$price[position] <= players$fortune[cur_player]){ #sjekk om råd
           #kjør strategi
@@ -81,19 +83,20 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
       }else{
         owner <<- board$owner[position]
         processNames <- c("Prop", "Util", "Train")
-        strategyName <- paste("process", processNames[board$prop[position]], sep="")
+        processName <- paste("process", processNames[board$prop[position]], sep="")
         if(owner != cur_player){
-          get(strategyName)()
+          get(processName)()
         }
       }
   }
   if(board$prop[position] %in% c(0,5,6)){
     processNames <- c("Jail", "Auto", "Free")
-    strategyName <- paste("process", processNames[match(board$prop[position],c(0,5,6))], sep="")
-    get(strategyName)()
+    processName <- paste("process", processNames[match(board$prop[position],c(0,5,6))], sep="")
+    get(processName)()
   }
 
   runHouseStrategy()
+  
 } 
 
 ##--------------------------------------------------------------------------------
@@ -111,8 +114,6 @@ processJail <- function(){
     players$position[cur_player] <<- 9 #teleporter til jail
     players$jailDays[cur_player] <<- 3 #kommer ut på 3. runden
     #cat(sprintf("Player %s moved to jail",cur_player))
-    #for å holde spilleren i jail trenger vi et element i df for å se om just visiting eller i jail
-    #  og for å se hvor mange kast spilleren har forsøkt å komme ut
   }
   if(board$position[position] == 10){
     dice1 <- sample(1:6, size = 1, replace = TRUE)

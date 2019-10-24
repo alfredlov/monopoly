@@ -249,21 +249,34 @@ strategy9 <- function(x){
 
 
 ##-----------------------------------------------------------------------------------
-##  Strategy 10: 
+##  Strategy 10: Solid
 ##-----------------------------------------------------------------------------------
+strategy10 <- function(){
+  position <- players$position[players$id==cur_player]
+  propPrice <- board$price[board$position == position]
+  fortune <- players$fortune[players$id==cur_player]
+  currrentThrow <- players$throws
+  factor <- 1.01
+  capitalReq <- 1500/2
+  if(fortune-price < factor*currentThrow*capitalReq){
+    return(TRUE)
+  }
+  else{
+    return(FALSE)
+  }
+}
+
 
 ######################################################################################
 #####  HOUSE-STRATEGIES #############################################################
 ######################################################################################
-
 
 ##-----------------------------------------------------------------------------------
 ##  Strategy H1: Aggressive
 ##-----------------------------------------------------------------------------------
 
 strategyH1 <- function(){
-  
-  
+  return(TRUE)
 }
   
 
