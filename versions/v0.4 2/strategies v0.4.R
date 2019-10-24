@@ -15,7 +15,7 @@ gatherStat <- function(x, y){
   if(x == "house"){
     for (i in 1:length(uniqueC)) {
       NoC <- nrow(board[board$color  == uniqueC[i],]) #hvor mange gater i den fargen
-      NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == y !(is.na(board$owner)),]) 
+      NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == cur_player & !(is.na(board$owner)),]) 
       streetColFreq <<- c(streetColFreq, NoCo)
       
       sumHouses <- sum(board$houses[(board$owner==cur_player) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
@@ -25,8 +25,7 @@ gatherStat <- function(x, y){
     logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, y, wola))
   }else{
     for (i in 1:length(uniqueC)) {
-      NoC <- nrow(board[board$color  == uniqueC[i],]) #hvor mange gater i den fargen
-      NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == y,]) 
+      NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == cur_player & !(is.na(board$owner)),]) 
       streetColFreq <<- c(streetColFreq, NoCo)
       
       sumHouses <- sum(board$houses[(board$owner==cur_player) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
@@ -43,7 +42,6 @@ runStrategy <- function(){
   ##propPos <<- board$position[players$position[cur_player]]
   strategyName <- paste("strategy", players$strategy[cur_player], sep="")
   if(get(strategyName)() == TRUE){
-    
     #SLETT??
     #cat(sprintf("kjøp %s",Sys.time()))
     position <- players$position[cur_player]
@@ -74,7 +72,7 @@ runStrategy <- function(){
             position <- players$position[cur_player]
             board$owner[position] <<- bidWinner
             players$fortune[bidWinner] <<- players$fortune[bidWinner] - propPrice
-            cat(sprintf("Player %s won auction of %s for %s",bidWinner, position, propPrice))
+            #cat(sprintf("Player %s won auction of %s for %s",bidWinner, position, propPrice))
           }
           if(propPrice > board$price[players$position[cur_player]]*3){
             if(length(interestedBuyers$interested[interestedBuyers$interested > 0]) == 0){
@@ -86,7 +84,7 @@ runStrategy <- function(){
             board$owner[position] <<- bidWinner$playersBidDf.id
             players$fortune[bidWinner$playersBidDf.id] <<- players$fortune[bidWinner$playersBidDf.id] - propPrice
     
-            cat(sprintf("Player %s won auction of %s on random for %s",bidWinner, position, propPrice))
+            #cat(sprintf("Player %s won auction of %s on random for %s",bidWinner, position, propPrice))
             }
           }else{
             propPrice <<- round(propPrice * 1.1)
@@ -217,7 +215,7 @@ mround <- function(x,base){
   base*round(x/base)
 }
 strategy100 <- function(x){
-  cur_player <- 2
+  #cur_player <- 2
   if(length(fortune) > 5){
     aprox.position <- mround(length(fortune[cur_player,])/5, 5)
   }else{
@@ -333,7 +331,7 @@ strategy102 <- function(x){
   houseColFreq <<- c()
   for (i in 1:length(uniqueC)) {
     NoC <- nrow(board[board$color  == uniqueC[i],]) #hvor mange gater i den fargen
-    NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == cur_player,]) 
+    NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == cur_player & !(is.na(board$owner)),]) 
     streetColFreq <<- c(streetColFreq, NoCo)
     
     sumHouses <- sum(board2$houses[(board2$owner==y) & !(is.na(board2$owner))  & !(is.na(board2$houses)) & board2$color  == uniqueC[i]])
@@ -392,9 +390,12 @@ strategy103 <- function(x){
   houseColFreq <<- c()
   pos <- players$position[cur_player]
   fort <- players$fortune[cur_player]
+  # filteredNN <- logForNN4 %>%
+  #   filter(throws == pos)
+  #nn=neuralnet(win~throws+fortune+white+brown+lblue+purple+orange+red+yellow+green+blue+whitehouses+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+buyStreet+buyHouse,data=filteredNN, act.fct = "tanh", linear.output = FALSE, stepmax=1e6, lifesign="full")
   for (i in 1:length(uniqueC)) {
     NoC <- nrow(board[board$color  == uniqueC[i],]) #hvor mange gater i den fargen
-    NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == cur_player & !(is.na(board$owner)),]) 
+    NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == cur_player,]) 
     streetColFreq <<- c(streetColFreq, NoCo)
     
     sumHouses <- sum(board$houses[(board$owner==cur_player) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
