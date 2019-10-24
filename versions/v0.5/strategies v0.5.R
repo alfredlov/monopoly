@@ -120,7 +120,10 @@ runHouseStrategy <- function(){
           group_by(color) %>%
           filter(houses == min(houses)) %>%
           ungroup()
-        
+
+      if(length(placesToBuy$name) == 0){
+        considerBuy <<- FALSE
+      }else{
         houseToBuy <- get(strategyName)()
         if(houseToBuy != FALSE){ #KJØPER BARE HUS OM TRUE FRA STRATEGI
           board$houses[board$name == houseToBuy] <<- board$houses[board$name == houseToBuy] + 1 
@@ -130,9 +133,6 @@ runHouseStrategy <- function(){
         }else{
           gatherStat("house", 0)
         }
-
-      if(length(placesToBuy$name) == 0){
-        considerBuy <<- FALSE
       }
     }
   }
@@ -315,13 +315,16 @@ strategyH3 <- function(){
 ##-----------------------------------------------------------------------------------
 
 strategyHALFRED <- function(){
-  if(length(ownsAll) == 1){
+  if(length(placesToBuy$name) == 1){
+    return(placesToBuy[1,]$name)
     housesInCol <- board$houses[board$color == uniqueC[ownsAll[1]]]
     sQuery <- board$position[board$color == uniqueC[ownsAll[1]] & board$houses == min(housesInCol) & board$houses < 5]
     if(length(sQuery) != 0){
       wTB <- max(sQuery)
       
     }
+  }else{
+    return(placesToBuy[length(placesToBuy$name),]$name)
   }
  
   
