@@ -101,7 +101,7 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
       ownsAll <<- c(ownsAll, i)
     }
   }
-  cur_player <- 2
+ 
   if(length(ownsAll) == 1){ #hvis en spiller eier alle av en farge/farger
     #print("ALFRED")
     housesInCol <- board$houses[board$color == uniqueC[ownsAll[1]]]
@@ -219,11 +219,11 @@ processProp <- function(){
       housesFunc <- sprintf("rent%sh", board$houses[position])
       players$fortune[owner] <<- players$fortune[owner] + board[[housesFunc]][position]
       players$fortune[cur_player] <<- players$fortune[cur_player] - board[[housesFunc]][position]
-      cat(sprintf("HUSLEIE, spiller %s fikk %s for %s", owner, board[[housesFunc]][position], board$name[position]))
+      #cat(sprintf("HUSLEIE, spiller %s fikk %s for %s", owner, board[[housesFunc]][position], board$name[position]))
     }else{
       players$fortune[owner] <<- players$fortune[owner] + board$rent[position]*2
       players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]*2
-      print("DOBBEL LEIE")
+      #print("DOBBEL LEIE")
     }
 
     #cat(sprintf("DOBBEL, spiller %s eier hele %s", owner, board$color[position]))
@@ -257,7 +257,7 @@ checkPlayerLoss <- function(){#sjekk hvis cur_player har tapt
       mutate(houses=replace(houses, owner==cur_player, 0)) %>%
       mutate(owner=replace(owner, owner==cur_player, 0)) %>%
       as.data.frame()
-    cat(sprintf("Player %s ran out of cash!", cur_player))
+    #cat(sprintf("Player %s ran out of cash!", cur_player))
     return(TRUE)
     ##SLETT??
 
