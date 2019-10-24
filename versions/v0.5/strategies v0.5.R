@@ -185,7 +185,7 @@ strategy2 <- function(x){
 
 ##-----------------------------------------------------------------------------------
 ##  Strategy 3: Simple conservative
-##  Buys all properties as long as price < 70% of total income.
+##  Buys all properties as long as price < 50% of total income.
 ##-----------------------------------------------------------------------------------
 strategy3 <- function(x){
   if(propPrice/players$fortune[cur_player] <= 0.5){
