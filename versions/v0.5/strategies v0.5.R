@@ -282,7 +282,7 @@ strategy10 <- function(){
 ##-----------------------------------------------------------------------------------
 
 strategyH1 <- function(){
-  return(TRUE)
+  return(placesToBuy[1,]$name)
 }
   
 
