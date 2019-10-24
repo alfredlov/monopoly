@@ -100,7 +100,7 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
       ownsAll <<- c(ownsAll, i)
     }
   }
- 
+  
   if(length(ownsAll) == 1){ #hvis en spiller eier alle av en farge/farger
     #print("ALFRED")
     housesInCol <- board$houses[board$color == uniqueC[ownsAll[1]]]

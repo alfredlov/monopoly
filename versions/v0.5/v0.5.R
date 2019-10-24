@@ -1,6 +1,6 @@
 ##---------------------------------------------------------
 ## Monopoly Simulation - Main script
-## Version 0.4
+## Version 0.5
 ##---------------------------------------------------------
 
 #NB pass på variabler: globale = << og lokale = <
@@ -9,15 +9,15 @@
 initGame <- function(i){
   
   #------------------------- Settings --------------------------
-  setwd("../v0.4.1")              # Set working directory to correct version number
+  setwd("../v0.5")              # Set working directory to correct version number
   N <<- 2                         # N = Number of player
   strategy <- c(7, 9)             # Set player strategies, first parameter sets strategy for player 1, etc...
-  N <<- 2                      # N = Number of player
-  strategy <- c(sample(c(3,4,5,8,9),1), sample(c(3,4,5,8,9),1)) # Set player strategies, first parameter sets strategy for player 1, etc...
+  #N <<- 2                      # N = Number of player
+  #strategy <- c(sample(c(3,4,5,8,9),1), sample(c(3,4,5,8,9),1)) # Set player strategies, first parameter sets strategy for player 1, etc...
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
   startCap <- 1500                # Sets start capital for all players.
   roundCap <<- 200                # Capital gained frmo passing 'Go'.
-  version <- 4                    # Sets game version.
+  version <- 5                    # Sets game version.
   bid_Active <<- TRUE             # Turn bidding on and off.
   collectStats <<- TRUE           # Turns collecting stats on and off. 
   enableAiData <<- FALSE          # Turn AI on/off
@@ -64,7 +64,7 @@ initGame <- function(i){
 startGame <- function(i){
   source('functions v0.4.R')
   library(ggplot2)
-  board <<- read.csv("monopoly_data v0.4.csv") #importer/reset gameboard som data.frame
+  board <<- read.csv("monopoly_data v0.5.csv") #importer/reset gameboard som data.frame
   
   initGame(i)                      # Reset verdier for spillet(start på nytt)
   cur_player <<- sample(1:N, 1)   # Selects initial player at random. Eliminates potential first-mover (dis)advantage.
