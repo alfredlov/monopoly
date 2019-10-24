@@ -9,15 +9,16 @@
 initGame <- function(i){
   
   #------------------------- Settings --------------------------
-  setwd("../v0.4.1")              # Set working directory to correct version number
+  setwd("../v0.5")              # Set working directory to correct version number
   N <<- 2                         # N = Number of player
-  strategy <- c(7, 9)             # Set player strategies, first parameter sets strategy for player 1, etc...
+  strategy <- c(7, 9)
+  houseStrategy <- c("H1", "H2")  # Set player strategies, first parameter sets strategy for player 1, etc...
   N <<- 2                      # N = Number of player
   strategy <- c(sample(c(3,4,5,8,9),1), sample(c(3,4,5,8,9),1)) # Set player strategies, first parameter sets strategy for player 1, etc...
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
   startCap <- 1500                # Sets start capital for all players.
   roundCap <<- 200                # Capital gained frmo passing 'Go'.
-  version <- 4                    # Sets game version.
+  version <- 5                    # Sets game version.
   bid_Active <<- TRUE             # Turn bidding on and off.
   collectStats <<- TRUE           # Turns collecting stats on and off. 
   enableAiData <<- FALSE          # Turn AI on/off
@@ -35,7 +36,7 @@ initGame <- function(i){
   active <- rep(1, times=N) #sett spillere som er aktive, alle v/ init
   position <- rep(1, times=N) #tile 1 er start
   jailDays <- rep(0, times=N) #tile 1 er start
-  players <<- data.frame(id, strategy, fortune, active, position, jailDays, throws) #data.frame m/ oversikt over spillerne
+  players <<- data.frame(id, strategy, houseStrategy, fortune, active, position, jailDays, throws) #data.frame m/ oversikt over spillerne
   
   ##########################################################################
   #### AI STUFF  ##########################################################

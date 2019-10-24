@@ -101,46 +101,48 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
     }
   }
  
-  if(length(ownsAll) == 1){ #hvis en spiller eier alle av en farge/farger
+  if(length(ownsAll) > 0){ #hvis en spiller eier alle av en farge/farger
     #print("ALFRED")
-    housesInCol <- board$houses[board$color == uniqueC[ownsAll[1]]]
-    sQuery <- board$position[board$color == uniqueC[ownsAll[1]] & board$houses == min(housesInCol) & board$houses < 5]
-    if(length(sQuery) != 0){
-      wTB <- max(sQuery)
-      if(players$fortune[cur_player] - board$housePrice[board$position == wTB] > 0){
-        propPrice <<- board$housePrice[board$position == wTB]
-        strategyName <- paste("strategy", players$strategy[cur_player], sep="")
-        if(get(strategyName)("HOUSE") == TRUE){ #KJØPER BARE HUS OM TRUE FRA STRATEGI
-          board$houses[board$position == wTB] <<- board$houses[board$position == wTB] + 1 
-          players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$position == wTB]
-          gatherStat("house", 1)
-          #print("KJØPT HUS")
-        }else{
-          gatherStat("house", 0)
-        }
+    if(players$fortune[cur_player] - board$housePrice[board$position == wTB] > 0){
+      propPrice <<- board$housePrice[board$position == wTB]
+      strategyName <- paste("strategy", players$houseStrategy[cur_player], sep="")
+      if(get(strategyName)() == TRUE){ #KJØPER BARE HUS OM TRUE FRA STRATEGI
+        board$houses[board$position == wTB] <<- board$houses[board$position == wTB] + 1 
+        players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$position == wTB]
+        gatherStat("house", 1)
+        #print("KJØPT HUS")
+      }else{
+        gatherStat("house", 0)
       }
     }
+    
+    # housesInCol <- board$houses[board$color == uniqueC[ownsAll[1]]]
+    # sQuery <- board$position[board$color == uniqueC[ownsAll[1]] & board$houses == min(housesInCol) & board$houses < 5]
+    # if(length(sQuery) != 0){
+    #   wTB <- max(sQuery)
+    #   
+    # }
   }
-  if(length(ownsAll) > 1){ #hvis en spiller eier alle av en farge/farger
-    colFocus <- sample(1:length(ownsAll), 1)
-    housesInCol <- board$houses[board$color == uniqueC[ownsAll[colFocus]]]
-    sQuery <- board$position[board$color == uniqueC[ownsAll[colFocus]] & board$houses == min(housesInCol) & board$houses < 5]
-    if(length(sQuery) != 0){
-      wTB <- max(sQuery)
-      if(players$fortune[cur_player] - board$housePrice[board$position == wTB] > 0){
-        propPrice <<- board$housePrice[board$position == wTB]
-        strategyName <- paste("strategy", players$strategy[cur_player], sep="")
-        if(get(strategyName)("HOUSE") == TRUE){
-          board$houses[board$position == wTB] <<- board$houses[board$position == wTB] + 1 
-          players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$position == wTB]
-          gatherStat("house", 1)
-          #print("KJØPT HUS")
-        }else{
-          gatherStat("house", 0)
-        }    
-      }
-    }
-  }
+  # if(length(ownsAll) > 1){ #hvis en spiller eier alle av en farge/farger
+  #   colFocus <- sample(1:length(ownsAll), 1)
+  #   housesInCol <- board$houses[board$color == uniqueC[ownsAll[colFocus]]]
+  #   sQuery <- board$position[board$color == uniqueC[ownsAll[colFocus]] & board$houses == min(housesInCol) & board$houses < 5]
+  #   if(length(sQuery) != 0){
+  #     wTB <- max(sQuery)
+  #     if(players$fortune[cur_player] - board$housePrice[board$position == wTB] > 0){
+  #       propPrice <<- board$housePrice[board$position == wTB]
+  #       strategyName <- paste("strategy", players$houseStrategy[cur_player], sep="")
+  #       if(get(strategyName)() == TRUE){
+  #         board$houses[board$position == wTB] <<- board$houses[board$position == wTB] + 1 
+  #         players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$position == wTB]
+  #         gatherStat("house", 1)
+  #         #print("KJØPT HUS")
+  #       }else{
+  #         gatherStat("house", 0)
+  #       }    
+  #     }
+  #   }
+  # }
 } 
 
 ##--------------------------------------------------------------------------------
