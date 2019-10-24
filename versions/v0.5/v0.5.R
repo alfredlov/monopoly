@@ -291,6 +291,7 @@ a <<- 0
 for (j in 1:k) {
   a <<- a + 1
   startGame()
+  cat(sprintf("Round: %s", j))
   winners[j] <- winner
 }
 
