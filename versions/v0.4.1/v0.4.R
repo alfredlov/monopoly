@@ -11,8 +11,6 @@ initGame <- function(i){
   #------------------------- Settings --------------------------
   setwd("../v0.4.1")              # Set working directory to correct version number
   N <<- 2                         # N = Number of player
-  strategy <- c(7, 9)             # Set player strategies, first parameter sets strategy for player 1, etc...
-  N <<- 2                      # N = Number of player
   strategy <- c(sample(c(3,4,5,8,9),1), sample(c(3,4,5,8,9),1)) # Set player strategies, first parameter sets strategy for player 1, etc...
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
   startCap <- 1500                # Sets start capital for all players.
