@@ -264,12 +264,18 @@ strategy10 <- function(){
   currentThrow <- players$throws[players$id==cur_player]
   factor <- 1.01
   capitalReq <- 1500/2
-  if(fortune-propPrice < factor*currentThrow*capitalReq){
+  if(currentThrow<=10){
     return(TRUE)
   }
   else{
-    return(FALSE)
+    if(fortune-propPrice < factor*currentThrow*capitalReq){
+      return(TRUE)
+    }
+    else{
+      return(FALSE)
+    }
   }
+
 }
 
 
