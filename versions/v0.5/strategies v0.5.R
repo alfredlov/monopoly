@@ -100,35 +100,41 @@ runStrategy <- function(){
 
 runHouseStrategy <- function(){
   #check if player owns all of a color
+  strategyName <- paste("strategy", players$houseStrategy[cur_player], sep="")
   uniqueC <- c(as.character(unique(board$color[board$color != "" & board$color != "white" & board$color != "grey"])))
   ownsAll <<- c() #liste over farger hvor cur_player eier alle, gitt av for løkken nedenfor
   for (i in 1:length(uniqueC)) {
     if(checkStreetPer(uniqueC[i], cur_player) == TRUE){
-      ownsAll <<- c(ownsAll, i)
+      ownsAll <<- c(ownsAll, uniqueC[i])
     }
-  }
-  for (i in 1:length(ownsAll)) {
-    if(!is.null(ownsAll)){
-      if(ownsAll[i] == 1){
-        if(top_n(board[board$color == uniqueC[i]], 1, wt = position)$housePrice > players$fortune[cur_player]){
-          ownsAll[i] <<- 0
-        }
-      } 
-    }
-  }
+  } 
   
   if(length(ownsAll) > 0){ #hvis en spiller eier alle av en farge/farger
     #print("ALFRED")
-      propPrice <<- board$housePrice[board$position == wTB]
-      strategyName <- paste("strategy", players$houseStrategy[cur_player], sep="")
-      if(get(strategyName)() == TRUE){ #KJØPER BARE HUS OM TRUE FRA STRATEGI
-        board$houses[board$position == wTB] <<- board$houses[board$position == wTB] + 1 
-        players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$position == wTB]
-        gatherStat("house", 1)
-        #print("KJØPT HUS")
-      }else{
-        gatherStat("house", 0)
+    #propPrice <<- board$housePrice[board$position == wTB]
+    considerBuy <- TRUE
+    while (considerBuy == TRUE) {
+        placesToBuy <<- board %>%
+          filter(owner == cur_player & color %in% ownsAll & housePrice < players$fortune[cur_player] & houses < 5) %>%
+          select(name, color, houses, housePrice) %>%
+          group_by(color) %>%
+          filter(houses == min(houses)) %>%
+          ungroup()
+        
+        houseToBuy <- get(strategyName)()
+        if(houseToBuy != FALSE){ #KJØPER BARE HUS OM TRUE FRA STRATEGI
+          board$houses[board$name == houseToBuy] <<- board$houses[board$name == houseToBuy] + 1 
+          players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$name == houseToBuy]
+          gatherStat("house", 1)
+          #print("KJØPT HUS")
+        }else{
+          gatherStat("house", 0)
+        }
+
+      if(length(placesToBuy$name) == 0){
+        considerBuy <<- FALSE
       }
+    }
   }
 }
 
