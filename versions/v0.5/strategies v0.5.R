@@ -3,11 +3,6 @@
 ## Version 0.2
 ##---------------------------------------------------------
 
-##--------------------------------------------------------------------------------
-## runStrategy: Runs the current player's predefined strategy
-##  - If the given player's strategy-function returns TRUE, 
-##    set the owner variable of the property to TRUE. 
-##--------------------------------------------------------------------------------
 gatherStat <- function(x, y){
   if(collectStats == TRUE){
     uniqueC <- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
@@ -35,6 +30,13 @@ gatherStat <- function(x, y){
     colnames(logForNN4temp) <- length(c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id"))
   }
 }
+
+
+##--------------------------------------------------------------------------------
+## runStrategy: Runs the current player's predefined strategy
+##  - If the given player's strategy-function returns TRUE, 
+##    set the owner variable of the property to TRUE. 
+##--------------------------------------------------------------------------------
 
 runStrategy <- function(){
   propPrice <<- board$price[players$position[cur_player]]
@@ -114,6 +116,7 @@ runHouseStrategy <- function(){
       propPrice <<- board$housePrice[board$position == wTB]
       strategyName <- paste("strategy", players$houseStrategy[cur_player], sep="")
       if(get(strategyName)() == TRUE){ #KJØPER BARE HUS OM TRUE FRA STRATEGI
+        ##A: LAG BUY HOUSE FUNKSJON...
         board$houses[board$position == wTB] <<- board$houses[board$position == wTB] + 1 
         players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$position == wTB]
         gatherStat("house", 1)
@@ -152,6 +155,9 @@ runHouseStrategy <- function(){
   #   }
   # }
 }
+
+
+
 
 ######################################################################################
 #####  PROPERTY-STRATEGIES ###########################################################

@@ -10,9 +10,9 @@ initGame <- function(i){
   
   #------------------------- Settings --------------------------
   setwd("../v0.5")              # Set working directory to correct version number
-  N <<- 2                         # N = Number of player
-  strategy <- c(7, 9)
-  houseStrategy <- c("HALFRED", "HALFRED")  # Set player strategies, first parameter sets strategy for player 1, etc...
+  N <<- 2                       # N = Number of player
+  strategy <- c(7, 9)           # Set player strategies, first parameter sets strategy for player 1, etc...
+  houseStrategy <- c("HALFRED", "HALFRED")  
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
   startCap <- 1500                # Sets start capital for all players.
   roundCap <<- 200                # Capital gained frmo passing 'Go'.
