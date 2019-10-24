@@ -35,7 +35,9 @@ initGame <- function(i){
   printResult <<- TRUE           # Turn bidding on and off.
   #-------------------------------------------------------------
   
-  logForNN4temp <<- data.frame(matrix(NA, 0, 24))
+  logForNN4temp <<- data.frame(matrix(NA, 0, 42))
+  colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
+  
   id <- c(1:N) #som vektor til data.frame
   throws <<- rep(0, times=N)
   fortune <<- rep(startCap, times=N)
@@ -173,18 +175,18 @@ startGame(2)
 #############           START NN DATA             ###############
 ################################################################
 
-#write.csv(logForNN,'logForNN3.csv')
+#write.csv(logForNN4,'logForNN4.csv')
 #logForNN <<- data.frame(matrix(NA, 0, 5))
 #logForNN2 <<- data.frame(matrix(NA, 0, 5))
 #logForNN3 <<- data.frame(matrix(NA, 0, 17))
 
-#logForNN4 <<- data.frame(matrix(NA, 0, 24))
+#logForNN4 <<- data.frame(matrix(NA, 0, 43))
 if(enableAiData == TRUE){
 replicate(200, buildDataBaseforNN())
 replicate(20, buildDataBaseforNN2())
 replicate(200, buildDataBaseforNN3())
 
-replicate(5000, buildDataBaseforNN4())
+replicate(1, buildDataBaseforNN4())
 
 hist(logForNN4$id[logForNN4$win == 1])
 
@@ -246,14 +248,15 @@ buildDataBaseforNN3 <- function(){
 buildDataBaseforNN4 <- function(){
   startGame()
   uniqueC <- unique(board$color[board$color != "" & board$color != "grey"])
+  colnames(logForNN4temp) <<- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
   
   if(length(logForNN4temp[,1]) != 0){
-    logForNN4temp <<- logForNN4temp %>%
-    mutate(win = ifelse(id == winner, 1, -1))
+      logForNN4temp <<- logForNN4temp %>%
+        mutate(win = ifelse(id == winner, 1, -1))
   }
   logForNN4 <<- rbind(logForNN4, logForNN4temp)
     
-  colnames(logForNN4) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "id", "win")
+  colnames(logForNN4) <<- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id", "win")
 }
 }
 ################################################################
