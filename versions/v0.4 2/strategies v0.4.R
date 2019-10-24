@@ -9,33 +9,34 @@
 ##    set the owner variable of the property to TRUE. 
 ##--------------------------------------------------------------------------------
 gatherStat <- function(x, y){
-  uniqueC <- unique(board$color[board$color != "" & board$color != "grey"])
-  streetColFreq <<- c()
-  houseColFreq <<- c()
-  if(x == "house"){
-    for (i in 1:length(uniqueC)) {
-      NoC <- nrow(board[board$color  == uniqueC[i],]) #hvor mange gater i den fargen
-      NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == cur_player & !(is.na(board$owner)),]) 
-      streetColFreq <<- c(streetColFreq, NoCo)
-      
-      sumHouses <- sum(board$houses[(board$owner==cur_player) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
-      houseColFreq <<- c(houseColFreq, sumHouses)
+  if(collectStats == TRUE){
+    uniqueC <- unique(board$color[board$color != "" & board$color != "grey"])
+    streetColFreq <<- c()
+    houseColFreq <<- c()
+    if(x == "house"){
+      for (i in 1:length(uniqueC)) {
+        NoC <- nrow(board[board$color  == uniqueC[i],]) #hvor mange gater i den fargen
+        NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == cur_player & !(is.na(board$owner)),]) 
+        streetColFreq <<- c(streetColFreq, NoCo)
+        
+        sumHouses <- sum(board$houses[(board$owner==cur_player) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
+        houseColFreq <<- c(houseColFreq, sumHouses)
+      }
+      wola <- cur_player
+      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, y, wola))
+    }else{
+      for (i in 1:length(uniqueC)) {
+        NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == cur_player & !(is.na(board$owner)),]) 
+        streetColFreq <<- c(streetColFreq, NoCo)
+        
+        sumHouses <- sum(board$houses[(board$owner==cur_player) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
+        houseColFreq <<- c(houseColFreq, sumHouses)
+      }
+      wola <- cur_player
+      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, y, 0, wola))
     }
-    wola <- cur_player
-    logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, y, wola))
-  }else{
-    for (i in 1:length(uniqueC)) {
-      NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == cur_player & !(is.na(board$owner)),]) 
-      streetColFreq <<- c(streetColFreq, NoCo)
-      
-      sumHouses <- sum(board$houses[(board$owner==cur_player) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
-      houseColFreq <<- c(houseColFreq, sumHouses)
-    }
-    wola <- cur_player
-    logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, y, 0, wola))
+    colnames(logForNN4temp) <<- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "id")
   }
-  colnames(logForNN4temp) <<- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "id")
-  
 }
 runStrategy <- function(){
   propPrice <<- board$price[players$position[cur_player]]

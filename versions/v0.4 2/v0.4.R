@@ -7,7 +7,7 @@
 #NB test enkeltfunksjoner fra dette dokumentet, ikke 'functions vx.x.R'
 
 
-initGame <- function(){
+initGame <- function(i){
   #require(neuralnet)
   #nn strategi 100, ser på sammenheng mellom seier og [posisjon, saldo, ant. hus, ant eiendommer]
   #nn=neuralnet(X1~X5+X1500+X0+X0.1,data=logForNN, hidden=0,act.fct = "logistic", linear.output = FALSE, stepmax=1e6)
@@ -25,7 +25,7 @@ initGame <- function(){
   #------------------------- Settings --------------------------
   #setwd("../v0.4 2")              # Set working directory to correct version number
   N <<- 2                      # N = Number of player
-  strategy <- c(sample(1:9, 1), 103) # Set player strategies, first parameter sets strategy for player 1, etc...
+  strategy <- c(i, 103) # Set player strategies, first parameter sets strategy for player 1, etc...
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
   startCap <- 1500              # Sets start capital for all players.
   roundCap <<- 200              # Capital gained frmo passing 'Go'.
@@ -49,12 +49,12 @@ initGame <- function(){
 ## Main-function.
 ##---------------------------------------------------------
 #logForNN <- data.frame()
-startGame <- function(){
+startGame <- function(i){
   source('functions v0.4.R')
   library(ggplot2)
   board <<- read.csv("monopoly_data v0.4.csv") #importer/reset gameboard som data.frame
   
-  initGame()                      # Reset verdier for spillet(start på nytt)
+  initGame(i)                      # Reset verdier for spillet(start på nytt)
   cur_player <<- sample(1:N, 1)   # Selects initial player at random. Eliminates potential first-mover (dis)advantage.
   game_over <<- FALSE
   ptm <- Sys.time()  #Timer
@@ -166,7 +166,7 @@ startGame <- function(){
   ################################################################
 }
 
-startGame()
+startGame(2)
 
 ################################################################
 #############           START NN DATA             ###############
@@ -273,15 +273,21 @@ buildDataBaseforNN4 <- function(){
 # ## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRATEGI SOM ER BEST
 plot(nn)
 k=100
-winners = 1:k*0
+s=9
+winners = 1:s*k*0
 numberOfRounds <- 1:k*0
 # 
-for (i in 1:k) {
-  startGame()
-  buildDataBaseforNN4()
-  #buildDataBaseforNN()
-  winners[i] <- winnerS
+a <<- 0
+for (i in 1:s) {
+  for (j in 1:k) {
+    a <<- a + 1
+    startGame(i)
+    #buildDataBaseforNN4()
+    #buildDataBaseforNN()
+    winners[a] <- winnerS
+  }
 }
+
 
 hist(winners)
 table(winners)
