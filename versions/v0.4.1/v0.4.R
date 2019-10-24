@@ -24,7 +24,7 @@ initGame <- function(i){
   #------------------------- Settings --------------------------
   setwd("../v0.4.1")              # Set working directory to correct version number
   N <<- 2                      # N = Number of player
-  strategy <- c(1, 8) # Set player strategies, first parameter sets strategy for player 1, etc...
+  strategy <- c(sample(c(3,4,5,8,9),1), sample(c(3,4,5,8,9),1)) # Set player strategies, first parameter sets strategy for player 1, etc...
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
   startCap <- 1500              # Sets start capital for all players.
   roundCap <<- 200              # Capital gained frmo passing 'Go'.
@@ -131,7 +131,7 @@ startGame <- function(i){
       checkGameOver()
       game_over <- TRUE
       
-      logForNN4temp <<- data.frame(matrix(NA, 0, 24))
+      logForNN4temp <<- data.frame(matrix(NA, 0, 42))
     }
 
     
@@ -186,7 +186,7 @@ replicate(200, buildDataBaseforNN())
 replicate(20, buildDataBaseforNN2())
 replicate(200, buildDataBaseforNN3())
 
-replicate(1, buildDataBaseforNN4())
+replicate(10, buildDataBaseforNN4())
 
 hist(logForNN4$id[logForNN4$win == 1])
 
@@ -254,10 +254,11 @@ buildDataBaseforNN4 <- function(){
       logForNN4temp <<- logForNN4temp %>%
         mutate(win = ifelse(id == winner, 1, -1))
   }
+  colnames(logForNN4) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id", "win")
+  
   logForNN4 <<- rbind(logForNN4, logForNN4temp)
     
-  colnames(logForNN4) <<- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id", "win")
-}
+  }
 }
 ################################################################
 #############          SLUTT NN DATA             ###############
