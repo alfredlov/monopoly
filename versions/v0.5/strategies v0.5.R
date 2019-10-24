@@ -261,10 +261,10 @@ strategy10 <- function(){
   position <- players$position[players$id==cur_player]
   propPrice <- board$price[board$position == position]
   fortune <- players$fortune[players$id==cur_player]
-  currrentThrow <- players$throws
+  currentThrow <- players$throws[players$id==cur_player]
   factor <- 1.01
   capitalReq <- 1500/2
-  if(fortune-price < factor*currentThrow*capitalReq){
+  if(fortune-propPrice < factor*currentThrow*capitalReq){
     return(TRUE)
   }
   else{
