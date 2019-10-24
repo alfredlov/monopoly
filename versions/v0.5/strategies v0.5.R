@@ -259,23 +259,45 @@ strategy9 <- function(x){
 ##  Strategy 10: Solid
 ##-----------------------------------------------------------------------------------
 strategy10 <- function(){
-  position <- players$position[players$id==cur_player]
+  position <- players$position[players$id == cur_player]
   propPrice <- board$price[board$position == position]
-  fortune <- players$fortune[players$id==cur_player]
+  curFortune <- players$fortune[players$id == cur_player]
+  
+  
+  cat(sprintf("Koden tror nå at strategi 10 skal spilles av spiller current player: %s \n",cur_player))
+
   currentThrow <- players$throws[players$id==cur_player]
-  factor <- 1.001
+  factor <- 1.01
   capitalReq <- 1500
-  if(currentThrow<=5 | fortune > 5000){
+  if((currentThrow<=5)&&((curFortune-propPrice)>=300)){
+    # print("fine1!")
+    # print("-----------")
+    #
+    # print(curFortune)
+    # print(propPrice)
+  }
+  if((curFortune-propPrice)>=300){
+    print("lololol")
     return(TRUE)
   }
-  else{
-    if(fortune-propPrice >= factor*currentThrow*capitalReq){
-      return(TRUE)
-    }
-    else{
-      return(FALSE)
-    }
+  else if(curFortune > 2500){
+    print("fine2!")
+
+    return(TRUE)
   }
+  else if(curFortune-propPrice >= factor^(currentThrow)*capitalReq){
+    print("--------")
+    print(factor^(currentThrow)*capitalReq)
+
+    print("fine3!")
+
+    return(TRUE)
+    }
+
+  else{
+    return(FALSE)
+  }
+
 
 }
 ##-----------------------------------------------------------------------------------
@@ -321,6 +343,16 @@ strategyH1 <- function(){
 ##-----------------------------------------------------------------------------------
 
 strategyH2 <- function(){
+  curFortune <- players$fortune[players$id==cur_player]
+  cat(sprintf("current player: %s \n",cur_player))
+  if(players$fortune[players$id==cur_player]<1000){
+    return(FALSE)
+  }
+  else{
+    pickedHouse <- sample(1:length(placesToBuy[1,]))
+    return(placesToBuy[1,]$name)
+  }
+
   
   
 }

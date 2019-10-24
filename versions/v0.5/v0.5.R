@@ -8,11 +8,11 @@
 
 initGame <- function(i){
   
-  #------------------------- Settings --------------------------
+  #------------------------------  Settings  ------------------------------ 
   setwd("../v0.5")              # Set working directory to correct version number
   N <<- 2                       # N = Number of player
-  strategy <- c(3, 10)           # Set player strategies, first parameter sets strategy for player 1, etc...
-  houseStrategy <- c("H1", "H1")  
+  strategy <- c(1, 10)           # Set player strategies, first parameter sets strategy for player 1, etc...
+  houseStrategy <- c("H1", "H2")  
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
   startCap <<- 1500                # Sets start capital for all players.
   roundCap <<- 200                # Capital gained frmo passing 'Go'.
@@ -21,7 +21,7 @@ initGame <- function(i){
   collectStats <<- TRUE           # Turns collecting stats on and off. 
   enableAiData <<- FALSE          # Turn AI on/off
   printResult <<- TRUE            # Turns printing result on and off. 
-  #-------------------------------------------------------------
+  #---------------------------------------------------------------------------
   
   logForNN4temp <<- data.frame(matrix(NA, 0, 42))
   colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
@@ -290,8 +290,8 @@ numberOfRounds <- 1:k*0
 a <<- 0
 for (j in 1:k) {
   a <<- a + 1
-  startGame()
   cat(sprintf("Round: %s", j))
+  startGame()
   winners[j] <- winner
 }
 
