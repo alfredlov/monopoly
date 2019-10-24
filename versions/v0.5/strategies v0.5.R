@@ -280,6 +280,29 @@ strategy10 <- function(){
   }
 
 }
+##-----------------------------------------------------------------------------------
+##  Strategy 10.1: Solid(?)
+##-----------------------------------------------------------------------------------
+strategy10.1 <- function(){
+  position <- players$position[players$id==cur_player]
+  propPrice <- board$price[board$position == position]
+  fortune <- players$fortune[players$id==cur_player]
+  currentThrow <- players$throws[players$id==cur_player]
+  factor <- 1.01
+  capitalReq <- 1500/2
+  if(currentThrow<=10){
+    return(TRUE)
+  }
+  else{
+    if(fortune-propPrice > players$fortune[players$id!=cur_player]){
+      return(TRUE)
+    }
+    else{
+      return(FALSE)
+    }
+  }
+  
+}
 
 
 ######################################################################################
@@ -318,17 +341,17 @@ strategyH3 <- function(){
 ##-----------------------------------------------------------------------------------
 
 strategyHALFRED <- function(){
-  if(length(placesToBuy$name) == 1){
-    return(placesToBuy[1,]$name)
-    housesInCol <- board$houses[board$color == uniqueC[ownsAll[1]]]
-    sQuery <- board$position[board$color == uniqueC[ownsAll[1]] & board$houses == min(housesInCol) & board$houses < 5]
-    if(length(sQuery) != 0){
-      wTB <- max(sQuery)
-      
-    }
-  }else{
-    return(placesToBuy[length(placesToBuy$name),]$name)
-  }
+  # if(length(placesToBuy$name) == 1){
+  #   return(placesToBuy[1,]$name)
+  #   housesInCol <- board$houses[board$color == uniqueC[ownsAll[1]]]
+  #   sQuery <- board$position[board$color == uniqueC[ownsAll[1]] & board$houses == min(housesInCol) & board$houses < 5]
+  #   if(length(sQuery) != 0){
+  #     wTB <- max(sQuery)
+  #     
+  #   }
+  # }else{
+  return(placesToBuy[length(placesToBuy$name),]$name)
+  #}
  
   
   # if(length(ownsAll) > 1){ #hvis en spiller eier alle av en farge/farger

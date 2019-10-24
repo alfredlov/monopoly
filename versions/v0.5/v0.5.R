@@ -11,8 +11,8 @@ initGame <- function(i){
   #------------------------- Settings --------------------------
   setwd("../v0.5")              # Set working directory to correct version number
   N <<- 2                       # N = Number of player
-  strategy <- c(7, 10)           # Set player strategies, first parameter sets strategy for player 1, etc...
-  houseStrategy <- c("HALFRED", "HALFRED")  
+  strategy <- c(7, 10.1)           # Set player strategies, first parameter sets strategy for player 1, etc...
+  houseStrategy <- c("H1", "H1")  
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
   startCap <<- 1500                # Sets start capital for all players.
   roundCap <<- 200                # Capital gained frmo passing 'Go'.
@@ -282,7 +282,7 @@ buildDataBaseforNN4 <- function(){
 # hist(lengde, breaks=20, xlim=c(0,360), ylim = c(0,20))
 # ## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRATEGI SOM ER BEST
 plot(nn)
-k=100
+k=50
 #s=9
 winners = 1:k*0
 numberOfRounds <- 1:k*0
@@ -291,7 +291,7 @@ a <<- 0
 for (j in 1:k) {
   a <<- a + 1
   startGame()
-  winners[j] <- winnerS
+  winners[j] <- winner
 }
 
 
