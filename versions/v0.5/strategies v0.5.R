@@ -38,6 +38,8 @@ gatherStat <- function(x, y){
 
 runStrategy <- function(){
   propPrice <<- board$price[players$position[cur_player]]
+  propType <<- board$prop[players$position[cur_player]]
+  propCol <<- board$color[players$position[cur_player]]
   ##propPos <<- board$position[players$position[cur_player]]
   strategyName <- paste("strategy", players$strategy[cur_player], sep="")
   if(get(strategyName)() == TRUE){
@@ -50,11 +52,9 @@ runStrategy <- function(){
   }else{
     gatherStat("street", 0)
     #####BUDRUNDE
-    #BUDRUNDE FUNKER MEN STRATEGIENE ER IKKE SOFISTIKERTE NOK TIL Å HÅNDTERE DET
-    #DE BRUKER OFTE MER ENN DE HAR OG TAPER
     #SKRU BUDRUNDER AV/PÅ I initGame()
     if(bid_Active == TRUE){    
-      bid_over <- FALSE
+      bid_over <<- FALSE
       while (bid_over != TRUE) {
         playersBidDf <- players %>%
           filter(active == 1 & fortune > propPrice)
@@ -62,12 +62,13 @@ runStrategy <- function(){
         interestedBuyers <<- data.frame(playersBidDf$id, interested)
         if(nrow(playersBidDf) != 0){
           for (i in 1:nrow(playersBidDf)) {
-            strategyName <- paste("strategy", playersBidDf$strategy[i], sep="")
-            interestedBuyers$interested[i] <- get(strategyName)()
+            strategyName <- paste("strategy", playersBidDf$strategy[playersBidDf$id == playersBidDf$id[i]], sep="")
+            #cat(sprintf("\nstrategy %s, player %s",strategyName, playersBidDf$id[i]))
+            interestedBuyers$interested[i] <- get(strategyName)(playersBidDf$id[i])
           }
           if(length(interestedBuyers$interested[interestedBuyers$interested==TRUE]) == 1){
             bidWinner <<- interestedBuyers$playersBidDf.id[interestedBuyers$interested==TRUE]
-            bid_over <- TRUE
+            bid_over <<- TRUE
             position <- players$position[cur_player]
             board$owner[position] <<- bidWinner
             players$fortune[bidWinner] <<- players$fortune[bidWinner] - propPrice
@@ -75,10 +76,10 @@ runStrategy <- function(){
           }
           if(propPrice > board$price[players$position[cur_player]]*3){
             if(length(interestedBuyers$interested[interestedBuyers$interested > 0]) == 0){
-              bid_over <- TRUE
+              bid_over <<- TRUE
             }else{
             bidWinner <<- interestedBuyers[sample(nrow(interestedBuyers), 1),]
-            bid_over <- TRUE
+            bid_over <<- TRUE
             position <- players$position[cur_player]
             board$owner[position] <<- bidWinner$playersBidDf.id
             players$fortune[bidWinner$playersBidDf.id] <<- players$fortune[bidWinner$playersBidDf.id] - propPrice
@@ -89,7 +90,7 @@ runStrategy <- function(){
             propPrice <<- round(propPrice * 1.1)
           }
         }else{
-          bid_over <- TRUE
+          bid_over <<- TRUE
         }
       }
     }
@@ -168,7 +169,12 @@ strategy2 <- function(x){
 ##  Buys all properties as long as price < 50% of total income.
 ##-----------------------------------------------------------------------------------
 strategy3 <- function(x){
-  if(propPrice/players$fortune[cur_player] <= 0.5){
+  if(!missing(x)){
+    stratPlayer <<- x
+  }else{
+    stratPlayer <<- cur_player
+  }
+  if(propPrice/players$fortune[stratPlayer] <= 0.5){
     return(TRUE)
   }else{
     return(FALSE)
@@ -183,8 +189,7 @@ strategy3 <- function(x){
 strategy4 <- function(x){
   
   ##FORENKLE??
-  if(board$color[players$position[cur_player]] == 'purple' || board$color[players$position[cur_player]] == 'orange' || 
-     board$color[players$position[cur_player]] == 'red' || board$color[players$position[cur_player]] == 'yellow'){
+  if(propCol == 'purple' || propCol == 'orange' || propCol == 'red' || propCol == 'yellow'){
     return(TRUE)
   }else{
     return(FALSE)
@@ -197,7 +202,7 @@ strategy4 <- function(x){
 strategy5 <- function(x){
   
   ##FORENKLE??
-  if(board$color[players$position[cur_player]] == 'orange' || board$color[players$position[cur_player]] == 'red'){
+  if(propCol == 'orange' || propCol == 'red'){
     return(TRUE)
   }else{
     return(FALSE)
@@ -209,7 +214,7 @@ strategy5 <- function(x){
 ##  Strategy 6: Railroads
 ##-----------------------------------------------------------------------------------
 strategy6 <- function(x){
-  if(board$prop[players$position[cur_player]] == 3){
+  if(propType == 3){
     return(TRUE)
   }else{
     return(FALSE)
@@ -220,7 +225,7 @@ strategy6 <- function(x){
 ##  Strategy 7: Utilities
 ##-----------------------------------------------------------------------------------
 strategy7 <- function(x){
-  if(board$prop[players$position[cur_player]] == 2){
+  if(propType == 2){
     return(TRUE)
   }else{
     return(FALSE)
@@ -231,7 +236,7 @@ strategy7 <- function(x){
 ##  Strategy 8: Railroads + Utilities
 ##-----------------------------------------------------------------------------------
 strategy8 <- function(x){
-  if(board$prop[players$position[cur_player]] == 2 | board$prop[players$position[cur_player]] == 3){
+  if(propType == 2 | propType== 3){
     return(TRUE)
   }else{
     return(FALSE)
@@ -242,7 +247,7 @@ strategy8 <- function(x){
 ##  Strategy 9: Railroads + Utilities, then Conservative
 ##-----------------------------------------------------------------------------------
 strategy9 <- function(x){
-  if(board$prop[players$position[cur_player]] == 2 | board$prop[players$position[cur_player]] == 3){
+  if(propType == 2 | propType == 3){
     return(TRUE)
   }else{
     if(sum(board$owner[board$prop==2 | board$prop==3] > 0) >=5){
@@ -258,16 +263,15 @@ strategy9 <- function(x){
 ##-----------------------------------------------------------------------------------
 ##  Strategy 10: Solid
 ##-----------------------------------------------------------------------------------
-strategy10 <- function(){
-  position <- players$position[players$id == cur_player]
-  propPrice <- board$price[board$position == position]
-  curFortune <- players$fortune[players$id == cur_player]
-  
-  
-  cat(sprintf("Koden tror nå at strategi 10 skal spilles av spiller current player: %s \n",cur_player))
-
-  currentThrow <- players$throws[players$id==cur_player]
-  factor <- 1.01
+strategy10 <- function(x){
+  if(!missing(x)){
+    stratPlayer <<- x
+  }else{
+    stratPlayer <<- cur_player
+  }
+  fortune <- players$fortune[players$id == stratPlayer]
+  currentThrow <- players$throws[players$id == stratPlayer]
+  factor <- 1.001
   capitalReq <- 1500
   if((currentThrow<=5)&&((curFortune-propPrice)>=300)){
     # print("fine1!")
