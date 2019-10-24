@@ -61,7 +61,7 @@ initGame <- function(i){
 ## Main-function.
 ##---------------------------------------------------------
 startGame <- function(i){
-  source('functions v0.4.R')
+  source('functions v0.5.R')
   library(ggplot2)
   board <<- read.csv("monopoly_data v0.5.csv") #importer/reset gameboard som data.frame
   
