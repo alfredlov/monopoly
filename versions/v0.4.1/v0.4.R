@@ -22,9 +22,9 @@ initGame <- function(i){
   
   #gwplot(nn)
   #------------------------- Settings --------------------------
-  #setwd("../v0.4 2")              # Set working directory to correct version number
+  setwd("../v0.4.1")              # Set working directory to correct version number
   N <<- 2                      # N = Number of player
-  strategy <- c(i, 103) # Set player strategies, first parameter sets strategy for player 1, etc...
+  strategy <- c(1, 8) # Set player strategies, first parameter sets strategy for player 1, etc...
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
   startCap <- 1500              # Sets start capital for all players.
   roundCap <<- 200              # Capital gained frmo passing 'Go'.
@@ -32,6 +32,7 @@ initGame <- function(i){
   bid_Active <<- TRUE           # Turn bidding on and off.
   collectStats <<- TRUE           # Turn bidding on and off.
   enableAiData <<- TRUE         #Turn AI on/off
+  printResult <<- TRUE           # Turn bidding on and off.
   #-------------------------------------------------------------
   
   logForNN4temp <<- data.frame(matrix(NA, 0, 24))
@@ -138,6 +139,7 @@ startGame <- function(i){
   
   
   ##PRINTFUNKSJON FOR FORTUNE-UTVIKING
+  #SLETT?
   fortune <- t(data.frame(fortune))
   colnames(fortune)[1:N] <- paste(sprintf("player%s", 1:ncol(fortune)))
 
@@ -148,20 +150,18 @@ startGame <- function(i){
   ##############            MED GGPLOT              ##############
   ################################################################
 
-  ##SLETT??
-  # fortune <- data.frame(fortune)
-  # fortune <- t(data.frame(fortune))
-  # colnames(fortune)[1:N] <- paste(sprintf("player%s", 1:ncol(fortune)))
-
-  fortune <- data.frame(fortune)
-  fortune %>% 
-    ggplot() +
-    geom_line(aes(x = 1:nrow(fortune), y = fortune[,1]), color="blue") +
-    geom_line(aes(x = 1:nrow(fortune), y = fortune[,2]), color="red") +
-    #geom_line(aes(x = 1:nrow(fortune), y = fortune[,3]), color="orange") +
-    #geom_line(aes(x = 1:nrow(fortune), y = fortune[,4]), color="green") +
-    scale_color_manual(values = c("#00AFBB", "#E7B800")) +
-    theme_minimal()
+  if(printResult==TRUE){
+    fortune <- data.frame(fortune)
+    fortune %>% 
+      ggplot() +
+      geom_line(aes(x = 1:nrow(fortune), y = fortune[,1]), color="blue") +
+      geom_line(aes(x = 1:nrow(fortune), y = fortune[,2]), color="red") +
+      #geom_line(aes(x = 1:nrow(fortune), y = fortune[,3]), color="orange") +
+      #geom_line(aes(x = 1:nrow(fortune), y = fortune[,4]), color="green") +
+      scale_color_manual(values = c("#00AFBB", "#E7B800")) +
+      theme_minimal()
+  }
+  
   ################################################################
   #############        SLUTT FORTUNE-PRINT         ###############
   ################################################################
