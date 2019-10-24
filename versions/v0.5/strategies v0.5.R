@@ -35,6 +35,7 @@ gatherStat <- function(x, y){
     colnames(logForNN4temp) <- length(c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id"))
   }
 }
+
 runStrategy <- function(){
   propPrice <<- board$price[players$position[cur_player]]
   ##propPos <<- board$position[players$position[cur_player]]
@@ -151,6 +152,10 @@ runHouseStrategy <- function(){
   #   }
   # }
 }
+
+######################################################################################
+#####  PROPERTY-STRATEGIES ###########################################################
+######################################################################################
 
 ##-----------------------------------------------------------------------------------
 ##  Strategy 1: Greedy Naive
