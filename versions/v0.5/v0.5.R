@@ -22,6 +22,7 @@ initGame <- function(i){
   roundCap <<- 200                # Capital gained frmo passing 'Go'.
   bankMoney <<- 15140 - startCap*N
   bid_Active <<- TRUE             # Turn bidding on and off.
+  mort_Active <<- TRUE             # Turn mortage on and off.
   collectStats <<- TRUE           # Turns collecting stats on and off. 
   printResult <<- TRUE            # Turns printing result on and off.
   enableAiData <<- FALSE          # Turn AI on/off

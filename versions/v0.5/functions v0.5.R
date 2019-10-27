@@ -235,13 +235,14 @@ updateBalance <- function(x, y, z, what){
 ## checkPlayerLoss: Checks to see if player has lost by seeing if balance is negative. 
 ##--------------------------------------------------------------------------------
 checkPlayerLoss <- function(){#sjekk hvis cur_player har tapt
-  while(length(board$name[(board$owner==cur_player) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$mortaged != 1]) > 0 & players$fortune[cur_player] < 0){
+  while(length(board$name[(board$owner==cur_player) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$mortaged != 1]) > 0 & players$fortune[cur_player] < 0 & mort_Active == TRUE){
     if(runMortStrategy(cur_player) == FALSE){
       break
     }
   }
   if(players$fortune[cur_player] < 0){
     players$active[cur_player] <<- 0
+    fortune <<- cbind(fortune, players$fortune)
     board2 <<- board
     board <<- board %>%
       mutate(houses=replace(houses, owner==cur_player, 0)) %>%
