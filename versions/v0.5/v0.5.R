@@ -3,8 +3,6 @@
 ## Version 0.5
 ##---------------------------------------------------------
 
-#NB pass på variabler: globale = << og lokale = <
-
 #Importing of libraries and associated scripts.
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 source('functions v0.5.R')
