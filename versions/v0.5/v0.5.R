@@ -11,9 +11,9 @@ initGame <- function(i){
   
   #------------------------------  Settings  ------------------------------ 
   setwd("../v0.5")              # Set working directory to correct version number
-  N <<- 3                       # N = Number of player
-  strategy <- c(1, 2, 3)        # Set player strategies, first parameter sets strategy for player 1, etc...
-  houseStrategy <- c("H1", "H1", "H1")  
+  N <<- 4                       # N = Number of player
+  strategy <- c(1, 2, 3, 4)        # Set player strategies, first parameter sets strategy for player 1, etc...
+  houseStrategy <- c("H1", "H1", "H1", "H1")  
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
   startCap <<- 1500               # Sets start capital for all players.
   roundCap <<- 200                # Capital gained frmo passing 'Go'.
@@ -130,22 +130,11 @@ startGame <- function(i){
       winner <<- 0
     }
   }
-   
-  ################################################################
-  ############## PRINTFUNKSJON FOR FORTUNE-UTVIKING ##############
-  ##############            MED GGPLOT              ##############
-  ################################################################
 
   if(printResult==TRUE){
     printRoundResult()
-    
   }
-  
-  ################################################################
-  #############        SLUTT FORTUNE-PRINT         ###############
-  ################################################################
 }
-startGame(2)
 
 
 # #---------------
@@ -169,14 +158,12 @@ startGame(2)
 printRoundResult <- function(){
   test_data <- melt(fortune)
   thisThrows <- length(test_data[,1])
-  theme_set(theme_classic())
-  
-  ggplot(data=test_data, aes(x=1:thisThrows, y=value, group=Var1, col='variable'))+
-    geom_line()
 
+  ggplot(data=test_data, aes(x=1:thisThrows, y=value, group=Var1, color=as.factor(Var1)))+
+    geom_line()+
+    theme_classic()+
+    labs(title="Results", x="Throws", y="Fortune", color="Players")
 }
-
-
 
 ################################################################
 #############             TEST-SUITE             ###############
@@ -200,4 +187,4 @@ printRoundResult <- function(){
 # pbinom(68, 100, prob=0.5)
 ################################################################
 
-
+startGame()
