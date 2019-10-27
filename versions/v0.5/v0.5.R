@@ -147,6 +147,7 @@ startGame <- function(i){
 }
 startGame(2)
 
+
 # #---------------
 # #Mål hvor mange runder spillet går
 # #---------------
@@ -160,11 +161,33 @@ startGame(2)
 # hist(lengde, breaks=20, xlim=c(0,360), ylim = c(0,20))
 # ## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRATEGI SOM ER BEST
 plot(nn)
-k=50
+
+################################################################
+#############             TEST-SUITE             ###############
+################################################################
+
+printRoundResult <- function(numPlayers){
+  fortune <- t(data.frame(fortune))
+  colnames(fortune)[1:N] <- paste(sprintf("player%s", 1:ncol(fortune)))
+  fortune <- data.frame(fortune)
+  fortune %>% 
+    ggplot() +
+    geom_line(aes(x = 1:nrow(fortune), y = fortune[,1]), color="blue") +
+    geom_line(aes(x = 1:nrow(fortune), y = fortune[,2]), color="red") +
+    #geom_line(aes(x = 1:nrow(fortune), y = fortune[,3]), color="orange") +
+    #geom_line(aes(x = 1:nrow(fortune), y = fortune[,4]), color="green") +
+    scale_color_manual(values = c("#00AFBB", "#E7B800")) +
+    theme_minimal()
+}
+
+################################################################
+#############             TEST-SUITE             ###############
+################################################################
+k <- 50
+a <- 0
 #s=9
 winners = 1:k*0
 numberOfRounds <- 1:k*0
-# 
 a <<- 0
 for (j in 1:k) {
   a <<- a + 1
@@ -174,20 +197,9 @@ for (j in 1:k) {
 }
 
 
-hist(winners)
-##SLETT!!!
+#hist(winners)
 table(winners)
 pbinom(68, 100, prob=0.5)
+################################################################
 
-# 
-# pbinom(73, size = 100, prob = 0.5)
-# 
-# ## Number of rounds
-# hist(numberOfRounds, breaks=60)
-# 
-# ##Plot the results!!!
-# plot(x=1:length(fortune1), y = fortune1, ylim=c(0, max(c(fortune1, fortune2))))
-# lines(x=1:length(fortune2), y = fortune2)
-# print("number of props")
-# print(length(board$owner[board$owner==1]))
-# print(length(board$owner[board$owner==2]))
+
