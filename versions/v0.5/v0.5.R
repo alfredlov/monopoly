@@ -11,8 +11,8 @@ initGame <- function(i){
   #------------------------------  Settings  ------------------------------ 
   setwd("../v0.5")              # Set working directory to correct version number
   N <<- 2                       # N = Number of player
-  strategy <- c(sample(), 10)           # Set player strategies, first parameter sets strategy for player 1, etc...
-  houseStrategy <- c("H1", "H1")  
+  strategy <- c(sample(1:11, 1),104)         # Set player strategies, first parameter sets strategy for player 1, etc...
+  houseStrategy <- c("H1", "H104")  
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
   startCap <<- 1500                # Sets start capital for all players.
   roundCap <<- 200                # Capital gained frmo passing 'Go'.
@@ -52,6 +52,10 @@ initGame <- function(i){
   
   #nn=neuralnet(win~throws+fortune+white+brown+lblue+purple+orange+red+yellow+green+blue+whitehouses+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+buyStreet+buyHouse,data=logForNN4, hidden=c(2),act.fct = "logistic", linear.output = FALSE, stepmax=1e6, lifesign="full")
   #nn=neuralnet(win~throws+fortune+white+brown+lblue+purple+orange+red+yellow+green+blue+whitehouses+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+buyStreet+buyHouse,data=replica_NN, hidden=c(1),act.fct = "tanh", linear.output = FALSE, stepmax=1e6, lifesign="full")
+  #nn=neuralnet(win~throws+fortune+white+brown+lblue+purple+orange+red+yellow+green+blue+whitehouses+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+buyStreet+buyHouse+fortuneOthers+whiteOthers+brownOthers+lblueOthers+purpleOthers+orangeOthers+redOthers+yellowOthers+greenOthers+blueOthers+whitehousesOthers+brownhousesOthers+lbluehousesOthers+purplehousesOthers+orangehousesOthers+redhousesOthers+yellowhousesOthers+greenhousesOthers+bluehousesOthers,data=logForNN4, hidden=c(1),act.fct = "tanh", linear.output = FALSE, stepmax=1e6, lifesign="full")
+  #normalized
+  #nn=neuralnet(win~throws+fortune+white+brown+lblue+purple+orange+red+yellow+green+blue+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+buyStreet+buyHouse+fortuneOthers+whiteOthers+brownOthers+lblueOthers+purpleOthers+orangeOthers+redOthers+yellowOthers+greenOthers+blueOthers+brownhousesOthers+lbluehousesOthers+purplehousesOthers+orangehousesOthers+redhousesOthers+yellowhousesOthers+greenhousesOthers+bluehousesOthers,data=logForNN4NORM, hidden=c(2,1), linear.output = FALSE, stepmax=1e6, lifesign="full")
+  #nn=neuralnet(win~throws+fortune+white+brown+lblue+purple+orange+red+yellow+green+blue+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+buyStreet+buyHouse+fortuneOthers+whiteOthers+brownOthers+lblueOthers+purpleOthers+orangeOthers+redOthers+yellowOthers+greenOthers+blueOthers+brownhousesOthers+lbluehousesOthers+purplehousesOthers+orangehousesOthers+redhousesOthers+yellowhousesOthers+greenhousesOthers+bluehousesOthers,data=logForNN5NORM, hidden=c(2,1), linear.output = FALSE, stepmax=1e6, lifesign="full")
   
   #gwplot(nn)  
   
@@ -139,6 +143,8 @@ startGame <- function(i){
       game_over <- TRUE
       
       logForNN4temp <<- data.frame(matrix(NA, 0, 42))
+      winnerS <<- 0
+      winner <<- 0
     }
 
     
@@ -174,7 +180,7 @@ startGame <- function(i){
   #############        SLUTT FORTUNE-PRINT         ###############
   ################################################################
 }
-
+plot(nn)
 startGame(2)
 ################################################################
 #############           START NN DATA             ###############
@@ -186,12 +192,27 @@ startGame(2)
 #logForNN3 <<- data.frame(matrix(NA, 0, 17))
 
 #logForNN4 <<- data.frame(matrix(NA, 0, 43))
+#logForNN5 <<- data.frame(matrix(NA, 0, 43))
+
+
 if(enableAiData == TRUE){
 replicate(200, buildDataBaseforNN())
 replicate(20, buildDataBaseforNN2())
 replicate(200, buildDataBaseforNN3())
 
-replicate(10, buildDataBaseforNN4())
+replicate(200, buildDataBaseforNN4())
+
+replicate(40, buildDataBaseforNN5())
+#normalize data for optimized learning 
+normalize <- function(x){
+  return((x - min(x)) / (max(x) - min(x)))
+}
+logForNN4 <<- logForNN4 %>%
+  mutate(win = ifelse(win == 1, 1, 0))
+
+logForNN5NORM <<- as.data.frame(lapply(logForNN5, normalize))
+logForNN5NORM <<- logForNN5NORM %>%
+  replace(., is.na(.), as.integer("0"))
 
 hist(logForNN4$id[logForNN4$win == 1])
 
@@ -263,7 +284,23 @@ buildDataBaseforNN4 <- function(){
   
   logForNN4 <<- rbind(logForNN4, logForNN4temp)
     
+}
+
+
+buildDataBaseforNN5 <- function(){
+  startGame()
+  uniqueC <- unique(board$color[board$color != "" & board$color != "grey"])
+  colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
+  winner <- 1
+  if(length(logForNN4temp[,1]) != 0){
+    logForNN4temp <- logForNN4temp %>%
+      mutate(win = ifelse(id == winner, 1, 0))
   }
+  #colnames(logForNN5) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id", "win")
+  
+  logForNN5 <<- rbind(logForNN5, logForNN4temp)
+  
+}
 }
 ################################################################
 #############          SLUTT NN DATA             ###############
@@ -290,9 +327,9 @@ numberOfRounds <- 1:k*0
 a <<- 0
 for (j in 1:k) {
   a <<- a + 1
-  cat(sprintf("Round: %s", j))
+  cat(sprintf("Round: %s, winnner %s", j, winnerS))
   startGame()
-  winners[j] <- winner
+  winners[j] <- winnerS
 }
 
 

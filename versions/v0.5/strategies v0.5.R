@@ -40,24 +40,27 @@ runStrategy <- function(){
   propPrice <<- board$price[players$position[cur_player]]
   propType <<- board$prop[players$position[cur_player]]
   propCol <<- board$color[players$position[cur_player]]
+  propPos <<- board$position[players$position[cur_player]]
+  
   ##propPos <<- board$position[players$position[cur_player]]
   strategyName <- paste("strategy", players$strategy[cur_player], sep="")
   if(get(strategyName)() == TRUE){
     #SLETT??
     #cat(sprintf("kjøp %s",Sys.time()))
+    
     position <- players$position[cur_player]
     board$owner[position] <<- cur_player
-    players$fortune[cur_player] <<- players$fortune[cur_player] - board$price[position]
     gatherStat("street", 1)
+    players$fortune[cur_player] <<- players$fortune[cur_player] - board$price[position]
   }else{
     gatherStat("street", 0)
     #####BUDRUNDE
     #SKRU BUDRUNDER AV/PÅ I initGame()
     if(bid_Active == TRUE){    
       bid_over <<- FALSE
+      playersBidDf <- players %>%
+        filter(active == 1 & fortune > propPrice & id != cur_player)
       while (bid_over != TRUE) {
-        playersBidDf <- players %>%
-          filter(active == 1 & fortune > propPrice)
         interested <- rep(0, times=nrow(playersBidDf))
         interestedBuyers <<- data.frame(playersBidDf$id, interested)
         if(nrow(playersBidDf) != 0){
@@ -88,6 +91,8 @@ runStrategy <- function(){
             }
           }else{
             propPrice <<- round(propPrice * 1.1)
+            playersBidDf <- playersBidDf %>%
+              filter(active == 1 & fortune > propPrice & id != cur_player & id %in% interestedBuyers$playersBidDf.id[interestedBuyers$interested != 0])
           }
         }else{
           bid_over <<- TRUE
@@ -100,6 +105,13 @@ runStrategy <- function(){
 }
 
 runHouseStrategy <- function(){
+  housesAvailable <- TRUE
+  if(!is.na(sum(board$houses))){
+    if(sum(board$houses) > 32){
+      housesAvailable <- FALSE
+    }
+  }
+  if(housesAvailable == TRUE){
   #check if player owns all of a color
   strategyName <- paste("strategy", players$houseStrategy[cur_player], sep="")
   uniqueC <- c(as.character(unique(board$color[board$color != "" & board$color != "white" & board$color != "grey"])))
@@ -137,6 +149,7 @@ runHouseStrategy <- function(){
         }
       }
     }
+  }
   }
 }
 
@@ -281,19 +294,19 @@ strategy10 <- function(x){
     # print(propPrice)
   }
   if((curFortune-propPrice)>=300){
-    print("lololol")
+    #print("lololol")
     return(TRUE)
   }
   else if(curFortune > 2500){
-    print("fine2!")
+    #print("fine2!")
 
     return(TRUE)
   }
   else if(curFortune-propPrice >= factor^(currentThrow)*capitalReq){
-    print("--------")
-    print(factor^(currentThrow)*capitalReq)
+    #print("--------")
+    #print(factor^(currentThrow)*capitalReq)
 
-    print("fine3!")
+    #print("fine3!")
 
     return(TRUE)
     }
@@ -305,27 +318,48 @@ strategy10 <- function(x){
 
 }
 ##-----------------------------------------------------------------------------------
-##  Strategy 10.1: Solid(?)
+##  Strategy 11: Agressive(?)
 ##-----------------------------------------------------------------------------------
-strategy10.1 <- function(){
-  position <- players$position[players$id==cur_player]
-  propPrice <- board$price[board$position == position]
-  fortune <- players$fortune[players$id==cur_player]
-  currentThrow <- players$throws[players$id==cur_player]
-  factor <- 1.01
-  capitalReq <- 1500/2
-  if(currentThrow<=10){
-    return(TRUE)
+strategy11 <- function(x){
+  if(!missing(x)){
+    stratPlayer <<- x
+  }else{
+    stratPlayer <<- cur_player
   }
-  else{
-    if(fortune-propPrice > players$fortune[players$id!=cur_player]){
+  curFortune <- players$fortune[players$id == stratPlayer]
+  currentThrow <- players$throws[players$id == stratPlayer]
+  uniqueC <- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
+  streetColFreq <<- c()
+  streetColFreqOthers <<- c()
+  test<-data.frame(matrix(NA, 0, 41))
+  for (i in 1:length(uniqueC)) {
+    NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == stratPlayer & !(is.na(board$owner)),]) 
+    streetColFreq <<- c(streetColFreq, NoCo)
+    NoCo2 <- nrow(board[board$color  == uniqueC[i] & board$owner != stratPlayer & board$owner != 0 & !(is.na(board$owner)),]) 
+    streetColFreqOthers <<- c(streetColFreqOthers, NoCo2)
+  }
+  if(curFortune - propPrice < 400){
+    return(FALSE)
+  }else{
+    if(propType %in% c(2,3)){
+      return(FALSE)
+    } else if(currentThrow < 7){
       return(TRUE)
-    }
-    else{
+    } else if(-7 %in% (players$position[players$id != stratPlayer] - propPos)){
+      return(TRUE)
+    } else if(propCol %in% streetColFreq){
+      #print("lololol")
+      if(propCol %in% streetColFreqOthers){
+        return(FALSE)
+      }else{
+        return(TRUE)
+      }
+    } else if(propCol == "orange"){
+      return(TRUE)
+    } else{
       return(FALSE)
     }
   }
-  
 }
 
 
@@ -348,7 +382,7 @@ strategyH1 <- function(){
 
 strategyH2 <- function(){
   curFortune <- players$fortune[players$id==cur_player]
-  cat(sprintf("current player: %s \n",cur_player))
+  #cat(sprintf("current player: %s \n",cur_player))
   if(players$fortune[players$id==cur_player]<1000){
     return(FALSE)
   }
@@ -421,42 +455,48 @@ strategyH104 <- function(x){
   }else{
     stratPlayer <<- cur_player
   }
-  pos <- players$position[cur_player]
-  fort <- players$fortune[cur_player]
+  pos <- players$throws[stratPlayer]
+  fort <- players$fortune[stratPlayer]
   uniqueC <- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
   streetColFreq <<- c()
   streetColFreqOthers <<- c()
   houseColFreq <<- c()
   houseColFreqOthers <<- c()
-  test=data.frame()
+  test<-data.frame(matrix(NA, 0, 41))
   for (i in 1:length(uniqueC)) {
-    NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == cur_player & !(is.na(board$owner)),]) 
+    NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == stratPlayer & !(is.na(board$owner)),]) 
     streetColFreq <<- c(streetColFreq, NoCo)
-    NoCo2 <- nrow(board[board$color  == uniqueC[i] & board$owner != cur_player & board$owner != 0 & !(is.na(board$owner)),]) 
-    streetColFreqOthers <<- c(streetColFreq, NoCo2)
+    NoCo2 <- nrow(board[board$color  == uniqueC[i] & board$owner != stratPlayer & board$owner != 0 & !(is.na(board$owner)),]) 
+    streetColFreqOthers <<- c(streetColFreqOthers, NoCo2)
     
-    sumHouses <- sum(board$houses[(board$owner==cur_player) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
+    sumHouses <- sum(board$houses[(board$owner==stratPlayer) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
     houseColFreq <<- c(houseColFreq, sumHouses)
-    sumHouses2 <- sum(board$houses[(board$owner!=cur_player) & (board$owner!=0) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
-    houseColFreqOthers <<- c(houseColFreq, sumHouses2)
+    sumHouses2 <- sum(board$houses[(board$owner!=stratPlayer) & (board$owner!=0) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
+    houseColFreqOthers <<- c(houseColFreqOthers, sumHouses2)
   }
   
   hypStreet <<- houseColFreq
   #ikke kjøpe hus 
-  test<- rbind(test, c(pos, fort, streetColFreq, houseColFreq, 0, 0, sum(players$fortune[players$id != cur_player]), streetColFreqOthers, houseColFreqOthers)) 
+  test<- rbind(test, c(pos, fort, streetColFreq, houseColFreq, 0, 0, sum(players$fortune[players$id != stratPlayer]), streetColFreqOthers, houseColFreqOthers)) 
   #for hver farge
   for(i in 1:length(unique(placesToBuy$color))){
     hypStreet[which(uniqueC==unique(placesToBuy$color)[i])] <- hypStreet[which(uniqueC==unique(placesToBuy$color)[i])] + 1
     fort2 <- fort - board$housePrice[board$color == unique(placesToBuy$color)[i]][1]
-    test<- rbind(test, c(pos, fort2, streetColFreq, hypStreet, 0, 1, sum(players$fortune[players$id != cur_player]), streetColFreqOthers, houseColFreqOthers))
+    test<- rbind(test, c(pos, fort2, streetColFreq, hypStreet, 0, 1, sum(players$fortune[players$id != stratPlayer]), streetColFreqOthers, houseColFreqOthers))
     hypStreet[which(uniqueC==unique(placesToBuy$color)[i])] <- hypStreet[which(uniqueC==unique(placesToBuy$color)[i])] - 1  
   }
   
   #kolonnenavn
-  colnames(test) <<- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')))
+  colnames(test) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')))
   
   #vurderer hvilken situasjon som er mest egnet for å vinne
-  Predict=neuralnet::compute(nn,test)
+  normalize2 <- function(x){
+    return((x - min(logForNN4)) / (max(logForNN4) - min(logForNN4)))
+  }
+  testNORM <<- as.data.frame(lapply(test, normalize2))
+  testNORM <<- testNORM %>%
+    replace(is.na(.), 0)
+  Predict=neuralnet::compute(nn,testNORM)
   Predict$net.result
   
   #i tilfelle noen gir NA -> NA satt til 0
@@ -468,9 +508,13 @@ strategyH104 <- function(x){
   #velger farge eller ikke kjøp
   if(Predict$net.result[1] == max(Predict$net.result)){
     #ikke kjøp
+    #print("AI KJØPTE IKKKKKE HUS")
+    #cat(sprintf("%s", Predict$net.result))
+    #testTemp <<- as.data.frame(test)
     return(FALSE)
   }else{
-    colToBuy <- unique(placesToBuy$color)[which(Predict$net.result == max(Predict$net.result)) - 1] #minus 1 pga predict har én mer rad enn placestobuy pga ikke kjøp alternativet
+    #print("AI KJØPTE HUS")
+    colToBuy <- unique(placesToBuy$color)[which(Predict$net.result == max(Predict$net.result))[1] - 1] #minus 1 pga predict har én mer rad enn placestobuy pga ikke kjøp alternativet
     placesToBuyTemp <- placesToBuy %>%
       filter(color == colToBuy)
     return(placesToBuy[length(placesToBuyTemp$name),]$name) #kjøper hus på den eiendomen lengst ut ut i brettet av fargen den har valgt
@@ -734,9 +778,9 @@ strategy104 <- function(x){
   }else{
     stratPlayer <<- cur_player
   }
-  pos <- players$position[stratPlayer]
+  pos <- players$throws[stratPlayer]
   fort <- players$fortune[stratPlayer]
-  uniqueC <- unique(board$color[board$color != "" & board$color != "grey"])
+  uniqueC <- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
   streetColFreq <<- c()
   streetColFreqOthers <<- c()
   houseColFreq <<- c()
@@ -745,25 +789,30 @@ strategy104 <- function(x){
     NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == stratPlayer & !(is.na(board$owner)),]) 
     streetColFreq <<- c(streetColFreq, NoCo)
     NoCo2 <- nrow(board[board$color  == uniqueC[i] & board$owner != stratPlayer & board$owner != 0 & !(is.na(board$owner)),]) 
-    streetColFreqOthers <<- c(streetColFreq, NoCo2)
+    streetColFreqOthers <<- c(streetColFreqOthers, NoCo2)
     
     sumHouses <- sum(board$houses[(board$owner==stratPlayer) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
     houseColFreq <<- c(houseColFreq, sumHouses)
     sumHouses2 <- sum(board$houses[(board$owner!=stratPlayer) & (board$owner!=0) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
-    houseColFreqOthers <<- c(houseColFreq, sumHouses2)
+    houseColFreqOthers <<- c(houseColFreqOthers, sumHouses2)
   }
   # filteredNN <- logForNN4 %>%
   #   filter(throws == pos)
   #nn=neuralnet(win~throws+fortune+white+brown+lblue+purple+orange+red+yellow+green+blue+whitehouses+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+buyStreet+buyHouse,data=filteredNN, act.fct = "tanh", linear.output = FALSE, stepmax=1e6, lifesign="full")
-  hypStreet <<- streetColFreq
-  hypStreet[which(uniqueC==propCol)] <<- hypStreet[which(uniqueC==propCol)] + 1
+  hypStreet <- streetColFreq
+  hypStreet[which(uniqueC==propCol)] <- hypStreet[which(uniqueC==propCol)] + 1
   fort2 <- fort - propPrice
   
-  test=data.frame()
+  test<-data.frame(matrix(NA, 0, 41))
   test<- rbind(test, c(pos, fort, streetColFreq, houseColFreq, 0, 0, sum(players$fortune[players$id != stratPlayer]), streetColFreqOthers, houseColFreqOthers))
   test<- rbind(test, c(pos, fort2, hypStreet, houseColFreq, 1, 0, sum(players$fortune[players$id != stratPlayer]), streetColFreqOthers, houseColFreqOthers))
-  colnames(test) <<- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')))
-  Predict=neuralnet::compute(nn,test)
+  colnames(test) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')))
+  
+  normalize2 <- function(x){
+    return((x - min(logForNN4)) / (max(logForNN4) - min(logForNN4)))
+  }
+  testNORM <- as.data.frame(lapply(test, normalize2))
+  Predict=neuralnet::compute(nn,testNORM)
   Predict$net.result
   
   for (i in 1:2) {
@@ -771,9 +820,18 @@ strategy104 <- function(x){
       Predict$net.result[i] <- 0
     }
   }
-  if(Predict$net.result[1] > Predict$net.result[2]){
+  if(Predict$net.result[1] >= Predict$net.result[2]){
+    print("AI KJØPTE IKKKKKE GATE")
+    if(!missing(x)){
+      print("på auksjonnn")
+    }
+    #testTemp <<- as.data.frame(testNORM)
+    cat(sprintf("throws : %s", Predict$net.result))
     return(FALSE)
   }else{
+    print("AI KJØPTE GATE")
+    #cat(sprintf("%s", Predict$net.result))
+    #testTemp <<- as.data.frame(test)
     return(TRUE)
   }
 }
