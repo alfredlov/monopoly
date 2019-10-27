@@ -5,10 +5,19 @@
 
 #NB pass på variabler: globale = << og lokale = <
 #FORSLAG:FLYTT ALT AV SOURCING OF IMPORTERING AV LIBRARIES OPP HIT!!
-source('ai training v0.5.R')
-library(reshape2)
+
 initGame <- function(i){
+  enableAiData <<- FALSE          # Turn AI on/off
+  source('functions v0.5.R')
+  source('ai training v0.5.R')
+  library(ggplot2)
+  library(reshape2)
+  board <<- read.csv("monopoly_data v0.5.csv") #importer/reset gameboard som data.frame
+  uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
+  logForNN4temp <<- data.frame(matrix(NA, 0, 42))
+  colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
   
+
   #------------------------------  Settings  ------------------------------ 
   setwd("../v0.5")              # Set working directory to correct version number
   N <<- 2                      # N = Number of player
@@ -21,7 +30,6 @@ initGame <- function(i){
   version <- 5                    # Sets game version.
   bid_Active <<- TRUE             # Turn bidding on and off.
   collectStats <<- TRUE           # Turns collecting stats on and off. 
-  enableAiData <<- FALSE          # Turn AI on/off
   printResult <<- TRUE            # Turns printing result on and off. 
   #---------------------------------------------------------------------------
   
@@ -44,15 +52,6 @@ initGame <- function(i){
 ##---------------------------------------------------------
 startGame <- function(i){  
   initGame(i)                      # Reset verdier for spillet(start på nytt)
-  source('functions v0.5.R')
-  source('ai training v0.5.R')
-  library(ggplot2)
-  board <<- read.csv("monopoly_data v0.5.csv") #importer/reset gameboard som data.frame
-  
-  uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
-  logForNN4temp <<- data.frame(matrix(NA, 0, 42))
-  colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
-  
   
   cur_player <<- sample(1:N, 1)   # Selects initial player at random. Eliminates potential first-mover (dis)advantage.
   game_over <<- FALSE
@@ -135,7 +134,7 @@ startGame <- function(i){
     printRoundResult()
   }
 }
-
+startGame()
 
 # #---------------
 # #Mål hvor mange runder spillet går
