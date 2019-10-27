@@ -12,15 +12,15 @@ library(reshape2)
 
 initGame <- function(i){
   #------------------------------  Settings  ------------------------------ 
-  setwd("../v0.5")              # Set working directory to correct version number
-  N <<- 2                      # N = Number of player
-  strategy <- c(1, 10)        # Set player strategies, first parameter sets strategy for player 1, etc...
+  version <- 5                    # Sets game version.
+  setwd("../v0.5")                # Set working directory to correct version number
+  strategy <- c(1, 10)            # Set player strategies, first parameter sets strategy for player 1, etc...
+  N <<- length(strategy)          # N = Number of player
   houseStrategy <- c("H1", "H1")  
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
   startCap <<- 1500               # Sets start capital for all players.
   roundCap <<- 200                # Capital gained frmo passing 'Go'.
   bankMoney <<- 15140 - startCap*N
-  version <- 5                    # Sets game version.
   bid_Active <<- TRUE             # Turn bidding on and off.
   collectStats <<- TRUE           # Turns collecting stats on and off. 
   printResult <<- TRUE            # Turns printing result on and off.
