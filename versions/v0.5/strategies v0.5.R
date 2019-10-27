@@ -342,40 +342,18 @@ strategy9 <- function(x){
 ##  Strategy 10: Solid
 ##-----------------------------------------------------------------------------------
 strategy10 <- function(x){
-  if(!missing(x)){
-    stratPlayer <<- x
-  }else{
-    stratPlayer <<- cur_player
-  }
+
   curFortune <- players$fortune[players$id == stratPlayer]
   currentThrow <- players$throws[players$id == stratPlayer]
   factor <- 1.001
   capitalReq <- 1500
   if((currentThrow<=5)&&((curFortune-propPrice)>=300)){
-    # print("fine1!")
-    # print("-----------")
-    #
-    # print(curFortune)
-    # print(propPrice)
-  }
-  if((curFortune-propPrice)>=300){
-    #print("lololol")
-    return(TRUE)
-  }
-  else if(curFortune > 2500){
-    #print("fine2!")
-
     return(TRUE)
   }
   else if(curFortune-propPrice >= factor^(currentThrow)*capitalReq){
-    #print("--------")
-    #print(factor^(currentThrow)*capitalReq)
-
-    #print("fine3!")
 
     return(TRUE)
     }
-
   else{
     return(FALSE)
   }
