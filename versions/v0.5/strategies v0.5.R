@@ -12,8 +12,7 @@ source('ai strategies v0.5.R')
 
 gatherStat <- function(x, y){
   if(collectStats == TRUE){
-    uniqueC <- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
-    countFreq(cur_player, uniqueC)
+    countFreq(cur_player)
     wola <- cur_player
     if(x == "house"){
       logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, y, 0, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
@@ -140,6 +139,54 @@ runHouseStrategy <- function(){
       }
     }
   }
+  }
+}
+
+runMortStrategy <- function(x, y, z){
+  #--------------
+  #x = spiller, y = TRUE/FALSE (om spilleren pantsetter for å få z kapital), z = ønsket kapital
+  if(!missing(x)){
+    stratPlayer <<- x
+  }else{
+    stratPlayer <<- cur_player
+  }
+  countFreq(stratPlayer)
+  if(missing(y)){
+    #her pantsettes det nok kun for å overleve i spillet
+    #denne calles som regel fra checkPlayerLoss helt til spilleren eventuelt ikke har tapt
+    if(sum(streetColFreq) > 0){
+      #strategi M1 pantsetter kun de billigste eiendommene
+      M1(stratPlayer)
+    }
+  }else if (y == TRUE){
+    #spilleren prøver å få z kapital
+  }
+}
+
+M1 <- function(x){
+  if(!missing(x)){
+    stratPlayer <<- x
+  }else{
+    stratPlayer <<- cur_player
+  }
+  #denne strategien prøver å pantsette minst verdifulle eiendommer
+  countFreq(stratPlayer)
+  allOfCol <- c()
+  for(i in 1:length(uniqueC)){
+    total <- length(board$color[board$color == uniqueC[i] & !(is.na(board$owner))])
+    allOfCol <- c(allOfCol, total)
+  }
+  normVec <- streetColFreq/allOfCol
+  lowest <- min(normVec[normVec>0]) #over 0 fordi de med 0 inneholder 0 eiendommer...
+
+  first <- min(which(normVec == lowest)) #første farge m/ færrest eiendommer
+  colOfInd <- uniqueC[first]
+  #pantsette eiendom med fargen colOfFirst:
+  propsOfCol <- board2$name[board2$color == colOfInd & board2$owner == stratPlayer & !(is.na(board$owner))]
+  if(is.na(sum(board$houses[board$name %in% propsOfCol]))){
+    #ingen hus -> pantsett
+  }else{
+    #selg hus for halve prisen
   }
 }
 
@@ -319,8 +366,7 @@ strategy11 <- function(x){
   }
   curFortune <- players$fortune[players$id == stratPlayer]
   currentThrow <- players$throws[players$id == stratPlayer]
-  uniqueC <- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
-  countFreq(stratPlayer, uniqueC)
+  countFreq(stratPlayer)
   if(curFortune - propPrice < 400){
     return(FALSE)
   }else{
@@ -426,4 +472,6 @@ strategyHALFRED <- function(){
   #   }
   # }
 }
+
+
 

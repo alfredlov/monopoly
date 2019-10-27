@@ -7,7 +7,6 @@
 #FORSLAG:FLYTT ALT AV SOURCING OF IMPORTERING AV LIBRARIES OPP HIT!!
 source('ai training v0.5.R')
 library(reshape2)
-
 initGame <- function(i){
   
   #------------------------------  Settings  ------------------------------ 
@@ -18,6 +17,7 @@ initGame <- function(i){
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
   startCap <<- 1500               # Sets start capital for all players.
   roundCap <<- 200                # Capital gained frmo passing 'Go'.
+  bankMoney <<- 15140 - startCap*N
   version <- 5                    # Sets game version.
   bid_Active <<- TRUE             # Turn bidding on and off.
   collectStats <<- TRUE           # Turns collecting stats on and off. 
@@ -42,12 +42,18 @@ initGame <- function(i){
 ##---------------------------------------------------------
 ## Main-function.
 ##---------------------------------------------------------
-startGame <- function(i){
+startGame <- function(i){  
+  initGame(i)                      # Reset verdier for spillet(start på nytt)
   source('functions v0.5.R')
+  source('ai training v0.5.R')
   library(ggplot2)
   board <<- read.csv("monopoly_data v0.5.csv") #importer/reset gameboard som data.frame
   
-  initGame(i)                      # Reset verdier for spillet(start på nytt)
+  uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
+  logForNN4temp <<- data.frame(matrix(NA, 0, 42))
+  colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
+  
+  
   cur_player <<- sample(1:N, 1)   # Selects initial player at random. Eliminates potential first-mover (dis)advantage.
   game_over <<- FALSE
   ptm <- Sys.time()  #Timer
@@ -154,7 +160,7 @@ startGame(2)
 # replicate(100, startGame())
 # hist(lengde, breaks=20, xlim=c(0,360), ylim = c(0,20))
 # ## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRATEGI SOM ER BEST
-plot(nn)
+#plot(nn)
 
 ################################################################
 #############    PRINT ROUND RESULTS-FUNCTION    ###############

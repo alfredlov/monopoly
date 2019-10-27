@@ -258,8 +258,7 @@ strategy104 <- function(x){
   }
   pos <- players$throws[stratPlayer]
   fort <- players$fortune[stratPlayer]
-  uniqueC <- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
-  countFreq(stratPlayer, uniqueC)
+  countFreq(stratPlayer)
                                                         #kan egentlig fjerne dette men beholder det intil videre for sikkerhetsskyld
                                                         # streetColFreq <<- c()
                                                         # streetColFreqOthers <<- c()
