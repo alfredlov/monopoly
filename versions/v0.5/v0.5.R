@@ -4,16 +4,19 @@
 ##---------------------------------------------------------
 
 #NB pass på variabler: globale = << og lokale = <
+#FORSLAG:FLYTT ALT AV SOURCING OF IMPORTERING AV LIBRARIES OPP HIT!!
 source('ai training v0.5.R')
+library(reshape2)
+
 initGame <- function(i){
   
   #------------------------------  Settings  ------------------------------ 
   setwd("../v0.5")              # Set working directory to correct version number
-  N <<- 2                       # N = Number of player
-  strategy <- c(sample(1:11, 1),104)         # Set player strategies, first parameter sets strategy for player 1, etc...
-  houseStrategy <- c("H1", "H104")  
+  N <<- 3                       # N = Number of player
+  strategy <- c(1, 2, 3)        # Set player strategies, first parameter sets strategy for player 1, etc...
+  houseStrategy <- c("H1", "H1", "H1")  
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
-  startCap <<- 1500                # Sets start capital for all players.
+  startCap <<- 1500               # Sets start capital for all players.
   roundCap <<- 200                # Capital gained frmo passing 'Go'.
   version <- 5                    # Sets game version.
   bid_Active <<- TRUE             # Turn bidding on and off.
@@ -22,7 +25,7 @@ initGame <- function(i){
   printResult <<- TRUE            # Turns printing result on and off. 
   #---------------------------------------------------------------------------
   
-  logForNN4temp <<- data.frame(matrix(NA, 0, 42))
+  #logForNN4temp <<- data.frame(matrix(NA, 0, 42))
   colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
   
   id <- c(1:N) #som vektor til data.frame
@@ -31,8 +34,8 @@ initGame <- function(i){
   nHouses <<- rep(0, times=N)
   nProps <<- rep(0, times=N)
   active <- rep(1, times=N) #sett spillere som er aktive, alle v/ init
-  position <- rep(1, times=N) #tile 1 er start
-  jailDays <- rep(0, times=N) #tile 1 er start
+  position <- rep(1, times=N) 
+  jailDays <- rep(0, times=N) 
   players <<- data.frame(id, strategy, houseStrategy, fortune, active, position, jailDays, throws) #data.frame m/ oversikt over spillerne
 }
 
@@ -116,7 +119,7 @@ startGame <- function(i){
       checkGameOver()
       game_over <- TRUE
       
-      logForNN4temp <<- data.frame(matrix(NA, 0, 42))
+      #logForNN4temp <<- data.frame(matrix(NA, 0, 42))
       winnerS <<- 0
       winner <<- 0
     }
@@ -128,17 +131,8 @@ startGame <- function(i){
   ################################################################
 
   if(printResult==TRUE){
-    fortune <- t(data.frame(fortune))
-    colnames(fortune)[1:N] <- paste(sprintf("player%s", 1:ncol(fortune)))
-    fortune <- data.frame(fortune)
-    fortune %>% 
-      ggplot() +
-      geom_line(aes(x = 1:nrow(fortune), y = fortune[,1]), color="blue") +
-      geom_line(aes(x = 1:nrow(fortune), y = fortune[,2]), color="red") +
-      #geom_line(aes(x = 1:nrow(fortune), y = fortune[,3]), color="orange") +
-      #geom_line(aes(x = 1:nrow(fortune), y = fortune[,4]), color="green") +
-      scale_color_manual(values = c("#00AFBB", "#E7B800")) +
-      theme_minimal()
+    printRoundResult()
+    
   }
   
   ################################################################
@@ -163,43 +157,41 @@ startGame(2)
 plot(nn)
 
 ################################################################
-#############             TEST-SUITE             ###############
+#############    PRINT ROUND RESULTS-FUNCTION    ###############
 ################################################################
 
-printRoundResult <- function(numPlayers){
-  fortune <- t(data.frame(fortune))
-  colnames(fortune)[1:N] <- paste(sprintf("player%s", 1:ncol(fortune)))
-  fortune <- data.frame(fortune)
-  fortune %>% 
-    ggplot() +
-    geom_line(aes(x = 1:nrow(fortune), y = fortune[,1]), color="blue") +
-    geom_line(aes(x = 1:nrow(fortune), y = fortune[,2]), color="red") +
-    #geom_line(aes(x = 1:nrow(fortune), y = fortune[,3]), color="orange") +
-    #geom_line(aes(x = 1:nrow(fortune), y = fortune[,4]), color="green") +
-    scale_color_manual(values = c("#00AFBB", "#E7B800")) +
-    theme_minimal()
-}
+printRoundResult <- function(){
+  test_data <- melt(fortune)
+  thisThrows <- length(test_data[,1])
+  theme_set(theme_classic())
+  
+  ggplot(data=test_data, aes(x=1:thisThrows, y=value, group=Var1, col='variable'))+
+    geom_line()
 
-################################################################
-#############             TEST-SUITE             ###############
-################################################################
-k <- 50
-a <- 0
-#s=9
-winners = 1:k*0
-numberOfRounds <- 1:k*0
-a <<- 0
-for (j in 1:k) {
-  a <<- a + 1
-  cat(sprintf("Round: %s, winnner %s", j, winnerS))
-  startGame()
-  winners[j] <- winnerS
 }
 
 
-#hist(winners)
-table(winners)
-pbinom(68, 100, prob=0.5)
+
+################################################################
+#############             TEST-SUITE             ###############
+################################################################
+# k <- 50
+# a <- 0
+# #s=9
+# winners = 1:k*0
+# numberOfRounds <- 1:k*0
+# a <<- 0
+# for (j in 1:k) {
+#   a <<- a + 1
+#   cat(sprintf("Round: %s, winnner %s", j, winnerS))
+#   startGame()
+#   winners[j] <- winnerS
+# }
+# 
+# 
+# #hist(winners)
+# table(winners)
+# pbinom(68, 100, prob=0.5)
 ################################################################
 
 
