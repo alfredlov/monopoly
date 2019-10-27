@@ -30,9 +30,13 @@ move <- function(x){
     y <- nrow(board) - cur_position
     players$position[cur_player] <<- x - y
     #players$fortune[cur_player] <<- players$fortune[cur_player] + roundCapv
-    updateBalance(cur_player, "pluss", roundCap, "Start")
-    bankMoney <<- bankMoney - roundCap
-    cat(sprintf("Player %s moved %s tiles to position %s, and passed Go.",cur_player, x, x-y))
+    if(bankMoney > roundCap){
+      updateBalance(cur_player, "pluss", roundCap, "Start")
+      bankMoney <<- bankMoney - roundCap
+      cat(sprintf("Player %s moved %s tiles to position %s, and passed Go.",cur_player, x, x-y))
+    }else{
+      print("bank cant pay roundcap")
+    }
   }
   else{
     if(players$jailDays[cur_player] == 1){
@@ -164,30 +168,24 @@ processTrain <- function(){
 processProp <- function(){
   #sjekke om den som eier gaten også eier alle i samme farge
   color <<- as.character(board$color[position])
-  if(checkStreetPer(color, owner) == TRUE){
-    #en annen spiller en den som landet her eier alle av denne fargen, dobbel leie
-    if(board$houses[position] > 0){
-      housesFunc <- sprintf("rent%sh", board$houses[position])
-      updateBalance(owner, "pluss", board[[housesFunc]][position], "Husleie")
-      updateBalance(cur_player, "minus", board[[housesFunc]][position], "Husleie")
-                              # players$fortune[owner] <<- players$fortune[owner] + board[[housesFunc]][position]
-                              # players$fortune[cur_player] <<- players$fortune[cur_player] - board[[housesFunc]][position]
-      #cat(sprintf("HUSLEIE, spiller %s fikk %s for %s", owner, board[[housesFunc]][position], board$name[position]))
+  if(board$mortaged[position] == 0){
+    if(checkStreetPer(color, owner) == TRUE){
+      #en annen spiller en den som landet her eier alle av denne fargen, dobbel leie
+      if(board$houses[position] > 0){
+        housesFunc <- sprintf("rent%sh", board$houses[position])
+        updateBalance(owner, "pluss", board[[housesFunc]][position], "Husleie")
+        updateBalance(cur_player, "minus", board[[housesFunc]][position], "Husleie")
+      }else{
+        updateBalance(owner, "pluss", board$rent[position]*2, "Dobbel Prop")
+        updateBalance(cur_player, "minus", board$rent[position]*2, "Dobbel Prop")
+      }
     }else{
-      updateBalance(owner, "pluss", board$rent[position]*2, "Dobbel Prop")
-      updateBalance(cur_player, "minus", board$rent[position]*2, "Dobbel Prop")
-                                  # players$fortune[owner] <<- players$fortune[owner] + board$rent[position]*2
-                                  # players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]*2
-      #print("DOBBEL LEIE")
+      updateBalance(owner, "pluss", board$rent[position], "Prop")
+      updateBalance(cur_player, "minus", board$rent[position], "Prop")
     }
   }else{
-    updateBalance(owner, "pluss", board$rent[position], "Prop")
-    updateBalance(cur_player, "minus", board$rent[position], "Prop")
-                # players$fortune[owner] <<- players$fortune[owner] + board$rent[position]
-                # players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]
-    #print("LEIE")
+    #mortaged, no rent
   }
-  
 }
 #sjekk om alle farger blir eid av én spiller
 checkStreetPer <- function(x, y){
@@ -208,9 +206,9 @@ countFreq <- function(x){
   houseColFreq <<- c()
   houseColFreqOthers <<- c()
   for (i in 1:length(uniqueC)) {
-    NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == x & !(is.na(board$owner)),]) 
+    NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == x & !(is.na(board$owner)) & board$mortaged != 1,]) 
     streetColFreq <<- c(streetColFreq, NoCo)
-    NoCo2 <- nrow(board[board$color  == uniqueC[i] & board$owner != x & board$owner != 0 & !(is.na(board$owner)),]) 
+    NoCo2 <- nrow(board[board$color  == uniqueC[i] & board$owner != x & board$owner != 0 & !(is.na(board$owner)) & board$mortaged != 1,]) 
     streetColFreqOthers <<- c(streetColFreqOthers, NoCo2)
     
     sumHouses <- sum(board$houses[(board$owner==x) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
@@ -237,6 +235,11 @@ updateBalance <- function(x, y, z, what){
 ## checkPlayerLoss: Checks to see if player has lost by seeing if balance is negative. 
 ##--------------------------------------------------------------------------------
 checkPlayerLoss <- function(){#sjekk hvis cur_player har tapt
+  while(length(board$name[(board$owner==cur_player) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$mortaged != 1]) > 0 & players$fortune[cur_player] < 0){
+    if(runMortStrategy(cur_player) == FALSE){
+      break
+    }
+  }
   if(players$fortune[cur_player] < 0){
     players$active[cur_player] <<- 0
     board2 <<- board

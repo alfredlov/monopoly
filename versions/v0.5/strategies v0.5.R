@@ -40,7 +40,8 @@ runStrategy <- function(){
     position <- players$position[cur_player]
     board$owner[position] <<- cur_player
     gatherStat("street", 1)
-    players$fortune[cur_player] <<- players$fortune[cur_player] - board$price[position]
+    updateBalance(cur_player, "minus", propPrice, "bought street")
+    bankMoney <<- bankMoney + propPrice
   }else{
     gatherStat("street", 0)
     #####BUDRUNDE
@@ -63,7 +64,8 @@ runStrategy <- function(){
             bid_over <<- TRUE
             position <- players$position[cur_player]
             board$owner[position] <<- bidWinner
-            players$fortune[bidWinner] <<- players$fortune[bidWinner] - propPrice
+            updateBalance(bidWinner, "minus", propPrice, "bought street on auction")
+            bankMoney <<- bankMoney + propPrice
             #cat(sprintf("Player %s won auction of %s for %s",bidWinner, position, propPrice))
           }
           if(propPrice > board$price[players$position[cur_player]]*3){
@@ -74,7 +76,8 @@ runStrategy <- function(){
             bid_over <<- TRUE
             position <- players$position[cur_player]
             board$owner[position] <<- bidWinner$playersBidDf.id
-            players$fortune[bidWinner$playersBidDf.id] <<- players$fortune[bidWinner$playersBidDf.id] - propPrice
+            updateBalance(bidWinner$playersBidDf.id, "minus", propPrice, "bought street on auction")
+            bankMoney <<- bankMoney + propPrice
     
             #cat(sprintf("Player %s won auction of %s on random for %s",bidWinner, position, propPrice))
             }
@@ -156,7 +159,13 @@ runMortStrategy <- function(x, y, z){
     #denne calles som regel fra checkPlayerLoss helt til spilleren eventuelt ikke har tapt
     if(sum(streetColFreq) > 0){
       #strategi M1 pantsetter kun de billigste eiendommene
-      M1(stratPlayer)
+      if(M1(stratPlayer) == FALSE){
+        return(FALSE)
+      }else{
+        return(TRUE)
+      }
+    }else{
+      return(FALSE)
     }
   }else if (y == TRUE){
     #spilleren prøver å få z kapital
@@ -182,11 +191,30 @@ M1 <- function(x){
   first <- min(which(normVec == lowest)) #første farge m/ færrest eiendommer
   colOfInd <- uniqueC[first]
   #pantsette eiendom med fargen colOfFirst:
-  propsOfCol <- board2$name[board2$color == colOfInd & board2$owner == stratPlayer & !(is.na(board$owner))]
-  if(is.na(sum(board$houses[board$name %in% propsOfCol]))){
+  propsOfCol <- board$position[board$color == colOfInd & board$owner == stratPlayer & !(is.na(board$owner)) & board$mortaged != 1]
+  firtStreet <- min(board$position[board$position %in% propsOfCol])
+  if(is.na(sum(board$houses[board$position %in% propsOfCol])) | sum(board$houses[board$position %in% propsOfCol]) == 0){
     #ingen hus -> pantsett
+    if((bankMoney - board$mortageval[board$position == firtStreet]) > 0){
+      bankMoney <<- bankMoney - board$mortageval[board$position == firtStreet]
+      updateBalance(stratPlayer, "pluss", board$mortageval[board$position == firtStreet], "Mortage")
+      board$mortaged[board$position == firtStreet] <<- 1
+      return(TRUE)
+    }else{
+      print("banken har ikke råd til pantsetting")
+      return(FALSE)
+    }
   }else{
-    #selg hus for halve prisen
+    if(bankMoney - (board$housePrice[board$position == firtStreet])/2 > 0){
+      bankMoney <<- bankMoney - (board$housePrice[board$position == firtStreet])/2
+      updateBalance(stratPlayer, "pluss", (board$housePrice[board$position == firtStreet])/2, "sold house")
+      board$houses[board$position == firtStreet] <<- board$houses[board$position == firtStreet] - 1
+      return(TRUE)
+    }else{
+      print("banken har ikke råd til kjøpe hus")
+      return(FALSE)
+    }
+    #selg hus til banken for halve prisen
   }
 }
 
