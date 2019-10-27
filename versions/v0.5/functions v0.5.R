@@ -16,11 +16,6 @@ library(dplyr)
 throwDice <- function(){
   dice <- c(sample(1:6, size = 1, replace = TRUE), sample(1:6, size = 1, replace = TRUE))
   return(dice)
-  ##SLETT??
-  #simuler kast m/ 2 terninger, se hist nedenfor for bevis 
-  #hist(replicate(1000, sample(1:6, size = 1, replace = TRUE) + sample(1:6, size = 1, replace = TRUE)))
-  #hist(replicate(100000, sum(sample(1:6, size = 2, replace = TRUE))))
-  
 }
 
 ##--------------------------------------------------------------------------------
@@ -35,7 +30,6 @@ move <- function(x){
     y <- nrow(board) - cur_position
     players$position[cur_player] <<- x - y
     players$fortune[cur_player] <<- players$fortune[cur_player] + roundCap
-    ##SLETT??
     #cat(sprintf("Player %s moved %s tiles to position %s, and passed Go.",cur_player, x, x-y))
   }
   else{
@@ -51,8 +45,6 @@ move <- function(x){
     if(players$jailDays[cur_player] == 0){
       players$position[cur_player] <<- cur_position + x
     }
-    
-    ##SLETT??
     #cat(sprintf("Player %s moved %s tiles to position %s",cur_player, x, cur_position + x))
   }
 } 
@@ -101,7 +93,7 @@ processPos <- function(){#håndter posisjon for spiller cur_player, leder til fl
 ## processFree: 
 ##--------------------------------------------------------------------------------
 processFree <- function(){
-  
+  #nothing happens if landing on Free parking
 }
 
 ##--------------------------------------------------------------------------------
@@ -176,8 +168,6 @@ processProp <- function(){
       players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]*2
       #print("DOBBEL LEIE")
     }
-
-    #cat(sprintf("DOBBEL, spiller %s eier hele %s", owner, board$color[position]))
   }else{
     players$fortune[owner] <<- players$fortune[owner] + board$rent[position]
     players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]
@@ -185,7 +175,6 @@ processProp <- function(){
   }
   
 }
-
 #sjekk om alle farger blir eid av én spiller
 checkStreetPer <- function(x, y){
   NoC <- nrow(board[board$color  == x,]) #hvor mange gater i den fargen
@@ -194,6 +183,25 @@ checkStreetPer <- function(x, y){
     return(TRUE)
   }else{
     return(FALSE)
+  }
+}
+#sjekk hvor mange av en farge én spiller eier, og hvor mange hus per eiendom
+countFreq <- function(x, y){
+  uniqueC <- y
+  streetColFreq <<- c()
+  streetColFreqOthers <<- c()
+  houseColFreq <<- c()
+  houseColFreqOthers <<- c()
+  for (i in 1:length(uniqueC)) {
+    NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == x & !(is.na(board$owner)),]) 
+    streetColFreq <<- c(streetColFreq, NoCo)
+    NoCo2 <- nrow(board[board$color  == uniqueC[i] & board$owner != x & board$owner != 0 & !(is.na(board$owner)),]) 
+    streetColFreqOthers <<- c(streetColFreqOthers, NoCo2)
+    
+    sumHouses <- sum(board$houses[(board$owner==x) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
+    houseColFreq <<- c(houseColFreq, sumHouses)
+    sumHouses2 <- sum(board$houses[(board$owner!=x) & (board$owner!=0) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
+    houseColFreqOthers <<- c(houseColFreqOthers, sumHouses2)
   }
 }
 
@@ -210,8 +218,6 @@ checkPlayerLoss <- function(){#sjekk hvis cur_player har tapt
       as.data.frame()
     #cat(sprintf("Player %s ran out of cash!", cur_player))
     return(TRUE)
-    ##SLETT??
-
   }else{
     return(FALSE)
   }
@@ -226,8 +232,6 @@ checkGameOver <- function(){
     game_over <<- TRUE
     winner <<- players$id[players$active==TRUE]
     winnerS <<- players$strategy[players$active==TRUE]
-    
-    ##SLETT??
     print(winner)
     #cat(sprintf("Player %s won, using strategy %s", winner, winnerS))
   }
@@ -244,7 +248,5 @@ setNextPlayer <- function(){
   } else {
     cur_player <<- cur_player + 1
   }
-  
-  ##SLETT??
   #cat(sprintf("Player %s's turn",cur_player))
 }

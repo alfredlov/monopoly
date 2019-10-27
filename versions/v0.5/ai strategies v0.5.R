@@ -248,7 +248,8 @@ strategy103 <- function(x){
   }
 }
 
-
+#egentlig den eneste brukbare ai-strategien av de som er skrevet til nå, vinner iblandt - veldig ofte uavgjort
+#statistikk over vinnere av rand vs 104: uavgjort: 29, 1:1, 2:4, 5:2, 6:1, 7:1, 8:1, 9:2, 10:1, 11:2, 104: 6 (50 runder)
 strategy104 <- function(x){
   if(!missing(x)){
     stratPlayer <<- x
@@ -258,21 +259,23 @@ strategy104 <- function(x){
   pos <- players$throws[stratPlayer]
   fort <- players$fortune[stratPlayer]
   uniqueC <- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
-  streetColFreq <<- c()
-  streetColFreqOthers <<- c()
-  houseColFreq <<- c()
-  houseColFreqOthers <<- c()
-  for (i in 1:length(uniqueC)) {
-    NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == stratPlayer & !(is.na(board$owner)),]) 
-    streetColFreq <<- c(streetColFreq, NoCo)
-    NoCo2 <- nrow(board[board$color  == uniqueC[i] & board$owner != stratPlayer & board$owner != 0 & !(is.na(board$owner)),]) 
-    streetColFreqOthers <<- c(streetColFreqOthers, NoCo2)
-    
-    sumHouses <- sum(board$houses[(board$owner==stratPlayer) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
-    houseColFreq <<- c(houseColFreq, sumHouses)
-    sumHouses2 <- sum(board$houses[(board$owner!=stratPlayer) & (board$owner!=0) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
-    houseColFreqOthers <<- c(houseColFreqOthers, sumHouses2)
-  }
+  countFreq(stratPlayer, uniqueC)
+                                                        #kan egentlig fjerne dette men beholder det intil videre for sikkerhetsskyld
+                                                        # streetColFreq <<- c()
+                                                        # streetColFreqOthers <<- c()
+                                                        # houseColFreq <<- c()
+                                                        # houseColFreqOthers <<- c()
+                                                        # for (i in 1:length(uniqueC)) {
+                                                        #   NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == stratPlayer & !(is.na(board$owner)),])
+                                                        #   streetColFreq <<- c(streetColFreq, NoCo)
+                                                        #   NoCo2 <- nrow(board[board$color  == uniqueC[i] & board$owner != stratPlayer & board$owner != 0 & !(is.na(board$owner)),])
+                                                        #   streetColFreqOthers <<- c(streetColFreqOthers, NoCo2)
+                                                        # 
+                                                        #   sumHouses <- sum(board$houses[(board$owner==stratPlayer) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
+                                                        #   houseColFreq <<- c(houseColFreq, sumHouses)
+                                                        #   sumHouses2 <- sum(board$houses[(board$owner!=stratPlayer) & (board$owner!=0) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
+                                                        #   houseColFreqOthers <<- c(houseColFreqOthers, sumHouses2)
+                                                        # }
   # filteredNN <- logForNN4 %>%
   #   filter(throws == pos)
   #nn=neuralnet(win~throws+fortune+white+brown+lblue+purple+orange+red+yellow+green+blue+whitehouses+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+buyStreet+buyHouse,data=filteredNN, act.fct = "tanh", linear.output = FALSE, stepmax=1e6, lifesign="full")

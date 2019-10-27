@@ -13,21 +13,7 @@ source('ai strategies v0.5.R')
 gatherStat <- function(x, y){
   if(collectStats == TRUE){
     uniqueC <- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
-    streetColFreq <<- c()
-    streetColFreqOthers <<- c()
-    houseColFreq <<- c()
-    houseColFreqOthers <<- c()
-    for (i in 1:length(uniqueC)) {
-      NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == cur_player & !(is.na(board$owner)),]) 
-      streetColFreq <<- c(streetColFreq, NoCo)
-      NoCo2 <- nrow(board[board$color  == uniqueC[i] & board$owner != cur_player & board$owner != 0 & !(is.na(board$owner)),]) 
-      streetColFreqOthers <<- c(streetColFreqOthers, NoCo2)
-      
-      sumHouses <- sum(board$houses[(board$owner==cur_player) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
-      houseColFreq <<- c(houseColFreq, sumHouses)
-      sumHouses2 <- sum(board$houses[(board$owner!=cur_player) & (board$owner!=0) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$color  == uniqueC[i]])
-      houseColFreqOthers <<- c(houseColFreqOthers, sumHouses2)
-    }
+    countFreq(cur_player, uniqueC)
     wola <- cur_player
     if(x == "house"){
       logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, y, 0, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
@@ -324,6 +310,7 @@ strategy10 <- function(x){
 ##-----------------------------------------------------------------------------------
 ##  Strategy 11: Agressive(?)
 ##-----------------------------------------------------------------------------------
+
 strategy11 <- function(x){
   if(!missing(x)){
     stratPlayer <<- x
@@ -333,15 +320,7 @@ strategy11 <- function(x){
   curFortune <- players$fortune[players$id == stratPlayer]
   currentThrow <- players$throws[players$id == stratPlayer]
   uniqueC <- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
-  streetColFreq <<- c()
-  streetColFreqOthers <<- c()
-  test<-data.frame(matrix(NA, 0, 41))
-  for (i in 1:length(uniqueC)) {
-    NoCo <- nrow(board[board$color  == uniqueC[i] & board$owner == stratPlayer & !(is.na(board$owner)),]) 
-    streetColFreq <<- c(streetColFreq, NoCo)
-    NoCo2 <- nrow(board[board$color  == uniqueC[i] & board$owner != stratPlayer & board$owner != 0 & !(is.na(board$owner)),]) 
-    streetColFreqOthers <<- c(streetColFreqOthers, NoCo2)
-  }
+  countFreq(stratPlayer, uniqueC)
   if(curFortune - propPrice < 400){
     return(FALSE)
   }else{
