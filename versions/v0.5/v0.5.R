@@ -164,7 +164,7 @@ startGame(2)
 # replicate(100, startGame())
 # hist(lengde, breaks=20, xlim=c(0,360), ylim = c(0,20))
 # ## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRATEGI SOM ER BEST
-plot(nn)
+#plot(nn)
 
 ################################################################
 #############             TEST-SUITE             ###############
