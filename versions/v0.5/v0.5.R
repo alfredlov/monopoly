@@ -4,20 +4,15 @@
 ##---------------------------------------------------------
 
 #NB pass på variabler: globale = << og lokale = <
-#FORSLAG:FLYTT ALT AV SOURCING OF IMPORTERING AV LIBRARIES OPP HIT!!
+
+#Importing of libraries and associated scripts.
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+source('functions v0.5.R')
+source('ai training v0.5.R')
+library(ggplot2)
+library(reshape2)
 
 initGame <- function(i){
-  enableAiData <<- FALSE          # Turn AI on/off
-  source('functions v0.5.R')
-  source('ai training v0.5.R')
-  library(ggplot2)
-  library(reshape2)
-  board <<- read.csv("monopoly_data v0.5.csv") #importer/reset gameboard som data.frame
-  uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
-  logForNN4temp <<- data.frame(matrix(NA, 0, 42))
-  colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
-  
-
   #------------------------------  Settings  ------------------------------ 
   setwd("../v0.5")              # Set working directory to correct version number
   N <<- 2                      # N = Number of player
@@ -30,12 +25,12 @@ initGame <- function(i){
   version <- 5                    # Sets game version.
   bid_Active <<- TRUE             # Turn bidding on and off.
   collectStats <<- TRUE           # Turns collecting stats on and off. 
-  printResult <<- TRUE            # Turns printing result on and off. 
+  printResult <<- TRUE            # Turns printing result on and off.
+  enableAiData <<- FALSE          # Turn AI on/off
   #---------------------------------------------------------------------------
   
   logForNN4temp <<- data.frame(matrix(NA, 0, 42))
   colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
-  
   id <- c(1:N) #som vektor til data.frame
   throws <<- rep(0, times=N)
   fortune <<- rep(startCap, times=N)
@@ -45,6 +40,11 @@ initGame <- function(i){
   position <- rep(1, times=N) 
   jailDays <- rep(0, times=N) 
   players <<- data.frame(id, strategy, houseStrategy, fortune, active, position, jailDays, throws) #data.frame m/ oversikt over spillerne
+  board <<- read.csv("monopoly_data v0.5.csv") #importer/reset gameboard som data.frame
+  uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
+  logForNN4temp <<- data.frame(matrix(NA, 0, 42))
+  colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
+  
 }
 
 ##---------------------------------------------------------
