@@ -121,7 +121,7 @@ runHouseStrategy <- function(){
     considerBuy <<- TRUE
     while(considerBuy == TRUE){
         placesToBuy <<- board %>%
-          filter(owner == cur_player & color %in% ownsAll & housePrice < players$fortune[cur_player] & houses < 5) %>%
+          filter(owner == cur_player & color %in% ownsAll & housePrice < players$fortune[cur_player] & houses < 5 & mortaged != 1) %>%
           select(name, color, houses, housePrice)
       if(length(placesToBuy$name) == 0){
         considerBuy <<- FALSE
