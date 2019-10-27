@@ -11,9 +11,9 @@ initGame <- function(i){
   
   #------------------------------  Settings  ------------------------------ 
   setwd("../v0.5")              # Set working directory to correct version number
-  N <<- 4                       # N = Number of player
-  strategy <- c(1, 2, 3, 4)        # Set player strategies, first parameter sets strategy for player 1, etc...
-  houseStrategy <- c("H1", "H1", "H1", "H1")  
+  N <<- 2                      # N = Number of player
+  strategy <- c(1, 10)        # Set player strategies, first parameter sets strategy for player 1, etc...
+  houseStrategy <- c("H1", "H1")  
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
   startCap <<- 1500               # Sets start capital for all players.
   roundCap <<- 200                # Capital gained frmo passing 'Go'.
@@ -25,7 +25,7 @@ initGame <- function(i){
   printResult <<- TRUE            # Turns printing result on and off. 
   #---------------------------------------------------------------------------
   
-  #logForNN4temp <<- data.frame(matrix(NA, 0, 42))
+  logForNN4temp <<- data.frame(matrix(NA, 0, 42))
   colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
   
   id <- c(1:N) #som vektor til data.frame
@@ -162,29 +162,30 @@ printRoundResult <- function(){
   ggplot(data=test_data, aes(x=1:thisThrows, y=value, group=Var1, color=as.factor(Var1)))+
     geom_line()+
     theme_classic()+
-    labs(title="Results", x="Throws", y="Fortune", color="Players")
+    labs(title="Results", x="Throws", y="Fortune", color="Players")+
+    geom_hline(yintercept=0, linetype="dashed")
 }
 
 ################################################################
 #############             TEST-SUITE             ###############
 ################################################################
-# k <- 50
-# a <- 0
-# #s=9
-# winners = 1:k*0
-# numberOfRounds <- 1:k*0
-# a <<- 0
-# for (j in 1:k) {
-#   a <<- a + 1
-#   cat(sprintf("Round: %s, winnner %s", j, winnerS))
-#   startGame()
-#   winners[j] <- winnerS
-# }
-# 
-# 
-# #hist(winners)
-# table(winners)
-# pbinom(68, 100, prob=0.5)
+k <- 50
+a <- 0
+#s=9
+winners = 1:k*0
+numberOfRounds <- 1:k*0
+a <<- 0
+for (j in 1:k) {
+  a <<- a + 1
+  cat(sprintf("Round: %s, winnner %s", j, winnerS))
+  startGame()
+  winners[j] <- winnerS
+}
+
+
+#hist(winners)
+table(winners)
+pbinom(68, 100, prob=0.5)
 ################################################################
 
 startGame()
