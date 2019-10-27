@@ -120,7 +120,7 @@ runHouseStrategy <- function(){
     considerBuy <<- TRUE
     while(considerBuy == TRUE){
         placesToBuy <<- board %>%
-          filter(owner == cur_player & color %in% ownsAll & housePrice < players$fortune[cur_player] & houses < 5 & mortaged != 1) %>%
+          filter(owner == cur_player & color %in% ownsAll & housePrice < players$fortune[cur_player] & houses < 5) %>%
           select(name, color, houses, housePrice)
       if(length(placesToBuy$name) == 0){
         considerBuy <<- FALSE
@@ -132,8 +132,7 @@ runHouseStrategy <- function(){
         houseToBuy <- get(strategyName)()
         if(houseToBuy != FALSE){ #KJØPER BARE HUS OM TRUE FRA STRATEGI
           board$houses[board$name == houseToBuy] <<- board$houses[board$name == houseToBuy] + 1 
-          updateBalance(cur_player, "minus", board$housePrice[board$name == houseToBuy], "bougth house")
-          bankMoney <<- bankMoney + board$housePrice[board$name == houseToBuy]
+          players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$name == houseToBuy]
           gatherStat("house", 1)
           #print("KJØPT HUS")
         }else{
@@ -343,7 +342,11 @@ strategy9 <- function(x){
 ##  Strategy 10: Solid
 ##-----------------------------------------------------------------------------------
 strategy10 <- function(x){
-
+  if(!missing(x)){
+    stratPlayer <<- x
+  }else{
+    stratPlayer <<- cur_player
+  }
   curFortune <- players$fortune[players$id == stratPlayer]
   currentThrow <- players$throws[players$id == stratPlayer]
   factor <- 1.001
