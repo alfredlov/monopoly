@@ -27,6 +27,7 @@ initGame <- function(i){
   collectStats <<- TRUE           # Turns collecting stats on and off. 
   printResult <<- TRUE            # Turns printing result on and off.
   enableAiData <<- FALSE          # Turn AI on/off
+  enableTransLog <<- TRUE          # Turn transaction log on/off
   #---------------------------------------------------------------------------
   
   logForNN4temp <<- data.frame(matrix(NA, 0, 42))

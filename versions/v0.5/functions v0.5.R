@@ -228,7 +228,9 @@ updateBalance <- function(x, y, z, what){
     players$fortune[x] <<- players$fortune[x] - z
     bankMoney <<- bankMoney + z
   }
-  cat(sprintf("\n %s %s to %s for %s", y, z, x, what))
+  if(enableTransLog == TRUE){
+    cat(sprintf("\n %s %s to %s for %s", y, z, x, what))
+  }
 } 
 
 

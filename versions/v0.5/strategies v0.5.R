@@ -159,8 +159,10 @@ runMortStrategy <- function(x, y, z){
       #strategi M1 pantsetter kun de billigste eiendommene
       if(M1(stratPlayer) == FALSE){
         return(FALSE)
+        gatherStat("pantsatt", 0)
       }else{
         return(TRUE)
+        gatherStat("pantsatt", 1)
       }
     }else{
       return(FALSE)
