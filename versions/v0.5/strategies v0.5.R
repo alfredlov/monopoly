@@ -3,6 +3,7 @@
 ## Version 0.2
 ##---------------------------------------------------------
 
+
 ##--------------------------------------------------------------------------------
 ## runStrategy: Runs the current player's predefined strategy
 ##  - If the given player's strategy-function returns TRUE, 
@@ -351,7 +352,7 @@ strategy10 <- function(x){
   currentThrow <- players$throws[players$id == stratPlayer]
   factor <- 1.001
   capitalReq <- 1500
-  if((currentThrow<=5)&&((curFortune-propPrice)>=300)){
+  if((curFortune-propPrice)>=300){
     return(TRUE)
   }
   else if(curFortune-propPrice >= factor^(currentThrow)*capitalReq){

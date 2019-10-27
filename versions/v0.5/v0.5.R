@@ -14,7 +14,7 @@ initGame <- function(i){
   #------------------------------  Settings  ------------------------------ 
   version <- 5                    # Sets game version.
   setwd("../v0.5")                # Set working directory to correct version number
-  strategy <- c(1, 2)            # Set player strategies, first parameter sets strategy for player 1, etc...
+  strategy <- c(1, 3)             # Set player strategies, first parameter sets strategy for player 1, etc...
   N <<- length(strategy)          # N = Number of player
   houseStrategy <- c("H1", "H1")  
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
