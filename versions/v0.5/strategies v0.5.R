@@ -42,7 +42,6 @@ runStrategy <- function(){
     board$owner[position] <<- cur_player
     gatherStat("street", 1)
     updateBalance(cur_player, "minus", propPrice, "bought street")
-    bankMoney <<- bankMoney + propPrice
   }else{
     gatherStat("street", 0)
     #####BUDRUNDE
@@ -66,7 +65,6 @@ runStrategy <- function(){
             position <- players$position[cur_player]
             board$owner[position] <<- bidWinner
             updateBalance(bidWinner, "minus", propPrice, "bought street on auction")
-            bankMoney <<- bankMoney + propPrice
             #cat(sprintf("Player %s won auction of %s for %s",bidWinner, position, propPrice))
           }
           if(propPrice > board$price[players$position[cur_player]]*3){
@@ -78,7 +76,6 @@ runStrategy <- function(){
             position <- players$position[cur_player]
             board$owner[position] <<- bidWinner$playersBidDf.id
             updateBalance(bidWinner$playersBidDf.id, "minus", propPrice, "bought street on auction")
-            bankMoney <<- bankMoney + propPrice
     
             #cat(sprintf("Player %s won auction of %s on random for %s",bidWinner, position, propPrice))
             }
@@ -197,7 +194,6 @@ M1 <- function(x){
   if(is.na(sum(board$houses[board$position %in% propsOfCol])) | sum(board$houses[board$position %in% propsOfCol]) == 0){
     #ingen hus -> pantsett
     if((bankMoney - board$mortageval[board$position == firtStreet]) > 0){
-      bankMoney <<- bankMoney - board$mortageval[board$position == firtStreet]
       updateBalance(stratPlayer, "pluss", board$mortageval[board$position == firtStreet], "Mortage")
       board$mortaged[board$position == firtStreet] <<- 1
       return(TRUE)
@@ -207,7 +203,6 @@ M1 <- function(x){
     }
   }else{
     if(bankMoney - (board$housePrice[board$position == firtStreet])/2 > 0){
-      bankMoney <<- bankMoney - (board$housePrice[board$position == firtStreet])/2
       updateBalance(stratPlayer, "pluss", (board$housePrice[board$position == firtStreet])/2, "sold house")
       board$houses[board$position == firtStreet] <<- board$houses[board$position == firtStreet] - 1
       return(TRUE)
@@ -216,6 +211,37 @@ M1 <- function(x){
       return(FALSE)
     }
     #selg hus til banken for halve prisen
+  }
+}
+
+mayLiftMortage <- function(){
+  #vurder å kjøpe tilbake eiendommer
+  #call strategi og sjekk om eiendommene er noen strategien vil kjøpe for mortageval*1.1
+  #hvis det er flere eiendommer vil lift mortage, for alle strategier utenom AI, velge å kjøpe den rimeligste
+  #målet er at AI vil velge å kjøpe tilbake den som gir best sannsynlighet for å vinne
+  cur_player <- 2
+  mortagedProps <- board %>%
+    filter(owner == cur_player & mortaged == 1 & (mortageval*1.1) < players$fortune[cur_player])
+  inConcideration <- c()
+  if(length(mortagedProps$name) > 0){
+    for(i in 1:nrow(mortagedProps)){
+      propPrice <<- mortagedProps$mortageval[i]*1.1
+      propType <<- mortagedProps$prop[i]
+      propCol <<- mortagedProps$color[i]
+      propPos <<- mortagedProps$position[i]
+      
+      strategyName <- paste("strategy", players$strategy[cur_player], sep="")
+      inConcideration <- c(inConcideration, get(strategyName)())
+    }
+
+    if(!is.null(inConcideration)){
+      if(TRUE %in% inConcideration){
+        liftMort <- max(which(inConcideration == TRUE))
+        posOfLiftMort <- mortagedProps$position[liftMort]
+        board$mortaged[board$position == posOfLiftMort] <<- 0
+        updateBalance(cur_player, "minus", board$mortageval[board$position == posOfLiftMort]*1.1, sprintf("lif-mortage of %s", posOfLiftMort))
+      }    
+    }
   }
 }
 

@@ -32,7 +32,6 @@ move <- function(x){
     #players$fortune[cur_player] <<- players$fortune[cur_player] + roundCapv
     if(bankMoney > roundCap){
       updateBalance(cur_player, "pluss", roundCap, "Start")
-      bankMoney <<- bankMoney - roundCap
       cat(sprintf("Player %s moved %s tiles to position %s, and passed Go.",cur_player, x, x-y))
     }else{
       print("bank cant pay roundcap")
@@ -132,7 +131,7 @@ processJail <- function(){
 processAuto <- function(){
   updateBalance(cur_player, "minus", board$autopay[position], "autopay")
                                                         #players$fortune[cur_player] <<- players$fortune[cur_player] - board$autopay[position]
-  bankMoney <<- bankMoney + board$autopay[position]
+
   #cat(sprintf("AUTOPAY, spiller %s betaler %s til %s", cur_player, board$autopay[position], board$name[position]))
 }
 
@@ -223,9 +222,11 @@ updateBalance <- function(x, y, z, what){
   if(y == "pluss"){
     #legg til
     players$fortune[x] <<- players$fortune[x] + z
+    bankMoney <<- bankMoney - z
   }else{
     #trekk fra
     players$fortune[x] <<- players$fortune[x] - z
+    bankMoney <<- bankMoney + z
   }
   cat(sprintf("\n %s %s to %s for %s", y, z, x, what))
 } 
@@ -235,7 +236,7 @@ updateBalance <- function(x, y, z, what){
 ## checkPlayerLoss: Checks to see if player has lost by seeing if balance is negative. 
 ##--------------------------------------------------------------------------------
 checkPlayerLoss <- function(){#sjekk hvis cur_player har tapt
-  while(length(board$name[(board$owner==cur_player) & !(is.na(board$owner))  & !(is.na(board$houses)) & board$mortaged != 1]) > 0 & players$fortune[cur_player] < 0 & mort_Active == TRUE){
+  while(length(board$name[(board$owner==cur_player) & !(is.na(board$owner)) & !(is.na(board$houses)) & board$mortaged != 1]) > 0 & players$fortune[cur_player] < 0 & mort_Active == TRUE){
     if(runMortStrategy(cur_player) == FALSE){
       break
     }

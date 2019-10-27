@@ -5,12 +5,13 @@
 
 #Importing of libraries and associated scripts.
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-source('functions v0.5.R')
+
 source('ai training v0.5.R')
 library(ggplot2)
 library(reshape2)
 
 initGame <- function(i){
+  source('functions v0.5.R')
   #------------------------------  Settings  ------------------------------ 
   version <- 5                    # Sets game version.
   setwd("../v0.5")                # Set working directory to correct version number
@@ -73,6 +74,7 @@ startGame <- function(i){
         players$jailDays[cur_player] <<- 3 #kommer ut på 3. runden
         #print("to like tre ganger = fengsel")
       }else{
+        mayLiftMortage() #vurder å kjøpe tilbake eiendommer
         move(sum(dice_res)) #endre position for cur_player i players data.frame
         processPos() #håndter posisjon for spiller cur_player, leder til flere sub-funksjoner
       }
