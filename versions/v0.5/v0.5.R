@@ -15,6 +15,7 @@ initGame <- function(i){
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
   startCap <<- 1500                # Sets start capital for all players.
   roundCap <<- 200                # Capital gained frmo passing 'Go'.
+  bankMoney <<- 15140 - startCap*N
   version <- 5                    # Sets game version.
   bid_Active <<- TRUE             # Turn bidding on and off.
   collectStats <<- TRUE           # Turns collecting stats on and off. 

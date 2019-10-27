@@ -29,8 +29,10 @@ move <- function(x){
   if(cur_position + x > nrow(board)){
     y <- nrow(board) - cur_position
     players$position[cur_player] <<- x - y
-    players$fortune[cur_player] <<- players$fortune[cur_player] + roundCap
-    #cat(sprintf("Player %s moved %s tiles to position %s, and passed Go.",cur_player, x, x-y))
+    #players$fortune[cur_player] <<- players$fortune[cur_player] + roundCapv
+    updateBalance(cur_player, "pluss", roundCap, "Start")
+    bankMoney <<- bankMoney - roundCap
+    cat(sprintf("Player %s moved %s tiles to position %s, and passed Go.",cur_player, x, x-y))
   }
   else{
     if(players$jailDays[cur_player] == 1){
@@ -124,7 +126,9 @@ processJail <- function(){
 ## processAuto: 
 ##--------------------------------------------------------------------------------
 processAuto <- function(){
-  players$fortune[cur_player] <<- players$fortune[cur_player] - board$autopay[position]
+  updateBalance(cur_player, "minus", board$autopay[position], "autopay")
+                                                        #players$fortune[cur_player] <<- players$fortune[cur_player] - board$autopay[position]
+  bankMoney <<- bankMoney + board$autopay[position]
   #cat(sprintf("AUTOPAY, spiller %s betaler %s til %s", cur_player, board$autopay[position], board$name[position]))
 }
 
@@ -135,9 +139,11 @@ processUtil <- function(){
   NoT <- nrow(board[board$prop  == "2" & board$owner == owner,]) #hvor mange tog eieren av dette toget eier
   utilR <- c(4, 10) #multipliers for landing on a util
   dice_res <- sum(throwDice()) #kast terning
-  players$fortune[owner] <<- players$fortune[owner] + dice_res*utilR[NoT] #formelen for tog-leie er 25*2^(x-1). D gir rekken 1,2,4,8. drd en ganger 25 m/ for å få leieprisene 25,50,100,200
-  players$fortune[cur_player] <<- players$fortune[cur_player] - dice_res*utilR[NoT]
-  #cat(sprintf("UTILITY, spiller %s eier %s util, spiller %s kastet %s og betaler %s   ", owner, NoT, cur_player, dice_res, dice_res*utilR[NoT]))
+  updateBalance(owner, "pluss", dice_res*utilR[NoT], "Util")
+  updateBalance(cur_player, "minus", dice_res*utilR[NoT], "Util")
+                  # players$fortune[owner] <<- players$fortune[owner] + dice_res*utilR[NoT] #formelen for tog-leie er 25*2^(x-1). D gir rekken 1,2,4,8. drd en ganger 25 m/ for å få leieprisene 25,50,100,200
+                  # players$fortune[cur_player] <<- players$fortune[cur_player] - dice_res*utilR[NoT]
+  # #cat(sprintf("UTILITY, spiller %s eier %s util, spiller %s kastet %s og betaler %s   ", owner, NoT, cur_player, dice_res, dice_res*utilR[NoT]))
 }
 
 ##--------------------------------------------------------------------------------
@@ -145,8 +151,10 @@ processUtil <- function(){
 ##--------------------------------------------------------------------------------
 processTrain <- function(){
   NoT <- nrow(board[board$prop  == "3" & board$owner == owner,]) #hvor mange tog eieren av dette toget eier
-  players$fortune[owner] <<- players$fortune[owner] + board$rent[position]*2^(NoT-1) #formelen for tog-leie er 25*2^(x-1). D gir rekken 1,2,4,8. drd en ganger 25 m/ for å få leieprisene 25,50,100,200
-  players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]*2^(NoT-1)
+  updateBalance(owner, "pluss", board$rent[position]*2^(NoT-1), "Train")
+  updateBalance(cur_player, "minus", board$rent[position]*2^(NoT-1), "Train")
+                      # players$fortune[owner] <<- players$fortune[owner] + board$rent[position]*2^(NoT-1) #formelen for tog-leie er 25*2^(x-1). D gir rekken 1,2,4,8. drd en ganger 25 m/ for å få leieprisene 25,50,100,200
+                      # players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]*2^(NoT-1)
   #cat(sprintf("TOOG, spiller %s eier %s tog, spiller %s betaler %s", owner, NoT, cur_player, board$rent[position]*2^(NoT-1)))
 }
 
@@ -160,17 +168,23 @@ processProp <- function(){
     #en annen spiller en den som landet her eier alle av denne fargen, dobbel leie
     if(board$houses[position] > 0){
       housesFunc <- sprintf("rent%sh", board$houses[position])
-      players$fortune[owner] <<- players$fortune[owner] + board[[housesFunc]][position]
-      players$fortune[cur_player] <<- players$fortune[cur_player] - board[[housesFunc]][position]
+      updateBalance(owner, "pluss", board[[housesFunc]][position], "Husleie")
+      updateBalance(cur_player, "minus", board[[housesFunc]][position], "Husleie")
+                              # players$fortune[owner] <<- players$fortune[owner] + board[[housesFunc]][position]
+                              # players$fortune[cur_player] <<- players$fortune[cur_player] - board[[housesFunc]][position]
       #cat(sprintf("HUSLEIE, spiller %s fikk %s for %s", owner, board[[housesFunc]][position], board$name[position]))
     }else{
-      players$fortune[owner] <<- players$fortune[owner] + board$rent[position]*2
-      players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]*2
+      updateBalance(owner, "pluss", board$rent[position]*2, "Dobbel Prop")
+      updateBalance(cur_player, "minus", board$rent[position]*2, "Dobbel Prop")
+                                  # players$fortune[owner] <<- players$fortune[owner] + board$rent[position]*2
+                                  # players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]*2
       #print("DOBBEL LEIE")
     }
   }else{
-    players$fortune[owner] <<- players$fortune[owner] + board$rent[position]
-    players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]
+    updateBalance(owner, "pluss", board$rent[position], "Prop")
+    updateBalance(cur_player, "minus", board$rent[position], "Prop")
+                # players$fortune[owner] <<- players$fortune[owner] + board$rent[position]
+                # players$fortune[cur_player] <<- players$fortune[cur_player] - board$rent[position]
     #print("LEIE")
   }
   
@@ -186,8 +200,9 @@ checkStreetPer <- function(x, y){
   }
 }
 #sjekk hvor mange av en farge én spiller eier, og hvor mange hus per eiendom
-countFreq <- function(x, y){
-  uniqueC <- y
+countFreq <- function(x){
+  #x = spiller å sjekke for 
+  uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
   streetColFreq <<- c()
   streetColFreqOthers <<- c()
   houseColFreq <<- c()
@@ -204,6 +219,19 @@ countFreq <- function(x, y){
     houseColFreqOthers <<- c(houseColFreqOthers, sumHouses2)
   }
 }
+
+updateBalance <- function(x, y, z, what){
+  #x - spiller, y - legg til eller trekk fra, z - beløp, what - hva skjedde
+  if(y == "pluss"){
+    #legg til
+    players$fortune[x] <<- players$fortune[x] + z
+  }else{
+    #trekk fra
+    players$fortune[x] <<- players$fortune[x] - z
+  }
+  cat(sprintf("\n %s %s to %s for %s", y, z, x, what))
+} 
+
 
 ##--------------------------------------------------------------------------------
 ## checkPlayerLoss: Checks to see if player has lost by seeing if balance is negative. 
