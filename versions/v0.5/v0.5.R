@@ -22,8 +22,9 @@ initGame <- function(i){
   mort_Active <<- TRUE                      # Turn mortage on and off.
   collectStats <<- TRUE                     # Turns collecting stats on and off. 
   printResult <<- FALSE                     # Turns printing result on and off.
-  enableAiData <<- FALSE                    # Turn AI on/off
-  enableTransLog <<- FALSE                  # Turn transaction log on/off
+  enableAiData <<- FALSE                    # Turn AI on/off.
+  enableTransLog <<- FALSE                  # Turn transaction log on/off.
+  printGame <<- FALSE                       # Turn printlog of game on/off.
   #---------------------------------------------------------------------------
   id <- c(1:N)                              # Creates unique player ID.
   throws <<- rep(0, times=N)                # Sets number of throws per player to initial value 0. 
@@ -55,35 +56,42 @@ initGame <- function(i){
 ## Main-function.
 ##---------------------------------------------------------
 startGame <- function(i){  
-  initGame(i)                      # Reset verdier for spillet(start på nytt)
-  cur_player <<- sample(1:N, 1)   # Selects initial player at random. Eliminates potential first-mover (dis)advantage.
-  game_over <<- FALSE
-  ptm <- Sys.time()  #Timer
-  while (game_over == FALSE) { #loop så lenge ikke én er vinnner
-    av_dices <<- 1 #available dice throws, pga to like = nytt kast..
-    equalDicesQount <<- 0 #sjekke hvor mange ganger på rad to like, hvis over tre -> fengsel
+  initGame(i)                               # Resets the game (board and players dataframes).
+  cur_player <<- sample(1:N, 1)             # Randomly selects first player. 
+  game_over <<- FALSE                       # game_over initially set to FALSE.
+  ptm <- Sys.time()                         # Timer used for timing out.
+  while (game_over == FALSE) {              # Loop until game is over.
+    av_dices <<- 1                          # Available dice throws.
+    eqDicesCount <<- 0                      # Check number of times equal dice are thrown in the same round. 
     while (av_dices >= 1 & players$active[cur_player] == 1) {
       av_dices <<- av_dices - 1
-      dice_res <- throwDice() #kast terning og lagre resultat
-      if(length(unique(dice_res)) == 1){
-        av_dices <<- av_dices + 1
-        equalDicesQount <<- equalDicesQount + 1
-        #print("SLO TO LIKE")
+      dice_res <- throwDice()               # Throw dice.
+      if(length(unique(dice_res)) == 1){    # If both dice show same number of eyes...  
+        av_dices <<- av_dices + 1           # ... award new throw.
+        eqDicesCount <<- eqDicesCount + 1   # ... increment number of equal dice thrown. 
+        if(printGame==TRUE){                # Prints the event. 
+          cat(sprintf("Player %s rolled two of the same face, %s.", cur_player, dice_res))
+        }
       }
-      if(equalDicesQount > 2){
-        av_dices <<- 0
-        equalDicesQount <<- 0
-        players$position[cur_player] <<- 9 #teleporter til jail
-        players$jailDays[cur_player] <<- 3 #kommer ut på 3. runden
-        #print("to like tre ganger = fengsel")
+      
+      if(eqDicesCount > 2){                 # If the player three times in a row has rolled two of the same face... 
+        av_dices <<- 0                      # ... reset availiable dice throws and same-face counter to 0.
+        eqDicesCount <<- 0              
+        players$position[cur_player] <<- 9  # ... and move player to jail. 
+        players$jailDays[cur_player] <<- 3  # ... and sets remaining jail days to 3. 
+        if(printGame==TRUE){                # Prints the event. 
+          cat(sprintf("Player %s rolled two of the same face three times and is moved to jail.", cur_player))
+        }
+        
       }else{
-        mayLiftMortage() #vurder å kjøpe tilbake eiendommer
-        move(sum(dice_res)) #endre position for cur_player i players data.frame
-        processPos() #håndter posisjon for spiller cur_player, leder til flere sub-funksjoner
+        move(sum(dice_res))                 # Changes the position of the player, and credits account if he passes 'Go'. 
+        processPos()                        # Processes the position the player now sits on.
+        mayLiftMortage()                    # Consider unleveraging properties.
       }
-      if(checkPlayerLoss() == TRUE){
-        av_dices <<- 0
-      } #sjekk hvis cur_player har tapt
+      
+      if(checkPlayerLoss() == TRUE){        # Checks to see if player has went bankrupt...
+        av_dices <<- 0                      # ... sets remaining dice throws to zero. 
+      } 
     }
     
     ################################################################
