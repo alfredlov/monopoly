@@ -114,20 +114,23 @@ processFree <- function(){                            # If the player lands on '
 ## processJail: 
 ##--------------------------------------------------------------------------------
 processJail <- function(){                            # If the player lands on 'Go to Jail'...
-  if(board$position[position] == 30){
+  if(board$position[position] == 27){
     players$position[cur_player] <<- 9                # ... teleports player to 'Jail'...
     players$jailDays[cur_player] <<- 3                # ... sets days remaining in jail to 3.
     if(printGame == TRUE){                            # Print event. 
       cat(sprintf("Player %s moved to jail",cur_player))
     }
   }
-  if(board$position[position] == 10){
+  
+  if(board$position[position] == 9){                 #
     dice1 <- sample(1:6, size = 1, replace = TRUE)
     dice2 <- sample(1:6, size = 1, replace = TRUE)
     if(dice1 == dice2){
       players$jailDays[cur_player] <<- 0
       move(dice1 + dice2)
-      #cat(sprintf("Player %s KOM UT AV FENGSEL PGA TERNINGKAST",cur_player))
+      if(printGame == TRUE){                            # Print event. 
+        cat(sprintf("Player %s KOM UT AV FENGSEL PGA TERNINGKAST",cur_player))
+      }
     }
     #cat(sprintf("Player %s KOM ikkkkke UT AV FENGSEL PGA TERNINGKAST",cur_player))
      #teleporter til jail

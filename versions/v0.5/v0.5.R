@@ -21,16 +21,10 @@ initGame <- function(i){
   bid_Active <<- TRUE                       # Turn bidding on and off.
   mort_Active <<- TRUE                      # Turn mortage on and off.
   collectStats <<- TRUE                     # Turns collecting stats on and off. 
-<<<<<<< HEAD
-  printResult <<- TRUE                     # Turns printing result on and off.
-  enableAiData <<- TRUE                    # Turn AI on/off
-  enableTransLog <<- FALSE                  # Turn transaction log on/off
-=======
   printResult <<- FALSE                     # Turns printing result on and off.
   enableAiData <<- FALSE                    # Turn AI on/off.
   enableTransLog <<- FALSE                  # Turn transaction log on/off.
   printGame <<- FALSE                       # Turn printlog of game on/off.
->>>>>>> origin/master
   #---------------------------------------------------------------------------
   id <- c(1:N)                              # Creates unique player ID.
   throws <<- rep(0, times=N)                # Sets number of throws per player to initial value 0. 
