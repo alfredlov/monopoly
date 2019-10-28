@@ -21,9 +21,16 @@ initGame <- function(i){
   bid_Active <<- TRUE                       # Turn bidding on and off.
   mort_Active <<- TRUE                      # Turn mortage on and off.
   collectStats <<- TRUE                     # Turns collecting stats on and off. 
+<<<<<<< HEAD
   printResult <<- TRUE                     # Turns printing result on and off.
   enableAiData <<- TRUE                    # Turn AI on/off
   enableTransLog <<- FALSE                  # Turn transaction log on/off
+=======
+  printResult <<- FALSE                     # Turns printing result on and off.
+  enableAiData <<- FALSE                    # Turn AI on/off.
+  enableTransLog <<- FALSE                  # Turn transaction log on/off.
+  printGame <<- FALSE                       # Turn printlog of game on/off.
+>>>>>>> origin/master
   #---------------------------------------------------------------------------
   id <- c(1:N)                              # Creates unique player ID.
   throws <<- rep(0, times=N)                # Sets number of throws per player to initial value 0. 
@@ -36,10 +43,22 @@ initGame <- function(i){
   # Creates the players-dataframe fmor the variables listed above.
   players <<- data.frame(id, strategy, houseStrategy, fortune, active, position, jailDays, throws) 
 
-  board <<- read.csv("monopoly_data v0.5.csv") #importer/reset gameboard som data.frame
+  # Imports data about the game board from .csv file. 
+  board <<- read.csv("monopoly_data v0.5.csv") 
+  
+  # Creates global vector containing all the propty colors.
   uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
+<<<<<<< HEAD
   logForNN4temp <<- data.frame(matrix(NA, 0, 44))
   colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
+=======
+  
+  # Creates log which is used for implementation of the Neural Network, AI. 
+  logForNN4temp <<- data.frame(matrix(NA, 0, 42))
+  colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
+  
+  # Sources associated scripts. 
+>>>>>>> origin/master
   source('functions v0.5.R')
   source('ai training v0.5.R')
 }
@@ -48,108 +67,95 @@ initGame <- function(i){
 ## Main-function.
 ##---------------------------------------------------------
 startGame <- function(i){  
-  initGame(i)                      # Reset verdier for spillet(start på nytt)
-  cur_player <<- sample(1:N, 1)   # Selects initial player at random. Eliminates potential first-mover (dis)advantage.
-  game_over <<- FALSE
-  ptm <- Sys.time()  #Timer
-  while (game_over == FALSE) { #loop så lenge ikke én er vinnner
-    av_dices <<- 1 #available dice throws, pga to like = nytt kast..
-    equalDicesQount <<- 0 #sjekke hvor mange ganger på rad to like, hvis over tre -> fengsel
+  initGame(i)                               # Resets the game (board and players dataframes).
+  cur_player <<- sample(1:N, 1)             # Randomly selects first player. 
+  game_over <<- FALSE                       # game_over initially set to FALSE.
+  ptm <- Sys.time()                         # Timer used for timing out.
+  while (game_over == FALSE) {              # Loop until game is over.
+    av_dices <<- 1                          # Available dice throws.
+    eqDicesCount <<- 0                      # Check number of times equal dice are thrown in the same round. 
     while (av_dices >= 1 & players$active[cur_player] == 1) {
       av_dices <<- av_dices - 1
-      dice_res <- throwDice() #kast terning og lagre resultat
-      if(length(unique(dice_res)) == 1){
-        av_dices <<- av_dices + 1
-        equalDicesQount <<- equalDicesQount + 1
-        #print("SLO TO LIKE")
+      dice_res <- throwDice()               # Throw dice.
+      if(length(unique(dice_res)) == 1){    # If both dice show same number of eyes...  
+        av_dices <<- av_dices + 1           # ... award new throw.
+        eqDicesCount <<- eqDicesCount + 1   # ... increment number of equal dice thrown. 
+        if(printGame==TRUE){                # Prints the event. 
+          cat(sprintf("Player %s rolled two of the same face, %s.", cur_player, dice_res))
+        }
       }
-      if(equalDicesQount > 2){
-        av_dices <<- 0
-        equalDicesQount <<- 0
-        players$position[cur_player] <<- 9 #teleporter til jail
-        players$jailDays[cur_player] <<- 3 #kommer ut på 3. runden
-        #print("to like tre ganger = fengsel")
-      }else{
-        mayLiftMortage() #vurder å kjøpe tilbake eiendommer
-        move(sum(dice_res)) #endre position for cur_player i players data.frame
-        processPos() #håndter posisjon for spiller cur_player, leder til flere sub-funksjoner
-      }
-      if(checkPlayerLoss() == TRUE){
-        av_dices <<- 0
-      } #sjekk hvis cur_player har tapt
-    }
-    
-    ################################################################
-    ############# Samler inn statistikk for runden.  ###############
-    ################################################################
-    # Samler inn data om antall kast, formue og antall eiendommer, og hus.
-    
-    #Kast
-    players$throws[cur_player] <<- players$throws[cur_player] + 1
-    
-    #Formue
-    fortune <<- cbind(fortune, players$fortune)
-    
-    #Eiendom
-    curProps <- rep(0, N)
-    for (i in 1:N) {
-      curProps[i] <- length(board$owner[(board$owner==i) & !(is.na(board$owner))])
-    }
-    nProps <<- cbind(nProps, curProps)
-    
-    # Hus
-    curHouses <- rep(0, N)
-    for (i in 1:N) {
-      sumHouses <- sum(board$houses[(board$owner==i) & !(is.na(board$owner))  & !(is.na(board$houses))])
-      curHouses[i] <- sumHouses
-    }
-    nHouses <<- cbind(nHouses, curHouses)
-    
-    ################################################################
-    #############    Slutt: Statistikkinnsamling     ###############
-    ################################################################
-    
-    checkGameOver() #sjekk om spillet er over
-    setNextPlayer() #endre cur_player til neste
-    
-    ptm2 <- Sys.time() - ptm
-    #timeout funskjon for å forhindre krasj
-    if(ptm2 > 100){
-      cat(sprintf("time out %s",Sys.time()))
-      players$active[players$id != players$id[players$fortune == max(players$fortune)]] <<- 0
-      players$active[players$id == players$id[players$fortune == max(players$fortune)]] <<- 0
-      checkGameOver()
-      game_over <- TRUE
       
-      #logForNN4temp <<- data.frame(matrix(NA, 0, 42))
-      winnerS <<- 0
-      winner <<- 0
+      if(eqDicesCount > 2){                 # If the player three times in a row has rolled two of the same face... 
+        av_dices <<- 0                      # ... reset availiable dice throws and same-face counter to 0.
+        eqDicesCount <<- 0              
+        players$position[cur_player] <<- 9  # ... and move player to jail. 
+        players$jailDays[cur_player] <<- 3  # ... and sets remaining jail days to 3. 
+        if(printGame==TRUE){                # Prints the event. 
+          cat(sprintf("Player %s rolled two of the same face three times and is moved to jail.", cur_player))
+        }
+        
+      }else{
+        move(sum(dice_res))                 # Changes the position of the player, and credits account if he passes 'Go'. 
+        processPos()                        # Processes the position the player now sits on.
+        mayLiftMortage()                    # Consider unleveraging properties.
+      }
+      
+      if(checkPlayerLoss() == TRUE){        # Checks to see if player has went bankrupt...
+        av_dices <<- 0                      # ... sets remaining dice throws to zero. 
+      } 
+    }
+    
+    collectRoundStatistics()                # Collects statistics on fortune, houses, etc. for the current round.
+    checkGameOver()                         # Check to see if game is over. 
+    setNextPlayer()                         # Changes current player before next round. 
+
+    currentPlaytime <- Sys.time() - ptm     # Updates current playtime variable.
+    if(currentPlaytime > 10){               # Checks to see if current playtime is longer than 10s.
+      cat(sprintf("Time out, %s! Round took longer than 10 seconds.",Sys.time()))
+      players$active <<- 0                  # Sets all players to inactive.
+      game_over <- TRUE                     # Sets game to be over. 
+      if(enableAiData == TRUE){             # Data collection for AI...
+        logForNN4temp <<- data.frame(matrix(NA, 0, 42))
+      }
+      winnerStrategy <<- 0                  # Records 0 as winner strategy as no players won. 
+      roundWinner <<- 0                     # Sets winner to be 0. 
+
     }
   }
-  if(printResult==TRUE){
-    printRoundResult()
+  if(printResult==TRUE){                    # If in settings printResult is set to TRUE...
+    printRoundResult()                      # ...prints graph containging development of fortune variable.
   }
 }
-startGame()
 
-# #---------------
-# #Mål hvor mange runder spillet går
-# #---------------
-# #lengde <<- c()
-# #replicate(100, startGame())
-# #mean(lengde)
-# #lengde <- lengde[lengde<=200]
-# #hist(lengde, breaks=20, xlim=c(0,360))
-# lengde <<- c()
-# replicate(100, startGame())
-# hist(lengde, breaks=20, xlim=c(0,360), ylim = c(0,20))
-# ## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRATEGI SOM ER BEST
-#plot(nn)
 
-################################################################
-#############    PRINT ROUND RESULTS-FUNCTION    ###############
-################################################################
 
+# function: collectRoundStatistics()
+# Code for collecting game information (numer of houses, 
+# throws, properties and fortune) every round.
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+collectRoundStatistics <- function(){
+  players$throws[cur_player] <<- players$throws[cur_player] + 1   # Increments throw number.
+  fortune <<- cbind(fortune, players$fortune)                     # Appends new fortune-data. 
+  curProps <- rep(0, N)
+  curHouses <- rep(0, N)
+  
+  for (i in 1:N) {
+    curProps[i] <- length(board$owner[(board$owner==i) & !(is.na(board$owner))])
+    sumHouses <- sum(board$houses[(board$owner==i) & !(is.na(board$owner))  & !(is.na(board$houses))])
+    curHouses[i] <- sumHouses
+  }
+
+  nProps <<- cbind(nProps, curProps)                              # Appends new properties-data.
+  nHouses <<- cbind(nHouses, curHouses)                           # Appends new houses-data.
+}
+
+
+
+
+# function: printRoundResult()
+# Code for printing a ggplot graph of the development of the 
+# fortune variable for each player throughout the game.
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 printRoundResult <- function(){
   test_data <- melt(fortune)
   thisThrows <- length(test_data[,1])
@@ -161,20 +167,21 @@ printRoundResult <- function(){
     geom_hline(yintercept=0, linetype="dashed")
 }
 
+
+
 ################################################################
 #############             TEST-SUITE             ###############
 ################################################################
+
+###SLETT FØR INNLEVERING
+
 k <- 50
-a <- 0
-#s=9
 winners = 1:k*0
 numberOfRounds <- 1:k*0
-a <<- 0
 for (j in 1:k) {
-  a <<- a + 1
-  cat(sprintf("Round: %s, winnner %s", j, winnerS))
   startGame()
-  winners[j] <- winner
+  cat(sprintf("Round: %s, winnner %s", j, winnerStrategy))
+  winners[j] <- roundWinner
 }
 
 
