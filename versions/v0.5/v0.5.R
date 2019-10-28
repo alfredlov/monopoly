@@ -4,7 +4,6 @@
 ##---------------------------------------------------------
 
 #Importing of libraries and associated scripts.
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 library(ggplot2)
 library(reshape2)
 
@@ -13,9 +12,9 @@ initGame <- function(i){
   version <- 5                              # Sets game version.
   setwd("../v0.5")                          # Set working directory to correct version number
   strategy <- c(1, 1)                       # Set player strategies, first parameter sets strategy for player 1, etc...
-  N <<- length(strategy)                    # N = Number of player
   houseStrategy <- c("H1", "H1")            # Set player house-buying strategies
   mortageStrategy <- c("M1", "M1")          # Set player mortgage strategies
+  N <<- length(strategy)                    # N = Number of player
   startCap <<- 1500                         # Sets start capital for all players.
   roundCap <<- 200                          # Capital gained from passing 'Go'.
   bankMoney <<- 15140 - startCap*N          # Sets bank cash limit. 
@@ -26,15 +25,16 @@ initGame <- function(i){
   enableAiData <<- FALSE                    # Turn AI on/off
   enableTransLog <<- FALSE                  # Turn transaction log on/off
   #---------------------------------------------------------------------------
-  id <- c(1:N) #som vektor til data.frame
-  throws <<- rep(0, times=N)
-  fortune <<- rep(startCap, times=N)
-  nHouses <<- rep(0, times=N)
-  nProps <<- rep(0, times=N)
-  active <- rep(1, times=N) #sett spillere som er aktive, alle v/ init
-  position <- rep(1, times=N) 
-  jailDays <- rep(0, times=N) 
-  players <<- data.frame(id, strategy, houseStrategy, fortune, active, position, jailDays, throws) #data.frame m/ oversikt over spillerne
+  id <- c(1:N)                              # Creates unique player ID.
+  throws <<- rep(0, times=N)                # Sets number of throws per player to initial value 0. 
+  fortune <<- rep(startCap, times=N)        # Sets initial fortune for each player to startCap (e.g. 200)
+  nHouses <<- rep(0, times=N)               # Sets inital number of houses to 0.
+  nProps <<- rep(0, times=N)                # Sets initial number of properties to 0.
+  active <- rep(1, times=N)                 # Initially sets all players to be active. 
+  position <- rep(1, times=N)               # Sets start position for each player to 1 (i.e. 'Go'). 
+  jailDays <- rep(0, times=N)               # Initializes remaining jail days variable to 0. 
+  # Creates the players-dataframe fmor the variables listed above.
+  players <<- data.frame(id, strategy, houseStrategy, fortune, active, position, jailDays, throws) 
   board <<- read.csv("monopoly_data v0.5.csv") #importer/reset gameboard som data.frame
   uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
   logForNN4temp <<- data.frame(matrix(NA, 0, 42))
