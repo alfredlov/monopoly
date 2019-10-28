@@ -35,10 +35,18 @@ initGame <- function(i){
   jailDays <- rep(0, times=N)               # Initializes remaining jail days variable to 0. 
   # Creates the players-dataframe fmor the variables listed above.
   players <<- data.frame(id, strategy, houseStrategy, fortune, active, position, jailDays, throws) 
-  board <<- read.csv("monopoly_data v0.5.csv") #importer/reset gameboard som data.frame
+  
+  # Imports data about the game board from .csv file. 
+  board <<- read.csv("monopoly_data v0.5.csv") 
+  
+  # Creates global vector containing all the propty colors.
   uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
+  
+  # Creates log which is used for implementation of the Neural Network, AI. 
   logForNN4temp <<- data.frame(matrix(NA, 0, 42))
   colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
+  
+  # Sources associated scripts. 
   source('functions v0.5.R')
   source('ai training v0.5.R')
 }
