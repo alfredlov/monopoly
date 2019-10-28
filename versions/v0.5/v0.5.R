@@ -35,7 +35,7 @@ initGame <- function(i){
   jailDays <- rep(0, times=N)               # Initializes remaining jail days variable to 0. 
   # Creates the players-dataframe fmor the variables listed above.
   players <<- data.frame(id, strategy, houseStrategy, fortune, active, position, jailDays, throws) 
-  
+
   # Imports data about the game board from .csv file. 
   board <<- read.csv("monopoly_data v0.5.csv") 
   
@@ -187,7 +187,7 @@ for (j in 1:k) {
 
 #hist(winners)
 table(winners)
-pbinom(68, 100, prob=0.5)
+pbinom(25, 45, prob=0.5)
 ################################################################
 
 startGame()
