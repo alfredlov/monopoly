@@ -161,7 +161,7 @@ printRoundResult <- function(){
 #############             TEST-SUITE             ###############
 ################################################################
 
-###SLETT FØRINNLEVERING
+###SLETT FØR INNLEVERING
 
 k <- 50
 winners = 1:k*0
