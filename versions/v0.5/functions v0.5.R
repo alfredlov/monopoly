@@ -3,15 +3,13 @@
 ## Contains the game-functions.
 ##--------------------------------------------------------------------------------
 
-##--------------------------------------------------------------------------------
-## Housekeeping: Importing libraries and sources the strategies-script. 
-##--------------------------------------------------------------------------------
+#Importing of libraries and associated scripts.
 source('strategies v0.5.R')
 library(dplyr)
 
 ##--------------------------------------------------------------------------------
 ## throwDice: Simulates the throwing of two dice.
-## output: Returns an integer between 2 and 12. 
+## output: A vector of two numbers in range 1-6.
 ##--------------------------------------------------------------------------------
 throwDice <- function(){
   dice <- c(sample(1:6, size = 1, replace = TRUE), sample(1:6, size = 1, replace = TRUE))
@@ -19,38 +17,50 @@ throwDice <- function(){
 }
 
 ##--------------------------------------------------------------------------------
-## move: Handles the changing the position of the players on the board, by altering board-dataframe.
+## move: Handles chaning player board position.
 ## input: x = number given by dice throw
-## -  Increments position variable of player by what is given by the dices. 
-## -  Handles discontinuity at Go and also handles adding $ to balance of players when passing Go. 
+## -  Increments position variable of player by x, and wraps around and credits fortune if 
+#     position + x is more than length of board. 
 ##--------------------------------------------------------------------------------
 move <- function(x){
   cur_position <- players$position[cur_player]
-  if(cur_position + x > nrow(board)){
-    y <- nrow(board) - cur_position
-    players$position[cur_player] <<- x - y
-    #players$fortune[cur_player] <<- players$fortune[cur_player] + roundCapv
-    if(bankMoney > roundCap){
+  if(cur_position + x > nrow(board)){                 # If the player moves past 'Go'...
+    y <- nrow(board) - cur_position                   # ... finds remaining tiles until 'Go'.
+    players$position[cur_player] <<- x - y            # ... sets position to be x - remaining tiles until 'Go'.
+    
+    if(bankMoney > roundCap){                         # If the bank is solvent, credit current player.
       updateBalance(cur_player, "pluss", roundCap, "Start")
-      #cat(sprintf("Player %s moved %s tiles to position %s, and passed Go.",cur_player, x, x-y))
+      if(printGame == TRUE){                          # Print event. 
+        cat(sprintf("Player %s moved %s tiles to position %s, and passed Go.",cur_player, x, x-y))
+      }
+      
     }else{
-      #print("bank cant pay roundcap")
+      if(printGame == TRUE){                          # Print event. 
+        cat(sprintf("Bank can't pay $%s for passing 'Go'.", roundCap))
+      }
     }
   }
-  else{
-    if(players$jailDays[cur_player] == 1){
+  
+  else{                                               # The following code-snippet deals with the 
+    if(players$jailDays[cur_player] == 1){            # number of days the player has to spend in jail.
       players$jailDays[cur_player] <<- players$jailDays[cur_player] - 1
       players$position[cur_player] <<- cur_position + x
-      #cat(sprintf("Player %s KOM UT AV GPA TIIID",cur_player))
+      if(printGame == TRUE){                          # Print event. 
+        cat(sprintf("Player %s got out after being in jail for three turns.",cur_player))
+      }
     }
     if(players$jailDays[cur_player] %in% c(2,3)){
       players$jailDays[cur_player] <<- players$jailDays[cur_player] - 1
-      #cat(sprintf("Player %s I FENGSEL MINUS EN RUNDE %s",cur_player, cur_position))
+      if(printGame == TRUE){                          # Print event. 
+        cat(sprintf("Player %s is in jail, and must wait another round.",cur_player))
+      }
     }
     if(players$jailDays[cur_player] == 0){
       players$position[cur_player] <<- cur_position + x
     }
-    #cat(sprintf("Player %s moved %s tiles to position %s",cur_player, x, cur_position + x))
+    if(printGame == TRUE){                          # Print event. 
+      cat(sprintf("Player %s moved %s tiles to position %s.",cur_player, x, cur_position + x))
+    }
   }
 } 
 
@@ -66,49 +76,50 @@ move <- function(x){
 ## -  If the person cannot afford a free property nothing happens and the turn moves to the next player.
 ## -  If the player lands on a tile, that is a property, is free and he can afford. 
 ##--------------------------------------------------------------------------------
-
-processPos <- function(){#håndter posisjon for spiller cur_player, leder til flere sub-funksjoner
+processPos <- function(){                             # Hands off player to correct processing function based on where he landed. 
   position <<- players$position[cur_player]
-  if(board$prop[position] %in% c(1,2,3)){
-      if(board$owner[position] == 0){ #sjekk om ledig
-        if(board$price[position] <= players$fortune[cur_player]){ #sjekk om råd
-          #kjør strategi
-          runStrategy()
-        }else{
-          #ikke råd
+  playerFortune <- players$fortune[cur_player]
+  if(board$prop[position] %in% c(1,2,3)){             # If current tile is a buyable property...
+      if(board$owner[position] == 0){                 # If no one currently owns the buyable property...
+        if(board$price[position] <= playerFortune){   # If price of property is lower than playerFortune...
+          runStrategy()                               # Run property strategy.
         }
-      }else{
-        owner <<- board$owner[position]
+        
+      }else{                                          # ...if someone else owns the propertymove to pay-rent function.
+        owner <<- board$owner[position]               # ...pay-rent function depends on whether the property is a normal propoerty, a train or a utility. 
         processNames <- c("Prop", "Util", "Train")
         processName <- paste("process", processNames[board$prop[position]], sep="")
         if(owner != cur_player){
-          get(processName)()
+          get(processName)()    
         }
       }
   }
-  if(board$prop[position] %in% c(0,5,6)){
-    processNames <- c("Jail", "Auto", "Free")
+  
+  if(board$prop[position] %in% c(0,5,6)){             # If the player currently is at jail, 'Free Parking' or an automatic pay tile...
+    processNames <- c("Jail", "Auto", "Free")         # ... hand of player to relevent process-function.
     processName <- paste("process", processNames[match(board$prop[position],c(0,5,6))], sep="")
     get(processName)()
   }
-  runHouseStrategy()
+  
+  runHouseStrategy()                                  # Runs the house strategy set in 'Settings'. 
 } 
 
 ##--------------------------------------------------------------------------------
 ## processFree: 
 ##--------------------------------------------------------------------------------
-processFree <- function(){
-  #nothing happens if landing on Free parking
-}
+processFree <- function(){                            # If the player lands on 'Free Parking'...
+}                                                     # ... nothing happens.
 
 ##--------------------------------------------------------------------------------
 ## processJail: 
 ##--------------------------------------------------------------------------------
-processJail <- function(){
+processJail <- function(){                            # If the player lands on 'Go to Jail'...
   if(board$position[position] == 30){
-    players$position[cur_player] <<- 9 #teleporter til jail
-    players$jailDays[cur_player] <<- 3 #kommer ut på 3. runden
-    #cat(sprintf("Player %s moved to jail",cur_player))
+    players$position[cur_player] <<- 9                # ... teleports player to 'Jail'...
+    players$jailDays[cur_player] <<- 3                # ... sets days remaining in jail to 3.
+    if(printGame == TRUE){                            # Print event. 
+      cat(sprintf("Player %s moved to jail",cur_player))
+    }
   }
   if(board$position[position] == 10){
     dice1 <- sample(1:6, size = 1, replace = TRUE)
