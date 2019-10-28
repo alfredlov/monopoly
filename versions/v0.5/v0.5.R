@@ -7,11 +7,11 @@
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 source('ai training v0.5.R')
+source('functions v0.5.R')
 library(ggplot2)
 library(reshape2)
 
 initGame <- function(i){
-  source('functions v0.5.R')
   #------------------------------  Settings  ------------------------------ 
   version <- 5                    # Sets game version.
   setwd("../v0.5")                # Set working directory to correct version number
