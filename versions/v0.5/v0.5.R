@@ -54,7 +54,6 @@ initGame <- function(i){
 ##---------------------------------------------------------
 startGame <- function(i){  
   initGame(i)                      # Reset verdier for spillet(start på nytt)
-  
   cur_player <<- sample(1:N, 1)   # Selects initial player at random. Eliminates potential first-mover (dis)advantage.
   game_over <<- FALSE
   ptm <- Sys.time()  #Timer
