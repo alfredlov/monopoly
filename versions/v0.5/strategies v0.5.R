@@ -45,7 +45,7 @@ runStrategy <- function(){
     gatherStat("street", 1)
     updateBalance(cur_player, "minus", propPrice, "bought street")
   }else{
-    gatherStat("street", 0)
+    #gatherStat("street", 0)
     #####BUDRUNDE
     #SKRU BUDRUNDER AV/PÅ I initGame()
     if(bid_Active == TRUE){    
@@ -136,7 +136,7 @@ runHouseStrategy <- function(){
           gatherStat("house", 1)
           #print("KJØPT HUS")
         }else{
-          gatherStat("house", 0)
+          #gatherStat("house", 0)
           considerBuy <<- FALSE
         }
       }
@@ -163,7 +163,7 @@ runMortStrategy <- function(x, y, z){
       if(strategyName == "strategy104"){
         inConcideration <- c(inConcideration, get(strategyName)(stratPlayer, "liftmortagestart"))
         if(strategy104(stratPlayer, "mortage") == FALSE){
-          gatherStat("pantsatt", 0)
+          #gatherStat("pantsatt", 0)
           return(FALSE)
         }else{
           gatherStat("pantsatt", 1)
@@ -171,7 +171,7 @@ runMortStrategy <- function(x, y, z){
         }
       }else{
         if(M1(stratPlayer, "mortage") == FALSE){
-          gatherStat("pantsatt", 0)
+          #gatherStat("pantsatt", 0)
           return(FALSE)
         }else{
           gatherStat("pantsatt", 1)
@@ -267,7 +267,7 @@ mayLiftMortage <- function(){
         board$mortaged[board$position == posOfLiftMort] <<- 0
         updateBalance(cur_player, "minus", board$mortageval[board$position == posOfLiftMort]*1.1, sprintf("lif-mortage of %s", posOfLiftMort))
       }else{
-        gatherStat("unpantsatt", 0)
+        #gatherStat("unpantsatt", 0)
       }    
     }
   }

@@ -229,8 +229,8 @@ strategy103 <- function(x){
     
     
     test=data.frame()
-    test<- rbind(test, c(pos, fort, streetColFreq, houseColFreq, 0, 0, sum(players$fortune[players$id != cur_player]), streetColFreqOthers, houseColFreqOthers))
-    test<- rbind(test, c(pos, fort2, hypStreet, houseColFreq, 1, 0, sum(players$fortune[players$id != cur_player]), streetColFreqOthers, houseColFreqOthers))
+    test<- rbind(test, c(pos, fort, streetColFreq, houseColFreq, 0, 0,0,0, sum(players$fortune[players$id != cur_player]), streetColFreqOthers, houseColFreqOthers))
+    test<- rbind(test, c(pos, fort2, hypStreet, houseColFreq, 1, 0, 0,0,sum(players$fortune[players$id != cur_player]), streetColFreqOthers, houseColFreqOthers))
     colnames(test) <<- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')))
     Predict=neuralnet::compute(nn,test)
     Predict$net.result
