@@ -5,28 +5,26 @@
 
 #Importing of libraries and associated scripts.
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
 library(ggplot2)
 library(reshape2)
 
 initGame <- function(i){
   #------------------------------  Settings  ------------------------------ 
-  version <- 5                    # Sets game version.
-  setwd("../v0.5")                # Set working directory to correct version number
-  strategy <- c(1, 1)             # Set player strategies, first parameter sets strategy for player 1, etc...
-  N <<- length(strategy)          # N = Number of player
-  houseStrategy <- c("H1", "H1")  
-  mortageStrategy <- c("M1", "M1")
-  #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
-  startCap <<- 1500               # Sets start capital for all players.
-  roundCap <<- 200                # Capital gained frmo passing 'Go'.
-  bankMoney <<- 15140 - startCap*N
-  bid_Active <<- TRUE             # Turn bidding on and off.
-  mort_Active <<- TRUE             # Turn mortage on and off.
-  collectStats <<- TRUE           # Turns collecting stats on and off. 
-  printResult <<- FALSE            # Turns printing result on and off.
-  enableAiData <<- FALSE          # Turn AI on/off
-  enableTransLog <<- FALSE          # Turn transaction log on/off
+  version <- 5                              # Sets game version.
+  setwd("../v0.5")                          # Set working directory to correct version number
+  strategy <- c(1, 1)                       # Set player strategies, first parameter sets strategy for player 1, etc...
+  N <<- length(strategy)                    # N = Number of player
+  houseStrategy <- c("H1", "H1")            # Set player house-buying strategies
+  mortageStrategy <- c("M1", "M1")          # Set player mortgage strategies
+  startCap <<- 1500                         # Sets start capital for all players.
+  roundCap <<- 200                          # Capital gained from passing 'Go'.
+  bankMoney <<- 15140 - startCap*N          # Sets bank cash limit. 
+  bid_Active <<- TRUE                       # Turn bidding on and off.
+  mort_Active <<- TRUE                      # Turn mortage on and off.
+  collectStats <<- TRUE                     # Turns collecting stats on and off. 
+  printResult <<- FALSE                     # Turns printing result on and off.
+  enableAiData <<- FALSE                    # Turn AI on/off
+  enableTransLog <<- FALSE                  # Turn transaction log on/off
   #---------------------------------------------------------------------------
   id <- c(1:N) #som vektor til data.frame
   throws <<- rep(0, times=N)
