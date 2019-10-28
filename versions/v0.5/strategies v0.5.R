@@ -16,11 +16,13 @@ gatherStat <- function(x, y){
     countFreq(cur_player)
     wola <- cur_player
     if(x == "house"){
-      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, y, 0, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
+      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, y, 0,0, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
     }else if (x == "pantsatt"){
-      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, 0, y, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
+      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, 0, y,0, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
+    }else if (x == "unpantsatt"){
+      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, 0, 0, y, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
     }else{
-      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, y, 0, 0, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
+      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, y, 0, 0,0, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
     }
     colnames(logForNN4temp) <- length(c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id"))
   }
@@ -233,15 +235,18 @@ mayLiftMortage <- function(){
       propPos <<- mortagedProps$position[i]
       
       strategyName <- paste("strategy", players$strategy[cur_player], sep="")
-      inConcideration <- c(inConcideration, get(strategyName)())
+      inConcideration <- c(inConcideration, get(strategyName)(cur_player, "liftmortage"))
     }
-
+    
     if(!is.null(inConcideration)){
       if(TRUE %in% inConcideration){
-        liftMort <- max(which(inConcideration == TRUE))
+        gatherStat("unpantsatt", 1)
+        liftMort <- max(which(inConcideration == max(inConcideration)))
         posOfLiftMort <- mortagedProps$position[liftMort]
         board$mortaged[board$position == posOfLiftMort] <<- 0
         updateBalance(cur_player, "minus", board$mortageval[board$position == posOfLiftMort]*1.1, sprintf("lif-mortage of %s", posOfLiftMort))
+      }else{
+        gatherStat("unpantsatt", 0)
       }    
     }
   }
@@ -255,7 +260,7 @@ mayLiftMortage <- function(){
 ##  Strategy 1: Greedy Naive
 ##  Simple naïve strategy which involves buying all properties the player lands on. 
 ##-----------------------------------------------------------------------------------
-strategy1 <- function(x){
+strategy1 <- function(x, y){
   return(TRUE)
 }
 
@@ -263,7 +268,7 @@ strategy1 <- function(x){
 ##  Strategy 2: Probabilistic greedy naive
 ##  Simple strategy of buying all properties the player lands on with probability 0.5.
 ##-----------------------------------------------------------------------------------
-strategy2 <- function(x){
+strategy2 <- function(x, y){
   if(sample(0:1, prob = c(0.5, 0.5), 1) == 1){
     return(TRUE)
   }else{
@@ -275,7 +280,7 @@ strategy2 <- function(x){
 ##  Strategy 3: Simple conservative
 ##  Buys all properties as long as price < 50% of total income.
 ##-----------------------------------------------------------------------------------
-strategy3 <- function(x){
+strategy3 <- function(x, y){
   if(!missing(x)){
     stratPlayer <<- x
   }else{
@@ -293,7 +298,7 @@ strategy3 <- function(x){
 ##  Only buys regular properties on the 2nd and 3rd part of the board. 
 ## These are either purple, orange, red, orange...
 ##-----------------------------------------------------------------------------------
-strategy4 <- function(x){
+strategy4 <- function(x, y){
   
   ##FORENKLE??
   if(propCol == 'purple' || propCol == 'orange' || propCol == 'red' || propCol == 'yellow'){
@@ -306,7 +311,7 @@ strategy4 <- function(x){
 ##-----------------------------------------------------------------------------------
 ##  Strategy 5: Red & Orange
 ##-----------------------------------------------------------------------------------
-strategy5 <- function(x){
+strategy5 <- function(x, y){
   
   ##FORENKLE??
   if(propCol == 'orange' || propCol == 'red'){
@@ -320,7 +325,7 @@ strategy5 <- function(x){
 ##-----------------------------------------------------------------------------------
 ##  Strategy 6: Railroads
 ##-----------------------------------------------------------------------------------
-strategy6 <- function(x){
+strategy6 <- function(x, y){
   if(propType == 3){
     return(TRUE)
   }else{
@@ -331,7 +336,7 @@ strategy6 <- function(x){
 ##-----------------------------------------------------------------------------------
 ##  Strategy 7: Utilities
 ##-----------------------------------------------------------------------------------
-strategy7 <- function(x){
+strategy7 <- function(x, y){
   if(propType == 2){
     return(TRUE)
   }else{
@@ -342,7 +347,7 @@ strategy7 <- function(x){
 ##-----------------------------------------------------------------------------------
 ##  Strategy 8: Railroads + Utilities
 ##-----------------------------------------------------------------------------------
-strategy8 <- function(x){
+strategy8 <- function(x, y){
   if(propType == 2 | propType== 3){
     return(TRUE)
   }else{
@@ -353,7 +358,7 @@ strategy8 <- function(x){
 ##-----------------------------------------------------------------------------------
 ##  Strategy 9: Railroads + Utilities, then Conservative
 ##-----------------------------------------------------------------------------------
-strategy9 <- function(x){
+strategy9 <- function(x, y){
   if(propType == 2 | propType == 3){
     return(TRUE)
   }else{
@@ -370,7 +375,7 @@ strategy9 <- function(x){
 ##-----------------------------------------------------------------------------------
 ##  Strategy 10: Solid
 ##-----------------------------------------------------------------------------------
-strategy10 <- function(x){
+strategy10 <- function(x, y){
   if(!missing(x)){
     stratPlayer <<- x
   }else{
@@ -397,7 +402,7 @@ strategy10 <- function(x){
 ##  Strategy 11: Agressive(?)
 ##-----------------------------------------------------------------------------------
 
-strategy11 <- function(x){
+strategy11 <- function(x, y){
   if(!missing(x)){
     stratPlayer <<- x
   }else{

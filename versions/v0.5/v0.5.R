@@ -15,9 +15,10 @@ initGame <- function(i){
   #------------------------------  Settings  ------------------------------ 
   version <- 5                    # Sets game version.
   setwd("../v0.5")                # Set working directory to correct version number
-  strategy <- c(1, 11)             # Set player strategies, first parameter sets strategy for player 1, etc...
+  strategy <- c(1, 1)             # Set player strategies, first parameter sets strategy for player 1, etc...
   N <<- length(strategy)          # N = Number of player
   houseStrategy <- c("H1", "H1")  
+  mortageStrategy <- c("M1", "M1")
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
   startCap <<- 1500               # Sets start capital for all players.
   roundCap <<- 200                # Capital gained frmo passing 'Go'.
@@ -25,9 +26,9 @@ initGame <- function(i){
   bid_Active <<- TRUE             # Turn bidding on and off.
   mort_Active <<- TRUE             # Turn mortage on and off.
   collectStats <<- TRUE           # Turns collecting stats on and off. 
-  printResult <<- TRUE            # Turns printing result on and off.
+  printResult <<- FALSE            # Turns printing result on and off.
   enableAiData <<- FALSE          # Turn AI on/off
-  enableTransLog <<- TRUE          # Turn transaction log on/off
+  enableTransLog <<- FALSE          # Turn transaction log on/off
   #---------------------------------------------------------------------------
   
   logForNN4temp <<- data.frame(matrix(NA, 0, 42))
@@ -179,7 +180,7 @@ for (j in 1:k) {
   a <<- a + 1
   cat(sprintf("Round: %s, winnner %s", j, winnerS))
   startGame()
-  winners[j] <- winnerS
+  winners[j] <- winner
 }
 
 
