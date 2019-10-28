@@ -11,8 +11,8 @@ initGame <- function(i){
   #------------------------------  Settings  ------------------------------ 
   version <- 5                              # Sets game version.
   setwd("../v0.5")                          # Set working directory to correct version number
-  strategy <- c(1, 1)                       # Set player strategies, first parameter sets strategy for player 1, etc...
-  houseStrategy <- c("H1", "H1")            # Set player house-buying strategies
+  strategy <- c(sample(1:11, 1), 104)                       # Set player strategies, first parameter sets strategy for player 1, etc...
+  houseStrategy <- c("H1", "H104")            # Set player house-buying strategies
   mortageStrategy <- c("M1", "M1")          # Set player mortgage strategies
   N <<- length(strategy)                    # N = Number of player
   startCap <<- 1500                         # Sets start capital for all players.
@@ -21,10 +21,16 @@ initGame <- function(i){
   bid_Active <<- TRUE                       # Turn bidding on and off.
   mort_Active <<- TRUE                      # Turn mortage on and off.
   collectStats <<- TRUE                     # Turns collecting stats on and off. 
+<<<<<<< HEAD
+  printResult <<- TRUE                     # Turns printing result on and off.
+  enableAiData <<- TRUE                    # Turn AI on/off
+  enableTransLog <<- FALSE                  # Turn transaction log on/off
+=======
   printResult <<- FALSE                     # Turns printing result on and off.
   enableAiData <<- FALSE                    # Turn AI on/off.
   enableTransLog <<- FALSE                  # Turn transaction log on/off.
   printGame <<- FALSE                       # Turn printlog of game on/off.
+>>>>>>> origin/master
   #---------------------------------------------------------------------------
   id <- c(1:N)                              # Creates unique player ID.
   throws <<- rep(0, times=N)                # Sets number of throws per player to initial value 0. 
@@ -42,12 +48,17 @@ initGame <- function(i){
   
   # Creates global vector containing all the propty colors.
   uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
+<<<<<<< HEAD
+  logForNN4temp <<- data.frame(matrix(NA, 0, 44))
+  colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
+=======
   
   # Creates log which is used for implementation of the Neural Network, AI. 
   logForNN4temp <<- data.frame(matrix(NA, 0, 42))
   colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
   
   # Sources associated scripts. 
+>>>>>>> origin/master
   source('functions v0.5.R')
   source('ai training v0.5.R')
 }
@@ -97,7 +108,7 @@ startGame <- function(i){
     collectRoundStatistics()                # Collects statistics on fortune, houses, etc. for the current round.
     checkGameOver()                         # Check to see if game is over. 
     setNextPlayer()                         # Changes current player before next round. 
-    
+
     currentPlaytime <- Sys.time() - ptm     # Updates current playtime variable.
     if(currentPlaytime > 10){               # Checks to see if current playtime is longer than 10s.
       cat(sprintf("Time out, %s! Round took longer than 10 seconds.",Sys.time()))
@@ -108,6 +119,7 @@ startGame <- function(i){
       }
       winnerStrategy <<- 0                  # Records 0 as winner strategy as no players won. 
       roundWinner <<- 0                     # Sets winner to be 0. 
+
     }
   }
   if(printResult==TRUE){                    # If in settings printResult is set to TRUE...

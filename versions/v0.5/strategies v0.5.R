@@ -24,7 +24,7 @@ gatherStat <- function(x, y){
     }else{
       logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, y, 0, 0,0, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
     }
-    colnames(logForNN4temp) <- length(c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id"))
+    colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
   }
 }
 
@@ -159,12 +159,24 @@ runMortStrategy <- function(x, y, z){
     #denne calles som regel fra checkPlayerLoss helt til spilleren eventuelt ikke har tapt
     if(sum(streetColFreq) > 0){
       #strategi M1 pantsetter kun de billigste eiendommene
-      if(M1(stratPlayer) == FALSE){
-        return(FALSE)
-        gatherStat("pantsatt", 0)
+      strategyName <- paste("strategy", players$strategy[stratPlayer], sep="")
+      if(strategyName == "strategy104"){
+        inConcideration <- c(inConcideration, get(strategyName)(stratPlayer, "liftmortagestart"))
+        if(strategy104(stratPlayer, "mortage") == FALSE){
+          gatherStat("pantsatt", 0)
+          return(FALSE)
+        }else{
+          gatherStat("pantsatt", 1)
+          return(TRUE)
+        }
       }else{
-        return(TRUE)
-        gatherStat("pantsatt", 1)
+        if(M1(stratPlayer, "mortage") == FALSE){
+          gatherStat("pantsatt", 0)
+          return(FALSE)
+        }else{
+          gatherStat("pantsatt", 1)
+          return(TRUE)
+        }
       }
     }else{
       return(FALSE)
@@ -174,7 +186,7 @@ runMortStrategy <- function(x, y, z){
   }
 }
 
-M1 <- function(x){
+M1 <- function(x,y){
   if(!missing(x)){
     stratPlayer <<- x
   }else{
@@ -227,15 +239,25 @@ mayLiftMortage <- function(){
     filter(owner == cur_player & mortaged == 1 & (mortageval*1.1) < players$fortune[cur_player])
   inConcideration <- c()
   if(length(mortagedProps$name) > 0){
-    for(i in 1:nrow(mortagedProps)){
-      propPrice <<- mortagedProps$mortageval[i]*1.1
-      propType <<- mortagedProps$prop[i]
-      propCol <<- mortagedProps$color[i]
-      propPos <<- mortagedProps$position[i]
-      
       strategyName <- paste("strategy", players$strategy[cur_player], sep="")
-      inConcideration <- c(inConcideration, get(strategyName)(cur_player, "liftmortage"))
-    }
+      if(strategyName == "strategy104"){
+        inConcideration <- c(inConcideration, get(strategyName)(cur_player, "liftmortagestart"))
+        for(i in 1:nrow(mortagedProps)){
+          propPrice <<- mortagedProps$mortageval[i]*1.1
+          propType <<- mortagedProps$prop[i]
+          propCol <<- mortagedProps$color[i]
+          propPos <<- mortagedProps$position[i]
+          inConcideration <- c(inConcideration, get(strategyName)(cur_player, "liftmortage"))
+        }
+      }else{
+        for(i in 1:nrow(mortagedProps)){
+          propPrice <<- mortagedProps$mortageval[i]*1.1
+          propType <<- mortagedProps$prop[i]
+          propCol <<- mortagedProps$color[i]
+          propPos <<- mortagedProps$position[i]
+          inConcideration <- c(inConcideration, get(strategyName)(cur_player, "liftmortage"))
+        }
+      }
     
     if(!is.null(inConcideration)){
       if(TRUE %in% inConcideration){
