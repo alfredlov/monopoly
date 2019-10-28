@@ -32,7 +32,7 @@ move <- function(x){
     #players$fortune[cur_player] <<- players$fortune[cur_player] + roundCapv
     if(bankMoney > roundCap){
       updateBalance(cur_player, "pluss", roundCap, "Start")
-      cat(sprintf("Player %s moved %s tiles to position %s, and passed Go.",cur_player, x, x-y))
+      #cat(sprintf("Player %s moved %s tiles to position %s, and passed Go.",cur_player, x, x-y))
     }else{
       print("bank cant pay roundcap")
     }
