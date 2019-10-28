@@ -18,14 +18,14 @@ initGame <- function(i){
   houseStrategy <- c("H1", "H1")  
   mortageStrategy <- c("M1", "M1")
   #strategy <- c(sample(1:9, 1), sample(1:9, 1), sample(1:9, 1), sample(1:9, 1))
-  startCap <<- 1500               # Sets start capital for all players.
-  roundCap <<- 200                # Capital gained frmo passing 'Go'.
-  bankMoney <<- 15140 - startCap*N
-  bid_Active <<- TRUE             # Turn bidding on and off.
-  mort_Active <<- TRUE             # Turn mortage on and off.
-  collectStats <<- TRUE           # Turns collecting stats on and off. 
-  printResult <<- FALSE            # Turns printing result on and off.
-  enableAiData <<- FALSE          # Turn AI on/off
+  startCap <<- 1500                 # Sets start capital for all players.
+  roundCap <<- 200                  # Capital gained frmo passing 'Go'.
+  bankMoney <<- 15140 - startCap*N  # Bank capital 
+  bid_Active <<- TRUE               # Turn bidding on and off.
+  mort_Active <<- TRUE              # Turn mortage on and off.
+  collectStats <<- TRUE             # Turns collecting stats on and off. 
+  printResult <<- FALSE             # Turns printing result on and off.
+  enableAiData <<- FALSE            # Turn AI on/off
   enableTransLog <<- FALSE          # Turn transaction log on/off
   #---------------------------------------------------------------------------
   id <- c(1:N) #som vektor til data.frame
@@ -33,7 +33,7 @@ initGame <- function(i){
   fortune <<- rep(startCap, times=N)
   nHouses <<- rep(0, times=N)
   nProps <<- rep(0, times=N)
-  active <- rep(1, times=N) #sett spillere som er aktive, alle v/ init
+  active <- rep(1, times=N)       #sett spillere som er aktive, alle v/ init
   position <- rep(1, times=N) 
   jailDays <- rep(0, times=N) 
   players <<- data.frame(id, strategy, houseStrategy, fortune, active, position, jailDays, throws) #data.frame m/ oversikt over spillerne
@@ -182,7 +182,7 @@ for (j in 1:k) {
 
 #hist(winners)
 table(winners)
-pbinom(68, 100, prob=0.5)
+pbinom(25, 45, prob=0.5)
 ################################################################
 
 startGame()
