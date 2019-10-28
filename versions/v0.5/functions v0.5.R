@@ -265,10 +265,10 @@ checkPlayerLoss <- function(){#sjekk hvis cur_player har tapt
 checkGameOver <- function(){
   if(length(players$active[players$active==TRUE])==1){
     game_over <<- TRUE
-    winner <<- players$id[players$active==TRUE]
-    winnerS <<- players$strategy[players$active==TRUE]
-    print(winner)
-    #cat(sprintf("Player %s won, using strategy %s", winner, winnerS))
+    roundWinner <<- players$id[players$active==TRUE]
+    winnerStrategy <<- players$strategy[players$active==TRUE]
+    print(roundWinner)
+    #cat(sprintf("Player %s won, using strategy %s", roundWinner, winnerStrategy))
   }
 } 
 

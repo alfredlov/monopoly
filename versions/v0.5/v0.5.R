@@ -94,77 +94,56 @@ startGame <- function(i){
       } 
     }
     
-    ################################################################
-    ############# Samler inn statistikk for runden.  ###############
-    ################################################################
-    # Samler inn data om antall kast, formue og antall eiendommer, og hus.
+    collectRoundStatistics()                # Collects statistics on fortune, houses, etc. for the current round.
+    checkGameOver()                         # Check to see if game is over. 
+    setNextPlayer()                         # Changes current player before next round. 
     
-    #Kast
-    players$throws[cur_player] <<- players$throws[cur_player] + 1
-    
-    #Formue
-    fortune <<- cbind(fortune, players$fortune)
-    
-    #Eiendom
-    curProps <- rep(0, N)
-    for (i in 1:N) {
-      curProps[i] <- length(board$owner[(board$owner==i) & !(is.na(board$owner))])
-    }
-    nProps <<- cbind(nProps, curProps)
-    
-    # Hus
-    curHouses <- rep(0, N)
-    for (i in 1:N) {
-      sumHouses <- sum(board$houses[(board$owner==i) & !(is.na(board$owner))  & !(is.na(board$houses))])
-      curHouses[i] <- sumHouses
-    }
-    nHouses <<- cbind(nHouses, curHouses)
-    
-    ################################################################
-    #############    Slutt: Statistikkinnsamling     ###############
-    ################################################################
-    
-    checkGameOver() #sjekk om spillet er over
-    setNextPlayer() #endre cur_player til neste
-    
-    ptm2 <- Sys.time() - ptm
-    #timeout funskjon for å forhindre krasj
-    if(ptm2 > 10){
-      cat(sprintf("time out %s",Sys.time()))
-      players$active[players$id != players$id[players$fortune == max(players$fortune)]] <<- 0
-      players$active[players$id == players$id[players$fortune == max(players$fortune)]] <<- 0
-      checkGameOver()
-      game_over <- TRUE
-      
-      #logForNN4temp <<- data.frame(matrix(NA, 0, 42))
-      winnerS <<- 0
-      winner <<- 0
+    currentPlaytime <- Sys.time() - ptm     # Updates current playtime variable.
+    if(currentPlaytime > 10){               # Checks to see if current playtime is longer than 10s.
+      cat(sprintf("Time out, %s! Round took longer than 10 seconds.",Sys.time()))
+      players$active <<- 0                  # Sets all players to inactive.
+      game_over <- TRUE                     # Sets game to be over. 
+      if(enableAiData == TRUE){             # Data collection for AI...
+        logForNN4temp <<- data.frame(matrix(NA, 0, 42))
+      }
+      winnerStrategy <<- 0                  # Records 0 as winner strategy as no players won. 
+      roundWinner <<- 0                     # Sets winner to be 0. 
     }
   }
-  if(printResult==TRUE){
-    printRoundResult()
+  if(printResult==TRUE){                    # If in settings printResult is set to TRUE...
+    printRoundResult()                      # ...prints graph containging development of fortune variable.
   }
 }
-startGame()
 
-# #---------------
-# #Mål hvor mange runder spillet går
-# #---------------
-# #lengde <<- c()
-# #replicate(100, startGame())
-# #mean(lengde)
-# #lengde <- lengde[lengde<=200]
-# #hist(lengde, breaks=20, xlim=c(0,360))
-# lengde <<- c()
-# replicate(100, startGame())
-# hist(lengde, breaks=20, xlim=c(0,360), ylim = c(0,20))
-# ## TESTING FOR Å FÅ UT VERDIER PÅ HVILKEN STRATEGI SOM ER BEST
-#plot(nn)
 
-################################################################
-#############    PRINT ROUND RESULTS-FUNCTION    ###############
-################################################################
 
+# function: collectRoundStatistics()
+# Code for collecting game information (numer of houses, 
+# throws, properties and fortune) every round.
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+collectRoundStatistics <- function(){
+  players$throws[cur_player] <<- players$throws[cur_player] + 1   # Increments throw number.
+  fortune <<- cbind(fortune, players$fortune)                     # Appends new fortune-data. 
+  curProps <- rep(0, N)
+  curHouses <- rep(0, N)
+  
+  for (i in 1:N) {
+    curProps[i] <- length(board$owner[(board$owner==i) & !(is.na(board$owner))])
+    sumHouses <- sum(board$houses[(board$owner==i) & !(is.na(board$owner))  & !(is.na(board$houses))])
+    curHouses[i] <- sumHouses
+  }
+
+  nProps <<- cbind(nProps, curProps)                              # Appends new properties-data.
+  nHouses <<- cbind(nHouses, curHouses)                           # Appends new houses-data.
+}
+
+
+
+
+# function: printRoundResult()
+# Code for printing a ggplot graph of the development of the 
+# fortune variable for each player throughout the game.
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 printRoundResult <- function(){
   test_data <- melt(fortune)
   thisThrows <- length(test_data[,1])
@@ -176,20 +155,21 @@ printRoundResult <- function(){
     geom_hline(yintercept=0, linetype="dashed")
 }
 
+
+
 ################################################################
 #############             TEST-SUITE             ###############
 ################################################################
+
+###SLETT FØRINNLEVERING
+
 k <- 50
-a <- 0
-#s=9
 winners = 1:k*0
 numberOfRounds <- 1:k*0
-a <<- 0
 for (j in 1:k) {
-  a <<- a + 1
-  cat(sprintf("Round: %s, winnner %s", j, winnerS))
   startGame()
-  winners[j] <- winner
+  cat(sprintf("Round: %s, winnner %s", j, winnerStrategy))
+  winners[j] <- roundWinner
 }
 
 
