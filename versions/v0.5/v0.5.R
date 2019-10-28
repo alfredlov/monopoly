@@ -11,8 +11,8 @@ initGame <- function(i){
   #------------------------------  Settings  ------------------------------ 
   version <- 5                              # Sets game version.
   setwd("../v0.5")                          # Set working directory to correct version number
-  strategy <- c(1, 1)                       # Set player strategies, first parameter sets strategy for player 1, etc...
-  houseStrategy <- c("H1", "H1")            # Set player house-buying strategies
+  strategy <- c(sample(1:11, 1), 104)                       # Set player strategies, first parameter sets strategy for player 1, etc...
+  houseStrategy <- c("H1", "H104")            # Set player house-buying strategies
   mortageStrategy <- c("M1", "M1")          # Set player mortgage strategies
   N <<- length(strategy)                    # N = Number of player
   startCap <<- 1500                         # Sets start capital for all players.
@@ -21,8 +21,8 @@ initGame <- function(i){
   bid_Active <<- TRUE                       # Turn bidding on and off.
   mort_Active <<- TRUE                      # Turn mortage on and off.
   collectStats <<- TRUE                     # Turns collecting stats on and off. 
-  printResult <<- FALSE                     # Turns printing result on and off.
-  enableAiData <<- FALSE                    # Turn AI on/off
+  printResult <<- TRUE                     # Turns printing result on and off.
+  enableAiData <<- TRUE                    # Turn AI on/off
   enableTransLog <<- FALSE                  # Turn transaction log on/off
   #---------------------------------------------------------------------------
   id <- c(1:N)                              # Creates unique player ID.
@@ -38,8 +38,8 @@ initGame <- function(i){
 
   board <<- read.csv("monopoly_data v0.5.csv") #importer/reset gameboard som data.frame
   uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
-  logForNN4temp <<- data.frame(matrix(NA, 0, 42))
-  colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
+  logForNN4temp <<- data.frame(matrix(NA, 0, 44))
+  colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
   source('functions v0.5.R')
   source('ai training v0.5.R')
 }
@@ -114,7 +114,7 @@ startGame <- function(i){
     
     ptm2 <- Sys.time() - ptm
     #timeout funskjon for å forhindre krasj
-    if(ptm2 > 10){
+    if(ptm2 > 100){
       cat(sprintf("time out %s",Sys.time()))
       players$active[players$id != players$id[players$fortune == max(players$fortune)]] <<- 0
       players$active[players$id == players$id[players$fortune == max(players$fortune)]] <<- 0
