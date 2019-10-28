@@ -6,8 +6,6 @@
 #Importing of libraries and associated scripts.
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-source('ai training v0.5.R')
-source('functions v0.5.R')
 library(ggplot2)
 library(reshape2)
 
@@ -30,9 +28,6 @@ initGame <- function(i){
   enableAiData <<- FALSE          # Turn AI on/off
   enableTransLog <<- FALSE          # Turn transaction log on/off
   #---------------------------------------------------------------------------
-  
-  logForNN4temp <<- data.frame(matrix(NA, 0, 42))
-  colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
   id <- c(1:N) #som vektor til data.frame
   throws <<- rep(0, times=N)
   fortune <<- rep(startCap, times=N)
@@ -46,7 +41,8 @@ initGame <- function(i){
   uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
   logForNN4temp <<- data.frame(matrix(NA, 0, 42))
   colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
-  
+  source('functions v0.5.R')
+  source('ai training v0.5.R')
 }
 
 ##---------------------------------------------------------

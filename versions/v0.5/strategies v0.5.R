@@ -223,7 +223,6 @@ mayLiftMortage <- function(){
   #call strategi og sjekk om eiendommene er noen strategien vil kjøpe for mortageval*1.1
   #hvis det er flere eiendommer vil lift mortage, for alle strategier utenom AI, velge å kjøpe den rimeligste
   #målet er at AI vil velge å kjøpe tilbake den som gir best sannsynlighet for å vinne
-  cur_player <- 2
   mortagedProps <- board %>%
     filter(owner == cur_player & mortaged == 1 & (mortageval*1.1) < players$fortune[cur_player])
   inConcideration <- c()
