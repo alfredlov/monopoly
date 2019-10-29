@@ -169,7 +169,7 @@ runMortStrategy <- function(x, y, z){                 # Mortgage strategy depend
   countFreq(stratPlayer)
   
   if(missing(y)){                                     # If no cap-requirement is supplied the player mortgages until he has a fortune above 0. 
-     if(sum(streetColFreq) > 0){                      # 
+     if(sum(streetColFreq) > 0){                      
       strategyName <- paste("strategy", players$strategy[stratPlayer], sep="")
       
       if(strategyName == "strategy104"){
@@ -177,8 +177,8 @@ runMortStrategy <- function(x, y, z){                 # Mortgage strategy depend
           return(FALSE)
         }
         
-        else{
-          gatherStat("pantsatt", 1)
+        else{                                        
+          gatherStat("pantsatt", 1)                    # Gather AI-data. 
           return(TRUE)
         }
       }
@@ -186,8 +186,10 @@ runMortStrategy <- function(x, y, z){                 # Mortgage strategy depend
       else{
         if(M1(stratPlayer, "mortage") == FALSE){
           return(FALSE)
-        }else{
-          gatherStat("pantsatt", 1)
+        }
+        
+        else{
+          gatherStat("pantsatt", 1)                    # Gather AI-data. 
           return(TRUE)
         }
       }
@@ -195,24 +197,22 @@ runMortStrategy <- function(x, y, z){                 # Mortgage strategy depend
       return(FALSE)
     }
   }else if (y == TRUE){
-    #spilleren prøver å få z kapital
+    #SLETT?! spilleren prøver å få z kapital
   }
 }
 
 
 # function: mayLiftMortage()
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-mayLiftMortage <- function(){
-  #vurder å kjøpe tilbake eiendommer
-  #call strategi og sjekk om eiendommene er noen strategien vil kjøpe for mortageval*1.1
-  #hvis det er flere eiendommer vil lift mortage, for alle strategier utenom AI, velge å kjøpe den rimeligste
-  #målet er at AI vil velge å kjøpe tilbake den som gir best sannsynlighet for å vinne
-  mortagedProps <- board %>%
+mayLiftMortage <- function(){                           # Function for the buying out of mortgaged properties.
+  mortagedProps <- board %>%                            # Only consideres prooperties which the player can afford to unmortgage and are currently mortgaged.
     filter(owner == cur_player & mortaged == 1 & (mortageval*1.1) < players$fortune[cur_player])
   inConcideration <- c()
+  
   if(length(mortagedProps$name) > 0){
       strategyName <- paste("strategy", players$strategy[cur_player], sep="")
-      if(strategyName == "strategy104"){
+      
+      if(strategyName == "strategy104"){                # If the AI deals with mortgage, run seperate code...
         inConcideration <- c(inConcideration, get(strategyName)(cur_player, "liftmortagestart"))
         for(i in 1:nrow(mortagedProps)){
           propPrice <<- mortagedProps$mortageval[i]*1.1
@@ -221,7 +221,9 @@ mayLiftMortage <- function(){
           propPos <<- mortagedProps$position[i]
           inConcideration <- c(inConcideration, get(strategyName)(cur_player, "liftmortage"))
         }
-      }else{
+      }
+      
+      else{                                              # ... otherwise run "analog" mortgage strategy.
         for(i in 1:nrow(mortagedProps)){
           propPrice <<- mortagedProps$mortageval[i]*1.1
           propType <<- mortagedProps$prop[i]
@@ -231,15 +233,16 @@ mayLiftMortage <- function(){
         }
       }
     
-    if(!is.null(inConcideration)){
-      if(TRUE %in% inConcideration){
+    if(!is.null(inConcideration)){                       # If there are properties which are considered for unmortgaging....
+      if(TRUE %in% inConcideration){                     # ... unmortgage possible properties.
         gatherStat("unpantsatt", 1)
         liftMort <- max(which(inConcideration == max(inConcideration)))
         posOfLiftMort <- mortagedProps$position[liftMort]
         board$mortaged[board$position == posOfLiftMort] <<- 0
         updateBalance(cur_player, "minus", board$mortageval[board$position == posOfLiftMort]*1.1, sprintf("lif-mortage of %s", posOfLiftMort))
-      }else{
-        #gatherStat("unpantsatt", 0)
+      }
+      else{
+        # SLETT?! gatherStat("unpantsatt", 0)
       }    
     }
   }
@@ -281,6 +284,7 @@ strategy3 <- function(x, y){
   }else{
     stratPlayer <<- cur_player
   }
+  
   if(propPrice/players$fortune[stratPlayer] <= 0.5){
     return(TRUE)
   }else{
@@ -290,12 +294,9 @@ strategy3 <- function(x, y){
 
 ##-----------------------------------------------------------------------------------
 ##  Strategy 4: Middle of the road
-##  Only buys regular properties on the 2nd and 3rd part of the board. 
-## These are either purple, orange, red, orange...
+##  Only buys regular properties on the 2nd and 3rd part of the board (purple, red, orange, yellow properties).
 ##-----------------------------------------------------------------------------------
 strategy4 <- function(x, y){
-  
-  ##FORENKLE??
   if(propCol == 'purple' || propCol == 'orange' || propCol == 'red' || propCol == 'yellow'){
     return(TRUE)
   }else{
