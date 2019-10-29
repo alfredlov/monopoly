@@ -171,9 +171,15 @@ runMortStrategy <- function(x, y, z){                 # Mortgage strategy depend
   if(missing(y)){                                     # If no cap-requirement is supplied the player mortgages until he has a fortune above 0. 
      if(sum(streetColFreq) > 0){                      
       strategyName <- paste("strategy", players$strategy[stratPlayer], sep="")
+<<<<<<< HEAD
+      if(players$strategy[stratPlayer] > 100){
+        if(strategy106(stratPlayer, "mortage") == FALSE){
+          #gatherStat("pantsatt", 0)
+=======
       
       if(strategyName == "strategy104"){
         if(strategy104(stratPlayer, "mortage") == FALSE){
+>>>>>>> origin/master
           return(FALSE)
         }
         
@@ -211,8 +217,12 @@ mayLiftMortage <- function(){                           # Function for the buyin
   
   if(length(mortagedProps$name) > 0){
       strategyName <- paste("strategy", players$strategy[cur_player], sep="")
+<<<<<<< HEAD
+      if(strategyName == "strategy1006"){
+=======
       
       if(strategyName == "strategy104"){                # If the AI deals with mortgage, run seperate code...
+>>>>>>> origin/master
         inConcideration <- c(inConcideration, get(strategyName)(cur_player, "liftmortagestart"))
         for(i in 1:nrow(mortagedProps)){
           propPrice <<- mortagedProps$mortageval[i]*1.1

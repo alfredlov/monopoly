@@ -420,12 +420,13 @@ strategy106 <- function(x, y){
           test<- rbind(test, c(hypStreet, houseColFreq,  sum(logForNN4temp$mortage[logForNN4temp$id == 1]) + 1, sum(logForNN4temp$liftmortage[logForNN4temp$id == 1]), sum(logForNN4temp$mortage[logForNN4temp$id != 1]),sum(logForNN4temp$liftmortage[logForNN4temp$id != 1]), sum(players$fortune[players$id != stratPlayer]), streetColFreqOthers, houseColFreqOthers))
         }
         predictFunc(test)
-        propColToMort <- propsOfCol[which(Predict$net.result == max(Predict$net.result))]
-        posToMort <- min(board$position[board$color == propColToMort & board$owner == stratPlayer & !(is.na(board$owner)) & board$mortaged != 1])
         if(Predict$net.result[1] == max(Predict$net.result)){
           cat(sprintf("ai did not mortage %s", Predict$net.result))
           return(FALSE)
         }else{
+          propColToMort <- propsOfCol[which(Predict$net.result == max(Predict$net.result))-1][1]
+          posToMort <- min(board$position[board$color == propColToMort & board$owner == stratPlayer & !(is.na(board$owner)) & board$mortaged != 1])
+          
           if(is.na(sum(board$houses[board$color %in% propColToMort])) | sum(board$houses[board$color %in% propColToMort]) == 0){
             #ingen hus -> pantsett
             if((bankMoney - board$mortageval[board$position == posToMort]) > 0){

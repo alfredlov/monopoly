@@ -22,7 +22,7 @@ initGame <- function(i){
   bid_Active <<- TRUE                       # Turn bidding on and off.
   mort_Active <<- TRUE                      # Turn mortage on and off.
   collectStats <<- TRUE                     # Turns collecting stats on and off. 
-  printResult <<- TRUE                      # Turns printing result on and off.
+  printResult <<- FALSE                     # Turns printing result on and off.
   enableAiData <<- FALSE                    # Turn AI on/off.
   enableTransLog <<- FALSE                  # Turn transaction log on/off.
   printGame <<- FALSE                       # Turn printing of game log on/off.
@@ -216,6 +216,19 @@ for (j in 1:k) {
   cat(sprintf("Round: %s, winnner %s. \n", j, winnerStrategy))
   winners[j] <- roundWinner
 }
+
+k <- 50
+st <- 11
+winners = 1:(k*st)*0
+numberOfRounds <- 1:k*st*0
+for (a in 1:11) {
+  for (j in 1:k) {
+    startGame(a)
+    cat(sprintf("Round: %s, winnner %s", j, winnerStrategy))
+    winners[j] <- winnerStrategy
+  }
+}
+
 
 
 #hist(winners)
