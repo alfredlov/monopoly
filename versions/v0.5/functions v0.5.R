@@ -281,6 +281,10 @@ checkGameOver <- function(){
     game_over <<- TRUE
     roundWinner <<- players$id[players$active==TRUE]
     winnerStrategy <<- players$strategy[players$active==TRUE]
+    countFreq(1)
+    colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
+    
+    logForNN6temp <<- rbind(logForNN6temp, c(players$throws[players$id == 1],players$fortune[players$id == 1],streetColFreq, houseColFreq, sum(logForNN4temp$mortage[logForNN4temp$id == 1]), sum(logForNN4temp$liftmortage[logForNN4temp$id == 1]), sum(logForNN4temp$mortage[logForNN4temp$id != 1]),sum(logForNN4temp$liftmortage[logForNN4temp$id != 1]), sum(players$fortune[players$id != 1]),streetColFreqOthers,houseColFreqOthers, ifelse(roundWinner == 1, 1, 0)))
     print(roundWinner)
     #cat(sprintf("Player %s won, using strategy %s", roundWinner, winnerStrategy))
   }
