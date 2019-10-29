@@ -12,7 +12,7 @@ initGame <- function(i){
   #------------------------------  Settings  ------------------------------ 
   version <- 5                              # Sets game version.
   setwd("../v0.5")                          # Set working directory to correct version number
-  strategy <- c(1, 2, 3, 4, 5, 6)                       # Set player strategies, first parameter sets strategy for player 1, etc...
+  strategy <- c(1, 2)                       # Set player strategies, first parameter sets strategy for player 1, etc...
   houseStrategy <- c("H1", "H1")            # Set player house-buying strategies
   mortageStrategy <- c("M1", "M1")          # Set player mortgage strategies
   N <<- length(strategy)                    # N = Number of player
@@ -218,17 +218,14 @@ for (j in 1:k) {
 }
 
 k <- 50
-st <- 11
-winners = 1:(k*st)*0
+# st <- 11
+# winners = 1:(k*st)*0
 numberOfRounds <- 1:k*st*0
-for (a in 1:11) {
-  for (j in 1:k) {
-    startGame(a)
+for (j in 1:k) {
+    startGame()
     cat(sprintf("Round: %s, winnner %s", j, winnerStrategy))
     winners[j] <- winnerStrategy
   }
-}
-
 
 
 #hist(winners)
