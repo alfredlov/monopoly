@@ -12,7 +12,7 @@ initGame <- function(i){
   #------------------------------  Settings  ------------------------------ 
   version <- 5                              # Sets game version.
   setwd("../v0.5")                          # Set working directory to correct version number
-  strategy <- c(1, 2)                       # Set player strategies, first parameter sets strategy for player 1, etc...
+  strategy <- c(3, 9)                       # Set player strategies, first parameter sets strategy for player 1, etc...
   houseStrategy <- c("H1", "H1")            # Set player house-buying strategies
   mortageStrategy <- c("M1", "M1")          # Set player mortgage strategies
   N <<- length(strategy)                    # N = Number of player
@@ -214,18 +214,21 @@ for (j in 1:k) {
   # cat(sprintf("######################################################## \n"))
   startGame()
   cat(sprintf("Round: %s, winnner %s. \n", j, winnerStrategy))
-  winners[j] <- roundWinner
+  #winners[j] <- roundWinner    ##USED WHEN SAME STARTS PLAY EACH OTHER
+  winners[j] <- winnerStrategy
+  
 }
-
-k <- 50
-# st <- 11
-# winners = 1:(k*st)*0
-numberOfRounds <- 1:k*st*0
-for (j in 1:k) {
-    startGame()
-    cat(sprintf("Round: %s, winnner %s", j, winnerStrategy))
-    winners[j] <- winnerStrategy
-  }
+# 
+# k <- 50
+# # st <- 11
+# # winners = 1:(k*st)*0
+# winners <- 1:k*0
+# numberOfRounds <- 1:k*0
+# for (j in 1:k) {
+#     startGame()
+#     cat(sprintf("Round: %s, winnner %s", j, winnerStrategy))
+#     winners[j] <- winnerStrategy
+#   }
 
 
 #hist(winners)
@@ -233,4 +236,4 @@ table(winners)
 pbinom(34, 50, prob=0.5)
 ################################################################
 
-startGame()
+#startGame()

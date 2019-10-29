@@ -361,7 +361,7 @@ strategy8 <- function(x, y){
 }
 
 ##-----------------------------------------------------------------------------------
-##  Strategy 9: Railroads + Utilities, then Conservative
+##  Strategy 9: Railroads + Utilities, then Buy-all
 ##-----------------------------------------------------------------------------------
 strategy9 <- function(x, y){
   setPlayer()
@@ -442,6 +442,15 @@ strategy11 <- function(x, y){
 }
 
 
+##-----------------------------------------------------------------------------------
+##  Strategy 12: Hotel-seeker
+##-----------------------------------------------------------------------------------
+strategy11 <- function(x, y){
+  setPlayer()
+  #if throws < N then set selected hotell property to FALSE
+  #after person gets all of one colors, put all money into houses tehre in order to clinch win. 
+  
+}
 #####################################################################################
 #                               HOUSE-STRATEGIES                                    #
 #####################################################################################
