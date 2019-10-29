@@ -11,8 +11,8 @@ initGame <- function(i){
   #------------------------------  Settings  ------------------------------ 
   version <- 5                              # Sets game version.
   setwd("../v0.5")                          # Set working directory to correct version number
-  strategy <- c(sample(1:11, 1), 2)         # Set player strategies, first parameter sets strategy for player 1, etc...
-  houseStrategy <- c("H1", "H2")            # Set player house-buying strategies
+  strategy <- c(sample(1:11, 1), 106)         # Set player strategies, first parameter sets strategy for player 1, etc...
+  houseStrategy <- c("H1", "H106")            # Set player house-buying strategies
   mortageStrategy <- c("M1", "M1")          # Set player mortgage strategies
   N <<- length(strategy)                    # N = Number of player
   startCap <<- 1500                         # Sets start capital for all players.
@@ -23,7 +23,7 @@ initGame <- function(i){
   collectStats <<- TRUE                     # Turns collecting stats on and off. 
 
 
-  printResult <<- TRUE                     # Turns printing result on and off.
+  printResult <<- FALSE                     # Turns printing result on and off.
   enableAiData <<- FALSE                    # Turn AI on/off.
   enableTransLog <<- TRUE                  # Turn transaction log on/off.
   printGame <<- FALSE                       # Turn printlog of game on/off.
@@ -105,7 +105,7 @@ startGame <- function(i){
     setNextPlayer()                         # Changes current player before next round. 
 
     currentPlaytime <- Sys.time() - ptm     # Updates current playtime variable.
-    if(currentPlaytime > 20){               # Checks to see if current playtime is longer than 10s.
+    if(currentPlaytime > 40){               # Checks to see if current playtime is longer than 10s.
       cat(sprintf("Time out, %s! Round took longer than 10 seconds.",Sys.time()))
       players$active <<- 0                  # Sets all players to inactive.
       game_over <- TRUE                     # Sets game to be over. 
@@ -178,6 +178,19 @@ for (j in 1:k) {
   cat(sprintf("Round: %s, winnner %s", j, winnerStrategy))
   winners[j] <- roundWinner
 }
+
+k <- 50
+st <- 11
+winners = 1:(k*st)*0
+numberOfRounds <- 1:k*st*0
+for (a in 1:11) {
+  for (j in 1:k) {
+    startGame(a)
+    cat(sprintf("Round: %s, winnner %s", j, winnerStrategy))
+    winners[j] <- winnerStrategy
+  }
+}
+
 
 
 #hist(winners)

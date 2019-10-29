@@ -160,8 +160,8 @@ runMortStrategy <- function(x, y, z){
     if(sum(streetColFreq) > 0){
       #strategi M1 pantsetter kun de billigste eiendommene
       strategyName <- paste("strategy", players$strategy[stratPlayer], sep="")
-      if(strategyName == "strategy104"){
-        if(strategy104(stratPlayer, "mortage") == FALSE){
+      if(players$strategy[stratPlayer] > 100){
+        if(strategy106(stratPlayer, "mortage") == FALSE){
           #gatherStat("pantsatt", 0)
           return(FALSE)
         }else{
@@ -239,7 +239,7 @@ mayLiftMortage <- function(){
   inConcideration <- c()
   if(length(mortagedProps$name) > 0){
       strategyName <- paste("strategy", players$strategy[cur_player], sep="")
-      if(strategyName == "strategy104"){
+      if(strategyName == "strategy1006"){
         inConcideration <- c(inConcideration, get(strategyName)(cur_player, "liftmortagestart"))
         for(i in 1:nrow(mortagedProps)){
           propPrice <<- mortagedProps$mortageval[i]*1.1
