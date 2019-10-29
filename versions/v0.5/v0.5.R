@@ -11,7 +11,7 @@ initGame <- function(i){
   #------------------------------  Settings  ------------------------------ 
   version <- 5                              # Sets game version.
   setwd("../v0.5")                          # Set working directory to correct version number
-  strategy <- c(sample(1:11, 1), 2)                       # Set player strategies, first parameter sets strategy for player 1, etc...
+  strategy <- c(sample(1:11, 1), 2)         # Set player strategies, first parameter sets strategy for player 1, etc...
   houseStrategy <- c("H1", "H2")            # Set player house-buying strategies
   mortageStrategy <- c("M1", "M1")          # Set player mortgage strategies
   N <<- length(strategy)                    # N = Number of player
@@ -21,10 +21,10 @@ initGame <- function(i){
   bid_Active <<- TRUE                       # Turn bidding on and off.
   mort_Active <<- TRUE                      # Turn mortage on and off.
   collectStats <<- TRUE                     # Turns collecting stats on and off. 
-  printResult <<- TRUE                     # Turns printing result on and off.
+  printResult <<- TRUE                      # Turns printing result on and off.
   enableAiData <<- FALSE                    # Turn AI on/off.
   enableTransLog <<- FALSE                  # Turn transaction log on/off.
-  printGame <<- TRUE                       # Turn printlog of game on/off.
+  printGame <<- TRUE                        # Turn printlog of game on/off.
   #---------------------------------------------------------------------------
   id <- c(1:N)                              # Creates unique player ID.
   throws <<- rep(0, times=N)                # Sets number of throws per player to initial value 0. 
@@ -44,9 +44,9 @@ initGame <- function(i){
   uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
 
   # Creates log which is used for implementation of the Neural Network, AI. 
-  logForNN4temp <<- data.frame(matrix(NA, 0, 42))
-  colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
-  
+  logForNN4temp <<- data.frame(matrix(NA, 0, 44))
+  colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
+
   # Sources associated scripts. 
   source('functions v0.5.R')
   source('ai training v0.5.R')
