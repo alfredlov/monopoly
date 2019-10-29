@@ -162,7 +162,6 @@ runMortStrategy <- function(x, y, z){
       #strategi M1 pantsetter kun de billigste eiendommene
       strategyName <- paste("strategy", players$strategy[stratPlayer], sep="")
       if(strategyName == "strategy104"){
-        inConcideration <- c(inConcideration, get(strategyName)(stratPlayer, "liftmortagestart"))
         if(strategy104(stratPlayer, "mortage") == FALSE){
           #gatherStat("pantsatt", 0)
           return(FALSE)

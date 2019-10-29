@@ -18,6 +18,7 @@
 #normalized
 #nn=neuralnet(win~throws+fortune+white+brown+lblue+purple+orange+red+yellow+green+blue+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+buyStreet+buyHouse+mortage+liftmortage+fortuneOthers+whiteOthers+brownOthers+lblueOthers+purpleOthers+orangeOthers+redOthers+yellowOthers+greenOthers+blueOthers+brownhousesOthers+lbluehousesOthers+purplehousesOthers+orangehousesOthers+redhousesOthers+yellowhousesOthers+greenhousesOthers+bluehousesOthers,data=logForNN4NORM, hidden=c(2,1), linear.output = FALSE, stepmax=1e6, lifesign="full")
 
+
 #gwplot(x=nn, min=0)
 #plot(nn)
 
@@ -31,26 +32,44 @@
 #logForNN3 <<- data.frame(matrix(NA, 0, 17))
 
 #logForNN4 <<- data.frame(matrix(NA, 0, 45))
-#logForNN5 <<- data.frame(matrix(NA, 0, 43))
+#logForNN5 <<- data.frame(matrix(NA, 0, 3))
+#logForNN6 <<- data.frame(matrix(NA, 0, 44))
 
 
 if(enableAiData == "Talfred"){
-  nn=neuralnet(win~throws+fortune+white+brown+lblue+purple+orange+red+yellow+green+blue+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+buyStreet+buyHouse+mortage+liftmortage+fortuneOthers+whiteOthers+brownOthers+lblueOthers+purpleOthers+orangeOthers+redOthers+yellowOthers+greenOthers+blueOthers+brownhousesOthers+lbluehousesOthers+purplehousesOthers+orangehousesOthers+redhousesOthers+yellowhousesOthers+greenhousesOthers+bluehousesOthers,data=logForNN4NORM, 
-               hidden=c(2,2,2), 
+
+  #nn=neuralnet(win~throws+fortune+white+brown+lblue+purple+orange+red+yellow+green+blue+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+buyStreet+buyHouse+mortage+liftmortage+fortuneOthers+whiteOthers+brownOthers+lblueOthers+purpleOthers+orangeOthers+redOthers+yellowOthers+greenOthers+blueOthers+brownhousesOthers+lbluehousesOthers+purplehousesOthers+orangehousesOthers+redhousesOthers+yellowhousesOthers+greenhousesOthers+bluehousesOthers,data=logForNN4NORM, 
+
+  # nn=neuralnet(win~paste(board$name[board$name != "Start" & board$color != "" & board$color != "grey"],collapse="+")
+  #              +paste(paste(board$name[board$name != "Start" & board$color != "" & board$color != "grey"], "Houses"),collapse="+")
+  #              +mortagedSelf+liftMortageSelf+mortagedOther+liftMortageOthers
+  #              +fortuneOthers
+  #              +paste(paste(board$name[board$name != "Start" & board$color != "" & board$color != "grey"], "Others"),collapse="+")
+  #              +paste(paste(board$name[board$name != "Start" & board$color != "" & board$color != "grey"], "Houses Others"),collapse="+"),
+  #              data=logForNN7NORM, 
+  #              hidden=c(2,2,2), 
+  #              #act.fct = "logistic", 
+  #              linear.output = FALSE, 
+  #              stepmax=1e6, 
+  #              lifesign="full", 
+  #              #startweights = nn[["startweights"]],
+  #              threshold=0.01)
+  nn=neuralnet(win~white+brown+lblue+purple+orange+red+yellow+green+blue+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+mortagedSelf+liftMortageSelf+mortagedOther+liftMortageOthers+fortuneOthers+whiteOthers+brownOthers+lblueOthers+purpleOthers+orangeOthers+redOthers+yellowOthers+greenOthers+blueOthers+brownhousesOthers+lbluehousesOthers+purplehousesOthers+orangehousesOthers+redhousesOthers+yellowhousesOthers+greenhousesOthers+bluehousesOthers,
+               data=logForNN6NORM, 
+               hidden=c(2), 
                #act.fct = "logistic", 
                linear.output = FALSE, 
                stepmax=1e6, 
                lifesign="full", 
-               startweights = nn[["startweights"]],
-               threshold=0.5)
-  
-  replicate(200, buildDataBaseforNN())
+               #startweights = nn[["startweights"]],
+               threshold=0.01)
+   replicate(200, buildDataBaseforNN())
   replicate(20, buildDataBaseforNN2())
   replicate(200, buildDataBaseforNN3())
   
   replicate(10, buildDataBaseforNN4())
   
-  replicate(100, buildDataBaseforNN5())
+  replicate(200, buildDataBaseforNN7())
   #normalize data for optimized learning 
   normalize <- function(x){
     return((x - min(x)) / (max(x) - min(x)))
@@ -58,8 +77,8 @@ if(enableAiData == "Talfred"){
   logForNN4 <<- logForNN4 %>%
     mutate(win = ifelse(win == 1, 1, 0))
   
-  logForNN4NORM <<- as.data.frame(lapply(logForNN4, normalize))
-  logForNN4NORM <<- logForNN4NORM %>%
+  logForNN6NORM <<- as.data.frame(lapply(logForNN6, normalize))
+  logForNN6NORM <<- logForNN6NORM %>%
     replace(., is.na(.), as.integer("0"))
   
   hist(logForNN4$id[logForNN4$win == 1])
@@ -139,15 +158,33 @@ if(enableAiData == "Talfred"){
     startGame()
     uniqueC <- unique(board$color[board$color != "" & board$color != "grey"])
     colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
-    winner <- 1
     if(length(logForNN4temp[,1]) != 0){
       logForNN4temp <- logForNN4temp %>%
-        mutate(win = ifelse(id == winner, 1, 0))
+        mutate(win = ifelse(id == roundWinner, 1, 0))
     }
     colnames(logForNN4) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id", "win")
     
     logForNN4 <<- rbind(logForNN4, logForNN4temp)
-    
+    logForNN5temp <<- rbind(logForNN5temp, c(players$strategy))
+    buildDataBaseforNN6()
+  }
+  buildDataBaseforNN6 <- function(){
+    startGame()
+    logForNN5temp <- rbind(logForNN5temp, c(players$strategy))
+    colnames(logForNN5temp) <- c("iS", "iiS")
+    if(length(logForNN5temp[,1]) != 0){
+      logForNN5temp <- logForNN5temp %>%
+        mutate(win = ifelse(iS == winnerStrategy, 1, 0))
+    }
+    colnames(logForNN5) <- c("iS", "iiS", "win")
+    logForNN5 <<- rbind(logForNN5, logForNN5temp)
+  }
+  buildDataBaseforNN7 <- function(){
+    startGame()
+    uniqueC <- unique(board$color[board$color != "" & board$color != "grey"])
+    colnames(logForNN6temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "mortagedSelf", "liftMortageSelf" , "mortagedOther", "liftMortageOthers",  "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "win")
+    colnames(logForNN6) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "mortagedSelf", "liftMortageSelf" , "mortagedOther", "liftMortageOthers", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "win")
+    logForNN6 <<- rbind(logForNN6, logForNN6temp)
   }
 }
 ################################################################

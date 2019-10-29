@@ -22,10 +22,13 @@ initGame <- function(i){
   bid_Active <<- TRUE                       # Turn bidding on and off.
   mort_Active <<- TRUE                      # Turn mortage on and off.
   collectStats <<- TRUE                     # Turns collecting stats on and off. 
-  printResult <<- TRUE                      # Turns printing result on and off.
+
+
+  printResult <<- TRUE                     # Turns printing result on and off.
   enableAiData <<- FALSE                    # Turn AI on/off.
-  enableTransLog <<- FALSE                  # Turn transaction log on/off.
-  printGame <<- TRUE                        # Turn printlog of game on/off.
+  enableTransLog <<- TRUE                  # Turn transaction log on/off.
+  printGame <<- FALSE                       # Turn printlog of game on/off.
+
   #---------------------------------------------------------------------------
   id <- c(1:N)                              # Creates unique player ID.
   throws <<- rep(0, times=N)                # Sets number of throws per player to initial value 0. 
@@ -44,11 +47,14 @@ initGame <- function(i){
   # Creates global vector containing all the propty colors.
   uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
 
-  # Creates log which is used for implementation of the Neural Network, AI. 
+  
   logForNN4temp <<- data.frame(matrix(NA, 0, 44))
   colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
+  logForNN5temp <<- data.frame(matrix(NA, 0, 2))
+  colnames(logForNN5temp) <- c("iS", "iiS")
+  logForNN6temp <<- data.frame(matrix(NA, 0, 44))
+  colnames(logForNN6temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "mortagedSelf", "liftMortageSelf" , "mortagedOther", "liftMortageOthers",  "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "win")
 
-  # Sources associated scripts. 
   source('functions v0.5.R')
   source('ai training v0.5.R')
 }
@@ -99,7 +105,7 @@ startGame <- function(i){
     setNextPlayer()                         # Changes current player before next round. 
 
     currentPlaytime <- Sys.time() - ptm     # Updates current playtime variable.
-    if(currentPlaytime > 10){               # Checks to see if current playtime is longer than 10s.
+    if(currentPlaytime > 20){               # Checks to see if current playtime is longer than 10s.
       cat(sprintf("Time out, %s! Round took longer than 10 seconds.",Sys.time()))
       players$active <<- 0                  # Sets all players to inactive.
       game_over <- TRUE                     # Sets game to be over. 
@@ -172,7 +178,7 @@ for (j in 1:k) {
 
 #hist(winners)
 table(winners)
-pbinom(25, 45, prob=0.5)
+pbinom(290, 500, prob=0.5)
 ################################################################
 
 startGame()
