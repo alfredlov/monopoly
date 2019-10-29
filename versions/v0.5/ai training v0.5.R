@@ -2,6 +2,26 @@
 #### AI STUFF  ##########################################################
 ##########################################################################
 
+# function: gatherStat()
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+gatherStat <- function(x, y){                         # Collects game stats for use in AI-agent. 
+  if(collectStats == TRUE){
+    countFreq(cur_player)
+    wola <- cur_player
+    if(x == "house"){
+      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, y, 0,0, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
+    }else if (x == "pantsatt"){
+      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, 0, y,0, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
+    }else if (x == "unpantsatt"){
+      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, 0, 0, y, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
+    }else{
+      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, y, 0, 0,0, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
+    }
+    colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
+  }
+}
+
+
 #require(neuralnet)
 #nn strategi 100, ser på sammenheng mellom seier og [posisjon, saldo, ant. hus, ant eiendommer]
 #nn=neuralnet(X1~X5+X1500+X0+X0.1,data=logForNN, hidden=0,act.fct = "logistic", linear.output = FALSE, stepmax=1e6)

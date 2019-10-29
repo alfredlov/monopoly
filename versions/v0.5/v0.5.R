@@ -161,7 +161,7 @@ printRoundResult <- function(){              # Creates ggplot of development of 
 
 
 ################################################################
-#############             TEST-SUITE             ###############
+#                         TEST-SUITE                           #
 ################################################################
 
 ###SLETT FØR INNLEVERING
