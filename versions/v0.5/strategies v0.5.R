@@ -1,179 +1,201 @@
-##---------------------------------------------------------
-## Monopoly Simulation - Strategies script
-## Version 0.2
-##---------------------------------------------------------
+##--------------------------------------------------------------------------------##
+## Monopoly Simulation - Strategies script                                        ## 
+## Version 0.5                                                                    ##
+##--------------------------------------------------------------------------------##
 
-
-##--------------------------------------------------------------------------------
-## runStrategy: Runs the current player's predefined strategy
-##  - If the given player's strategy-function returns TRUE, 
-##    set the owner variable of the property to TRUE. 
-##--------------------------------------------------------------------------------
 source('ai strategies v0.5.R')
 
-gatherStat <- function(x, y){
-  if(collectStats == TRUE){
-    countFreq(cur_player)
-    wola <- cur_player
-    if(x == "house"){
-      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, y, 0,0, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
-    }else if (x == "pantsatt"){
-      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, 0, y,0, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
-    }else if (x == "unpantsatt"){
-      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, 0, 0, y, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
-    }else{
-      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, y, 0, 0,0, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
-    }
-    colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
-  }
-}
 
-runStrategy <- function(){
-  propPrice <<- board$price[players$position[cur_player]]
+# function: runStrategy()
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+runStrategy <- function(){                                           # Helper function for handling the purchase of properties. 
+  propPrice <<- board$price[players$position[cur_player]]            # Gets price, type, colors and position of current property.
   propType <<- board$prop[players$position[cur_player]]
   propCol <<- board$color[players$position[cur_player]]
-  propPos <<- board$position[players$position[cur_player]]
-  
-  ##propPos <<- board$position[players$position[cur_player]]
+  propPos <<- board$position[players$position[cur_player]]           # Runs the strategy given for each player.
   strategyName <- paste("strategy", players$strategy[cur_player], sep="")
-  if(get(strategyName)() == TRUE){
-    #SLETT??
-    #cat(sprintf("kjøp %s",Sys.time()))
-    
-    position <- players$position[cur_player]
-    board$owner[position] <<- cur_player
+  
+  if(get(strategyName)() == TRUE){                                   # If the strategy allows for purchasing property...
+    position <- players$position[cur_player]              
+    board$owner[position] <<- cur_player                             # Change owner of the property on the board to cur_player.
     gatherStat("street", 1)
-    updateBalance(cur_player, "minus", propPrice, "bought street")
-  }else{
-    #gatherStat("street", 0)
-    #####BUDRUNDE
-    #SKRU BUDRUNDER AV/PÅ I initGame()
-    if(bid_Active == TRUE){    
-      bid_over <<- FALSE
-      playersBidDf <- players %>%
+    updateBalance(cur_player, "minus", propPrice, "bought street")   # Pays the bank for the property.
+    
+    if(printGame == TRUE){
+      cat(sprintf("Player %s bought property at position %s for %s. \n", cur_player, propPos, propPrice))
+      }
+    
+  }else{                                                             # If the strategy returns FALSE...
+    if(bid_Active == TRUE){                                          # ... and is bidding is turned on in settings. 
+      bid_over <<- FALSE                                             # ... start bidding round. 
+      playersBidDf <- players %>%                                    # ... without cur_player as he aready was able to buy property.
         filter(active == 1 & fortune > propPrice & id != cur_player)
-      while (bid_over != TRUE) {
-        interested <- rep(0, times=nrow(playersBidDf))
+      
+      while (bid_over != TRUE) {                                     # While bidding round isn't over...
+        interested <- rep(0, times=nrow(playersBidDf))               # Create array of interested buyers
         interestedBuyers <<- data.frame(playersBidDf$id, interested)
-        if(nrow(playersBidDf) != 0){
-          for (i in 1:nrow(playersBidDf)) {
+        
+        if(nrow(playersBidDf) != 0){                                 # For each player, consult their strategies and register if they are interested buyers.           
+          for (i in 1:nrow(playersBidDf)){
             strategyName <- paste("strategy", playersBidDf$strategy[playersBidDf$id == playersBidDf$id[i]], sep="")
-            #cat(sprintf("\nstrategy %s, player %s",strategyName, playersBidDf$id[i]))
             interestedBuyers$interested[i] <- get(strategyName)(playersBidDf$id[i])
           }
-          if(length(interestedBuyers$interested[interestedBuyers$interested==TRUE]) == 1){
+          
+          # If only one person is interested, awards them the property, deduct the bidprice from their fortune and register them as the owner.
+          if(length(interestedBuyers$interested[interestedBuyers$interested==TRUE]) == 1){    
             bidWinner <<- interestedBuyers$playersBidDf.id[interestedBuyers$interested==TRUE]
             bid_over <<- TRUE
             position <- players$position[cur_player]
             board$owner[position] <<- bidWinner
             updateBalance(bidWinner, "minus", propPrice, "bought street on auction")
-            #cat(sprintf("Player %s won auction of %s for %s",bidWinner, position, propPrice))
+            
+            if(printGame==TRUE){
+              cat(sprintf("Player %s won auction of property at position %s and paid $%s! \n",bidWinner, position, propPrice))
+            }
           }
+          
+          # If auction price has reached three times the original price, award the property at random or end bidding if no player now is interested. 
           if(propPrice > board$price[players$position[cur_player]]*3){
             if(length(interestedBuyers$interested[interestedBuyers$interested > 0]) == 0){
               bid_over <<- TRUE
-            }else{
-            bidWinner <<- interestedBuyers[sample(nrow(interestedBuyers), 1),]
-            bid_over <<- TRUE
-            position <- players$position[cur_player]
-            board$owner[position] <<- bidWinner$playersBidDf.id
-            updateBalance(bidWinner$playersBidDf.id, "minus", propPrice, "bought street on auction")
+              if(printGame==TRUE){
+                cat(sprintf("All players left the auction as price was too high. \n"))
+              }
+            }
+            
+            else{
+              bidWinner <<- interestedBuyers[sample(nrow(interestedBuyers), 1),]
+              bid_over <<- TRUE
+              position <- players$position[cur_player]
+              board$owner[position] <<- bidWinner$playersBidDf.id
+              updateBalance(bidWinner$playersBidDf.id, "minus", propPrice, "bought street on auction")
+              
+              if(printGame==TRUE){
+                cat(sprintf("Player %s won auction of property at position %s by random selection and paid  %s. \n",bidWinner, position, propPrice))
+              }
     
-            #cat(sprintf("Player %s won auction of %s on random for %s",bidWinner, position, propPrice))
             }
           }else{
             propPrice <<- round(propPrice * 1.1)
             playersBidDf <- playersBidDf %>%
               filter(active == 1 & fortune > propPrice & id != cur_player & id %in% interestedBuyers$playersBidDf.id[interestedBuyers$interested != 0])
           }
-        }else{
+        }
+        
+        else{
           bid_over <<- TRUE
+          
+          if(printGame==TRUE){
+            cat(sprintf("No players wanted or were able to participate in the auction. \n"))
+          }
         }
       }
     }
-    #ikke kjøp
-    #print("ikke kjøp")
   }
 }
 
-runHouseStrategy <- function(){
+
+# function: runHouseStrategy()
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+runHouseStrategy <- function(){                           # Handles running of house strategies.
   housesAvailable <- TRUE
-  if(!is.na(sum(board$houses))){
+  
+  if(!is.na(sum(board$houses))){                          # Checks to see if there are houses avaliable in bank. 
     if(sum(board$houses) > 32){
       housesAvailable <- FALSE
     }
   }
-  if(housesAvailable == TRUE){
-  #check if player owns all of a color
-  strategyName <- paste("strategy", players$houseStrategy[cur_player], sep="")
-  uniqueC <- c(as.character(unique(board$color[board$color != "" & board$color != "white" & board$color != "grey"])))
-  ownsAll <<- c() #liste over farger hvor cur_player eier alle, gitt av for løkken nedenfor
-  for (i in 1:length(uniqueC)) {
-    if(checkStreetPer(uniqueC[i], cur_player) == TRUE){
-      ownsAll <<- c(ownsAll, uniqueC[i])
-    }
-  } 
   
-  if(length(ownsAll) > 0){ #hvis en spiller eier alle av en farge/farger
-    #print("ALFRED")
-    #propPrice <<- board$housePrice[board$position == wTB]
-    considerBuy <<- TRUE
-    while(considerBuy == TRUE){
-        placesToBuy <<- board %>%
-          filter(owner == cur_player & color %in% ownsAll & housePrice < players$fortune[cur_player] & houses < 5 & mortaged != 1) %>%
-          select(name, color, houses, housePrice)
-      if(length(placesToBuy$name) == 0){
-        considerBuy <<- FALSE
-      }else{
-        placesToBuy <<- placesToBuy  %>%
-          group_by(color) %>%
-          filter(houses == min(houses)) %>%
-          ungroup()
-        houseToBuy <- get(strategyName)()
-        if(houseToBuy != FALSE){ #KJØPER BARE HUS OM TRUE FRA STRATEGI
-          board$houses[board$name == houseToBuy] <<- board$houses[board$name == houseToBuy] + 1 
-          players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$name == houseToBuy]
-          gatherStat("house", 1)
-          #print("KJØPT HUS")
-        }else{
-          #gatherStat("house", 0)
-          considerBuy <<- FALSE
+  if(housesAvailable == TRUE){                            # If there are houses avaliable...
+    ownsAll <<- c()                                       # ... create list of properties where players owns all of the same color.
+    for (i in 1:length(uniqueC)) {
+      if(checkStreetPer(uniqueC[i], cur_player) == TRUE){
+        ownsAll <<- c(ownsAll, uniqueC[i])
+      }
+    } 
+    
+    strategyName <- paste("strategy", players$houseStrategy[cur_player], sep="")
+    
+    if(length(ownsAll) > 0){                              # If the current player owns all properties of at least 1 color...
+      considerBuy <<- TRUE                                # Initially set considering buying houses to TRUE. 
+      
+      while(considerBuy == TRUE){                         # While still considering buying houses...
+          placesToBuy <<- board %>%                       # ... find candidates for house buying.
+            filter(owner == cur_player & color %in% ownsAll & housePrice < players$fortune[cur_player] & houses < 5 & mortaged != 1) %>%
+            select(name, color, houses, housePrice)
+          
+        if(length(placesToBuy$name) == 0){                # If no properties fit the above criterea...
+          considerBuy <<- FALSE                           # ... decline to buy houses.
+        }
+          
+        else{
+          placesToBuy <<- placesToBuy  %>%
+            group_by(color) %>%
+            filter(houses == min(houses)) %>%
+            ungroup()
+          
+          houseToBuy <- get(strategyName)()               # Run house strategy for the player.
+          
+          if(houseToBuy != FALSE){                        # If the strategy allowed for buying a house, deduct house price and increment number of houses.
+            housePrice <- board$housePrice[board$name == houseToBuy]
+            
+            board$houses[board$name == houseToBuy] <<- board$houses[board$name == houseToBuy] + 1 
+            players$fortune[cur_player] <<- players$fortune[cur_player] - housePrice
+            gatherStat("house", 1)
+            
+            if(printGame==TRUE){
+              cat(sprintf("Player %s has bought a house!", cur_player))
+            }
+          }
+          else{
+            considerBuy <<- FALSE
+          }
         }
       }
     }
   }
-  }
 }
 
-runMortStrategy <- function(x, y, z){
-  #--------------
-  #x = spiller, y = TRUE/FALSE (om spilleren pantsetter for å få z kapital), z = ønsket kapital
-  if(!missing(x)){
+
+# function: runMortStrategy(x, y, z)
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+runMortStrategy <- function(x, y, z){                 # Mortgage strategy depends on player x, whether the player wants a 
+  if(!missing(x)){                                    # variable y is not relevant for the final implementation.
     stratPlayer <<- x
   }else{
     stratPlayer <<- cur_player
   }
+  
   countFreq(stratPlayer)
-  if(missing(y)){
-    #her pantsettes det nok kun for å overleve i spillet
-    #denne calles som regel fra checkPlayerLoss helt til spilleren eventuelt ikke har tapt
-    if(sum(streetColFreq) > 0){
-      #strategi M1 pantsetter kun de billigste eiendommene
+  
+  if(missing(y)){                                     # If no cap-requirement is supplied the player mortgages until he has a fortune above 0. 
+     if(sum(streetColFreq) > 0){                      
       strategyName <- paste("strategy", players$strategy[stratPlayer], sep="")
+<<<<<<< HEAD
       if(players$strategy[stratPlayer] > 100){
         if(strategy106(stratPlayer, "mortage") == FALSE){
           #gatherStat("pantsatt", 0)
+=======
+      
+      if(strategyName == "strategy104"){
+        if(strategy104(stratPlayer, "mortage") == FALSE){
+>>>>>>> origin/master
           return(FALSE)
-        }else{
-          gatherStat("pantsatt", 1)
+        }
+        
+        else{                                        
+          gatherStat("pantsatt", 1)                    # Gather AI-data. 
           return(TRUE)
         }
-      }else{
+      }
+      
+      else{
         if(M1(stratPlayer, "mortage") == FALSE){
-          #gatherStat("pantsatt", 0)
           return(FALSE)
-        }else{
-          gatherStat("pantsatt", 1)
+        }
+        
+        else{
+          gatherStat("pantsatt", 1)                    # Gather AI-data. 
           return(TRUE)
         }
       }
@@ -181,65 +203,26 @@ runMortStrategy <- function(x, y, z){
       return(FALSE)
     }
   }else if (y == TRUE){
-    #spilleren prøver å få z kapital
+    #SLETT?! spilleren prøver å få z kapital
   }
 }
 
-M1 <- function(x,y){
-  if(!missing(x)){
-    stratPlayer <<- x
-  }else{
-    stratPlayer <<- cur_player
-  }
-  #denne strategien prøver å pantsette minst verdifulle eiendommer
-  countFreq(stratPlayer)
-  allOfCol <- c()
-  for(i in 1:length(uniqueC)){
-    total <- length(board$color[board$color == uniqueC[i] & !(is.na(board$owner))])
-    allOfCol <- c(allOfCol, total)
-  }
-  normVec <- streetColFreq/allOfCol
-  lowest <- min(normVec[normVec>0]) #over 0 fordi de med 0 inneholder 0 eiendommer...
 
-  first <- min(which(normVec == lowest)) #første farge m/ færrest eiendommer
-  colOfInd <- uniqueC[first]
-  #pantsette eiendom med fargen colOfFirst:
-  propsOfCol <- board$position[board$color == colOfInd & board$owner == stratPlayer & !(is.na(board$owner)) & board$mortaged != 1]
-  firtStreet <- min(board$position[board$position %in% propsOfCol])
-  if(is.na(sum(board$houses[board$position %in% propsOfCol])) | sum(board$houses[board$position %in% propsOfCol]) == 0){
-    #ingen hus -> pantsett
-    if((bankMoney - board$mortageval[board$position == firtStreet]) > 0){
-      updateBalance(stratPlayer, "pluss", board$mortageval[board$position == firtStreet], "Mortage")
-      board$mortaged[board$position == firtStreet] <<- 1
-      return(TRUE)
-    }else{
-      print("banken har ikke råd til pantsetting")
-      return(FALSE)
-    }
-  }else{
-    if(bankMoney - (board$housePrice[board$position == firtStreet])/2 > 0){
-      updateBalance(stratPlayer, "pluss", (board$housePrice[board$position == firtStreet])/2, "sold house")
-      board$houses[board$position == firtStreet] <<- board$houses[board$position == firtStreet] - 1
-      return(TRUE)
-    }else{
-      print("banken har ikke råd til kjøpe hus")
-      return(FALSE)
-    }
-    #selg hus til banken for halve prisen
-  }
-}
-
-mayLiftMortage <- function(){
-  #vurder å kjøpe tilbake eiendommer
-  #call strategi og sjekk om eiendommene er noen strategien vil kjøpe for mortageval*1.1
-  #hvis det er flere eiendommer vil lift mortage, for alle strategier utenom AI, velge å kjøpe den rimeligste
-  #målet er at AI vil velge å kjøpe tilbake den som gir best sannsynlighet for å vinne
-  mortagedProps <- board %>%
+# function: mayLiftMortage()
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+mayLiftMortage <- function(){                           # Function for the buying out of mortgaged properties.
+  mortagedProps <- board %>%                            # Only consideres prooperties which the player can afford to unmortgage and are currently mortgaged.
     filter(owner == cur_player & mortaged == 1 & (mortageval*1.1) < players$fortune[cur_player])
   inConcideration <- c()
+  
   if(length(mortagedProps$name) > 0){
       strategyName <- paste("strategy", players$strategy[cur_player], sep="")
+<<<<<<< HEAD
       if(strategyName == "strategy1006"){
+=======
+      
+      if(strategyName == "strategy104"){                # If the AI deals with mortgage, run seperate code...
+>>>>>>> origin/master
         inConcideration <- c(inConcideration, get(strategyName)(cur_player, "liftmortagestart"))
         for(i in 1:nrow(mortagedProps)){
           propPrice <<- mortagedProps$mortageval[i]*1.1
@@ -248,7 +231,9 @@ mayLiftMortage <- function(){
           propPos <<- mortagedProps$position[i]
           inConcideration <- c(inConcideration, get(strategyName)(cur_player, "liftmortage"))
         }
-      }else{
+      }
+      
+      else{                                              # ... otherwise run "analog" mortgage strategy.
         for(i in 1:nrow(mortagedProps)){
           propPrice <<- mortagedProps$mortageval[i]*1.1
           propType <<- mortagedProps$prop[i]
@@ -258,29 +243,42 @@ mayLiftMortage <- function(){
         }
       }
     
-    if(!is.null(inConcideration)){
-      if(TRUE %in% inConcideration){
+    if(!is.null(inConcideration)){                       # If there are properties which are considered for unmortgaging....
+      if(TRUE %in% inConcideration){                     # ... unmortgage possible properties.
         gatherStat("unpantsatt", 1)
         liftMort <- max(which(inConcideration == max(inConcideration)))
         posOfLiftMort <- mortagedProps$position[liftMort]
         board$mortaged[board$position == posOfLiftMort] <<- 0
         updateBalance(cur_player, "minus", board$mortageval[board$position == posOfLiftMort]*1.1, sprintf("lif-mortage of %s", posOfLiftMort))
-      }else{
-        #gatherStat("unpantsatt", 0)
+      }
+      else{
+        # SLETT?! gatherStat("unpantsatt", 0)
       }    
     }
   }
 }
 
-######################################################################################
-#####  PROPERTY-STRATEGIES ###########################################################
-######################################################################################
+# function: setPlayer()
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+setPlayer <- function(x){
+  if(!missing(x)){
+    stratPlayer <<- x
+  }else{
+    stratPlayer <<- cur_player
+  }
+}
+
+
+#####################################################################################
+#                             PROPERTY-STRATEGIES                                   #
+#####################################################################################
 
 ##-----------------------------------------------------------------------------------
 ##  Strategy 1: Greedy Naive
 ##  Simple naïve strategy which involves buying all properties the player lands on. 
 ##-----------------------------------------------------------------------------------
 strategy1 <- function(x, y){
+  setPlayer()
   return(TRUE)
 }
 
@@ -289,6 +287,7 @@ strategy1 <- function(x, y){
 ##  Simple strategy of buying all properties the player lands on with probability 0.5.
 ##-----------------------------------------------------------------------------------
 strategy2 <- function(x, y){
+  setPlayer()
   if(sample(0:1, prob = c(0.5, 0.5), 1) == 1){
     return(TRUE)
   }else{
@@ -301,11 +300,8 @@ strategy2 <- function(x, y){
 ##  Buys all properties as long as price < 50% of total income.
 ##-----------------------------------------------------------------------------------
 strategy3 <- function(x, y){
-  if(!missing(x)){
-    stratPlayer <<- x
-  }else{
-    stratPlayer <<- cur_player
-  }
+  setPlayer()
+  
   if(propPrice/players$fortune[stratPlayer] <= 0.5){
     return(TRUE)
   }else{
@@ -315,12 +311,9 @@ strategy3 <- function(x, y){
 
 ##-----------------------------------------------------------------------------------
 ##  Strategy 4: Middle of the road
-##  Only buys regular properties on the 2nd and 3rd part of the board. 
-## These are either purple, orange, red, orange...
+##  Only buys regular properties on the 2nd and 3rd part of the board (purple, red, orange, yellow properties).
 ##-----------------------------------------------------------------------------------
 strategy4 <- function(x, y){
-  
-  ##FORENKLE??
   if(propCol == 'purple' || propCol == 'orange' || propCol == 'red' || propCol == 'yellow'){
     return(TRUE)
   }else{
@@ -332,8 +325,7 @@ strategy4 <- function(x, y){
 ##  Strategy 5: Red & Orange
 ##-----------------------------------------------------------------------------------
 strategy5 <- function(x, y){
-  
-  ##FORENKLE??
+  setPlayer()
   if(propCol == 'orange' || propCol == 'red'){
     return(TRUE)
   }else{
@@ -346,6 +338,7 @@ strategy5 <- function(x, y){
 ##  Strategy 6: Railroads
 ##-----------------------------------------------------------------------------------
 strategy6 <- function(x, y){
+  setPlayer()
   if(propType == 3){
     return(TRUE)
   }else{
@@ -357,6 +350,7 @@ strategy6 <- function(x, y){
 ##  Strategy 7: Utilities
 ##-----------------------------------------------------------------------------------
 strategy7 <- function(x, y){
+  setPlayer()
   if(propType == 2){
     return(TRUE)
   }else{
@@ -368,6 +362,7 @@ strategy7 <- function(x, y){
 ##  Strategy 8: Railroads + Utilities
 ##-----------------------------------------------------------------------------------
 strategy8 <- function(x, y){
+  setPlayer()
   if(propType == 2 | propType== 3){
     return(TRUE)
   }else{
@@ -379,6 +374,7 @@ strategy8 <- function(x, y){
 ##  Strategy 9: Railroads + Utilities, then Conservative
 ##-----------------------------------------------------------------------------------
 strategy9 <- function(x, y){
+  setPlayer()
   if(propType == 2 | propType == 3){
     return(TRUE)
   }else{
@@ -396,6 +392,7 @@ strategy9 <- function(x, y){
 ##  Strategy 10: Solid
 ##-----------------------------------------------------------------------------------
 strategy10 <- function(x, y){
+  setPlayer()
   if(!missing(x)){
     stratPlayer <<- x
   }else{
@@ -415,14 +412,13 @@ strategy10 <- function(x, y){
   else{
     return(FALSE)
   }
-
-
 }
-##-----------------------------------------------------------------------------------
-##  Strategy 11: Agressive(?)
-##-----------------------------------------------------------------------------------
 
+##-----------------------------------------------------------------------------------
+##  Strategy 11: Best Practice
+##-----------------------------------------------------------------------------------
 strategy11 <- function(x, y){
+  setPlayer()
   if(!missing(x)){
     stratPlayer <<- x
   }else{
@@ -456,15 +452,16 @@ strategy11 <- function(x, y){
 }
 
 
-######################################################################################
-#####  HOUSE-STRATEGIES #############################################################
-######################################################################################
+#####################################################################################
+#                               HOUSE-STRATEGIES                                    #
+#####################################################################################
 
 ##-----------------------------------------------------------------------------------
 ##  Strategy H1: Aggressive
 ##-----------------------------------------------------------------------------------
 
 strategyH1 <- function(){
+  setPlayer()
   return(placesToBuy[1,]$name)
 }
   
@@ -474,8 +471,8 @@ strategyH1 <- function(){
 ##-----------------------------------------------------------------------------------
 
 strategyH2 <- function(){
+  setPlayer()
   curFortune <- players$fortune[players$id==cur_player]
-  #cat(sprintf("current player: %s \n",cur_player))
   if(players$fortune[players$id==cur_player]<1000){
     return(FALSE)
   }
@@ -483,59 +480,61 @@ strategyH2 <- function(){
     pickedHouse <- sample(1:length(placesToBuy[1,]))
     return(placesToBuy[1,]$name)
   }
-
-  
-  
 }
+
 
 ##-----------------------------------------------------------------------------------
 ##  Strategy H3: Timid
 ##-----------------------------------------------------------------------------------
 
 strategyH3 <- function(){
-  
-  
-}
-
-##-----------------------------------------------------------------------------------
-##  Strategy HALFRED: Timid
-##-----------------------------------------------------------------------------------
-
-strategyHALFRED <- function(){
-  # if(length(placesToBuy$name) == 1){
-  #   return(placesToBuy[1,]$name)
-  #   housesInCol <- board$houses[board$color == uniqueC[ownsAll[1]]]
-  #   sQuery <- board$position[board$color == uniqueC[ownsAll[1]] & board$houses == min(housesInCol) & board$houses < 5]
-  #   if(length(sQuery) != 0){
-  #     wTB <- max(sQuery)
-  #     
-  #   }
-  # }else{
+  setPlayer()
   return(placesToBuy[length(placesToBuy$name),]$name)
-  #}
- 
-  
-  # if(length(ownsAll) > 1){ #hvis en spiller eier alle av en farge/farger
-  #   colFocus <- sample(1:length(ownsAll), 1)
-  #   housesInCol <- board$houses[board$color == uniqueC[ownsAll[colFocus]]]
-  #   sQuery <- board$position[board$color == uniqueC[ownsAll[colFocus]] & board$houses == min(housesInCol) & board$houses < 5]
-  #   if(length(sQuery) != 0){
-  #     wTB <- max(sQuery)
-  #     if(players$fortune[cur_player] - board$housePrice[board$position == wTB] > 0){
-  #       propPrice <<- board$housePrice[board$position == wTB]
-  #       strategyName <- paste("strategy", players$houseStrategy[cur_player], sep="")
-  #       if(get(strategyName)() == TRUE){
-  #         board$houses[board$position == wTB] <<- board$houses[board$position == wTB] + 1 
-  #         players$fortune[cur_player] <<- players$fortune[cur_player] - board$housePrice[board$position == wTB]
-  #         gatherStat("house", 1)
-  #         #print("KJØPT HUS")
-  #       }else{
-  #         gatherStat("house", 0)
-  #       }    
-  #     }
-  #   }
-  # }
 }
 
 
+#####################################################################################
+#                               MORTGAGE-STRATEGIES                                 #
+#####################################################################################
+
+M1 <- function(x,y){
+  setPlayer()
+  
+  #denne strategien prøver å pantsette minst verdifulle eiendommer
+  countFreq(stratPlayer)
+  allOfCol <- c()
+  for(i in 1:length(uniqueC)){
+    total <- length(board$color[board$color == uniqueC[i] & !(is.na(board$owner))])
+    allOfCol <- c(allOfCol, total)
+  }
+  normVec <- streetColFreq/allOfCol
+  lowest <- min(normVec[normVec>0]) #over 0 fordi de med 0 inneholder 0 eiendommer...
+  
+  first <- min(which(normVec == lowest)) #første farge m/ færrest eiendommer
+  colOfInd <- uniqueC[first]
+  #pantsette eiendom med fargen colOfFirst:
+  propsOfCol <- board$position[board$color == colOfInd & board$owner == stratPlayer & !(is.na(board$owner)) & board$mortaged != 1]
+  firtStreet <- min(board$position[board$position %in% propsOfCol])
+  if(is.na(sum(board$houses[board$position %in% propsOfCol])) | sum(board$houses[board$position %in% propsOfCol]) == 0){
+    #ingen hus -> pantsett
+    if((bankMoney - board$mortageval[board$position == firtStreet]) > 0){
+      updateBalance(stratPlayer, "pluss", board$mortageval[board$position == firtStreet], "Mortage")
+      board$mortaged[board$position == firtStreet] <<- 1
+      return(TRUE)
+    }else{
+      print("banken har ikke råd til pantsetting")
+      return(FALSE)
+    }
+  }else{
+    if(bankMoney - (board$housePrice[board$position == firtStreet])/2 > 0){
+      updateBalance(stratPlayer, "pluss", (board$housePrice[board$position == firtStreet])/2, "sold house")
+      board$houses[board$position == firtStreet] <<- board$houses[board$position == firtStreet] - 1
+      return(TRUE)
+    }else{
+      print("banken har ikke råd til kjøpe hus")
+      return(FALSE)
+    }
+    #selg hus til banken for halve prisen
+  }
+}
 

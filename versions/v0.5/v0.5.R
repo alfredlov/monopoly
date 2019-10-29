@@ -7,12 +7,18 @@
 library(ggplot2)
 library(reshape2)
 
+
 initGame <- function(i){
   #------------------------------  Settings  ------------------------------ 
   version <- 5                              # Sets game version.
   setwd("../v0.5")                          # Set working directory to correct version number
+<<<<<<< HEAD
   strategy <- c(sample(1:11, 1), 106)         # Set player strategies, first parameter sets strategy for player 1, etc...
   houseStrategy <- c("H1", "H106")            # Set player house-buying strategies
+=======
+  strategy <- c(1, 2)                       # Set player strategies, first parameter sets strategy for player 1, etc...
+  houseStrategy <- c("H1", "H2")            # Set player house-buying strategies
+>>>>>>> origin/master
   mortageStrategy <- c("M1", "M1")          # Set player mortgage strategies
   N <<- length(strategy)                    # N = Number of player
   startCap <<- 1500                         # Sets start capital for all players.
@@ -58,9 +64,8 @@ initGame <- function(i){
   source('ai training v0.5.R')
 }
 
-##---------------------------------------------------------
-## Main-function.
-##---------------------------------------------------------
+# Main-function.
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 startGame <- function(i){  
   initGame(i)                               # Resets the game (board and players dataframes).
   cur_player <<- sample(1:N, 1)             # Randomly selects first player. 
@@ -125,10 +130,8 @@ startGame <- function(i){
 
 
 # function: collectRoundStatistics()
-# Code for collecting game information (numer of houses, 
-# throws, properties and fortune) every round.
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-collectRoundStatistics <- function(){
+collectRoundStatistics <- function(){                             # Collects statistice for each round of the game. 
   players$throws[cur_player] <<- players$throws[cur_player] + 1   # Increments throw number.
   fortune <<- cbind(fortune, players$fortune)                     # Appends new fortune-data. 
   curProps <- rep(0, N)
@@ -148,10 +151,8 @@ collectRoundStatistics <- function(){
 
 
 # function: printRoundResult()
-# Code for printing a ggplot graph of the development of the 
-# fortune variable for each player throughout the game.
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-printRoundResult <- function(){
+printRoundResult <- function(){              # Creates ggplot of development of fortune-variable post-game.
   test_data <- melt(fortune)
   thisThrows <- length(test_data[,1])
 
@@ -165,7 +166,7 @@ printRoundResult <- function(){
 
 
 ################################################################
-#############             TEST-SUITE             ###############
+#                         TEST-SUITE                           #
 ################################################################
 
 ###SLETT FØR INNLEVERING

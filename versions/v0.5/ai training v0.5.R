@@ -2,6 +2,26 @@
 #### AI STUFF  ##########################################################
 ##########################################################################
 
+# function: gatherStat()
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+gatherStat <- function(x, y){                         # Collects game stats for use in AI-agent. 
+  if(collectStats == TRUE){
+    countFreq(cur_player)
+    wola <- cur_player
+    if(x == "house"){
+      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, y, 0,0, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
+    }else if (x == "pantsatt"){
+      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, 0, y,0, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
+    }else if (x == "unpantsatt"){
+      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, 0, 0, y, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
+    }else{
+      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, y, 0, 0,0, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
+    }
+    colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
+  }
+}
+
+
 #require(neuralnet)
 #nn strategi 100, ser på sammenheng mellom seier og [posisjon, saldo, ant. hus, ant eiendommer]
 #nn=neuralnet(X1~X5+X1500+X0+X0.1,data=logForNN, hidden=0,act.fct = "logistic", linear.output = FALSE, stepmax=1e6)
@@ -37,6 +57,9 @@
 
 
 if(enableAiData == "Talfred"){
+
+  #nn=neuralnet(win~throws+fortune+white+brown+lblue+purple+orange+red+yellow+green+blue+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+buyStreet+buyHouse+mortage+liftmortage+fortuneOthers+whiteOthers+brownOthers+lblueOthers+purpleOthers+orangeOthers+redOthers+yellowOthers+greenOthers+blueOthers+brownhousesOthers+lbluehousesOthers+purplehousesOthers+orangehousesOthers+redhousesOthers+yellowhousesOthers+greenhousesOthers+bluehousesOthers,data=logForNN4NORM, 
+
   # nn=neuralnet(win~paste(board$name[board$name != "Start" & board$color != "" & board$color != "grey"],collapse="+")
   #              +paste(paste(board$name[board$name != "Start" & board$color != "" & board$color != "grey"], "Houses"),collapse="+")
   #              +mortagedSelf+liftMortageSelf+mortagedOther+liftMortageOthers
@@ -53,22 +76,13 @@ if(enableAiData == "Talfred"){
   #              threshold=0.01)
   nn=neuralnet(win~white+brown+lblue+purple+orange+red+yellow+green+blue+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+mortagedSelf+liftMortageSelf+mortagedOther+liftMortageOthers+fortuneOthers+whiteOthers+brownOthers+lblueOthers+purpleOthers+orangeOthers+redOthers+yellowOthers+greenOthers+blueOthers+brownhousesOthers+lbluehousesOthers+purplehousesOthers+orangehousesOthers+redhousesOthers+yellowhousesOthers+greenhousesOthers+bluehousesOthers,
                data=logForNN6NORM, 
-               hidden=c(2,2,2), 
-               #act.fct = "logistic", 
-               linear.output = FALSE, 
-               stepmax=1e6, 
-               lifesign="full", 
-               #startweights = nn[["startweights"]],
-               threshold=0.01)
-  nn2=neuralnet(win~iS+iiS,
-               data=logForNN5, 
                hidden=c(2), 
                #act.fct = "logistic", 
                linear.output = FALSE, 
                stepmax=1e6, 
                lifesign="full", 
                #startweights = nn[["startweights"]],
-               threshold=0.001)
+               threshold=0.01)
    replicate(200, buildDataBaseforNN())
   replicate(20, buildDataBaseforNN2())
   replicate(200, buildDataBaseforNN3())
