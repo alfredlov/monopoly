@@ -1,16 +1,17 @@
-##---------------------------------------------------------
-## Monopoly Simulation - Strategies script
-## Version 0.2
-##---------------------------------------------------------
+##--------------------------------------------------------------------------------##
+## Monopoly Simulation - Strategies script                                        ## 
+## Version 0.2                                                                    ##
+##--------------------------------------------------------------------------------##
 
 
+source('ai strategies v0.5.R')
 ##--------------------------------------------------------------------------------
 ## runStrategy: Runs the current player's predefined strategy
 ##  - If the given player's strategy-function returns TRUE, 
 ##    set the owner variable of the property to TRUE. 
 ##--------------------------------------------------------------------------------
-source('ai strategies v0.5.R')
-
+# function: gatherStat()
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 gatherStat <- function(x, y){
   if(collectStats == TRUE){
     countFreq(cur_player)

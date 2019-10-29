@@ -1,7 +1,7 @@
-##--------------------------------------------------------------------------------
-## FUNCTIONS v.0.5.R
-## Contains the game-functions.
-##--------------------------------------------------------------------------------
+##--------------------------------------------------------------------------------##
+## FUNCTIONS v.0.5.R                                                              ## 
+## Contains the game-functions.                                                   ##
+##--------------------------------------------------------------------------------##
 
 #Importing of libraries and associated scripts.
 source('strategies v0.5.R')
@@ -53,7 +53,7 @@ move <- function(x){
     if(players$jailDays[cur_player] == 0){
       players$position[cur_player] <<- cur_position + x
     }
-    if(printGame == TRUE){                          # Print event. 
+    if(printGame == TRUE){                            # Print event. 
       cat(sprintf("Player %s moved %s tiles to position %s. \n",cur_player, x, cur_position + x))
     }
   }
@@ -96,7 +96,8 @@ processPos <- function(){                             # Hands off player to corr
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 processFree <- function(){                            # If the player lands on 'Free Parking'...
                                                       # ... nothing happens.
-  if(printGame == TRUE){                            # Print event. 
+  
+  if(printGame == TRUE){                              # Print event. 
     cat(sprintf("Player %s landed on 'Free Parking'. \n",cur_player))
   }
 }                      
@@ -116,6 +117,7 @@ processJail <- function(){                            # If the player lands on '
   if(board$position[position] == 9){                 # If the player is at jail...
     dice1 <- sample(1:6, size = 1, replace = TRUE)   # Throw two dice...
     dice2 <- sample(1:6, size = 1, replace = TRUE)
+    
     if(dice1 == dice2){                              # If the dice show same result...
       players$jailDays[cur_player] <<- 0             # ... set remaining days in jail to 0.
       move(dice1 + dice2)                            # ... increment player position with result using move().
@@ -142,6 +144,7 @@ processAuto <- function(){                            # Processing the player la
   }
 }
 
+
 # function: processUtil: 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 processUtil <- function(){                            # Processes the player landing on a utility property.
@@ -155,6 +158,7 @@ processUtil <- function(){                            # Processes the player lan
     cat(sprintf("Player %s landed on a utility property owned by %s and paid him %s. \n", cur_player, owner, dice_res*utilR[numberOfUtilities]))
   }
 }
+
 
 ## function: processTrain()
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -174,6 +178,7 @@ processTrain <- function(){                           # Processes the player lan
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 processProp <- function(){                            # Processes the player landing on a regular property.
   color <<- as.character(board$color[position])       # Finds color of the street you landed on. 
+  
   if(board$mortaged[position] == 0){                  # If the property is not mortaged...
     if(checkStreetPer(color, owner) == TRUE){         # ... and the owner owns all the streets of the same color...
       if(board$houses[position] > 0){                 # ... and the person has a number of houses on the property pay accordingly.
@@ -197,6 +202,7 @@ processProp <- function(){                            # Processes the player lan
   else{                                             # When the property is mortgaged, pay no rent.
   }
 }
+
 
 # function: checkStreetPer(x, y)
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -233,6 +239,7 @@ countFreq <- function(x){                            # Finds the number of house
   }
 }
 
+
 # function: updateBalance(x, y, z, what)
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 updateBalance <- function(x, y, z, what){             # Transfers money z from/to (depending on y) player x.
@@ -262,21 +269,19 @@ updateBalance <- function(x, y, z, what){             # Transfers money z from/t
 # function: checkPlayerLoss()
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 checkPlayerLoss <- function(){                       # Checks to see if cur_player has lost.
-  #SETTE INN IF MORT = TRUE FØRST...
-  #Og an ennen if om at fortune < 0.
-  
-  #GENERELT DEKOMPONER WHILE SETNING...
-  while(length(board$name[(board$owner==cur_player) & !(is.na(board$owner)) & !(is.na(board$houses)) & board$mortaged != 1]) > 0 & players$fortune[cur_player] < 0 & mort_Active == TRUE){
-    if(runMortStrategy(cur_player) == FALSE){        # While the player has unmorta???????????
-      break
+  if(mort_Active == TRUE){
+    while(length(board$name[(board$owner==cur_player) & !(is.na(board$owner)) & !(is.na(board$houses)) & board$mortaged != 1]) > 0 & players$fortune[cur_player] < 0){
+      if(runMortStrategy(cur_player) == FALSE){      # While the player has unmortaged properties, has fortune less than zero, has zero houses.
+        break                                        # If the mortgage strategy returns FALSE, break loop.
+      }
     }
   }
   
+  
   if(players$fortune[cur_player] < 0){                # If player fortune is negative, houses can't be sold and properties can't be mortgaged...
     players$active[cur_player] <<- 0                  # Set current player to be inactive.
-    fortune <<- cbind(fortune, players$fortune)       # ?? må dette gjøres her??Add fortune data to
     board2 <<- board
-    board <<- board %>%
+    board <<- board %>%                               # When player loses set all his properties to be free and delete all houses.
       mutate(houses=replace(houses, owner==cur_player, 0)) %>%
       mutate(owner=replace(owner, owner==cur_player, 0)) %>%
       as.data.frame()
@@ -285,12 +290,13 @@ checkPlayerLoss <- function(){                       # Checks to see if cur_play
       cat(sprintf("Player %s ran out of cash! \n", cur_player))
     }
     
-    return(TRUE)        #Hvorfor returner den noe???
+    return(TRUE)    
   }
   else{
     return(FALSE)
   }
 }
+
 
 # function: checkGameOver()
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -299,8 +305,7 @@ checkGameOver <- function(){                            # Checks to see if game 
     game_over <<- TRUE                                  # Declares game over. 
     roundWinner <<- players$id[players$active==TRUE]    # Finds round winner and his strategy.
     winnerStrategy <<- players$strategy[players$active==TRUE]
-    print(roundWinner)            #SLETT?! Tar heller print-funksjonen helt på utside i TestSuite! 
-    
+
     if(printGame==TRUE){                                # Print event.
       cat(sprintf("Player %s won, using strategy %s. \n", roundWinner, winnerStrategy))
     }
