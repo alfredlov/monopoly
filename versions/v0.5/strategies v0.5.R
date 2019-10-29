@@ -248,6 +248,15 @@ mayLiftMortage <- function(){                           # Function for the buyin
   }
 }
 
+# function: setPlayer()
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+setPlayer <- function(x){
+  if(!missing(x)){
+    stratPlayer <<- x
+  }else{
+    stratPlayer <<- cur_player
+  }
+}
 
 
 #####################################################################################
@@ -259,6 +268,7 @@ mayLiftMortage <- function(){                           # Function for the buyin
 ##  Simple naïve strategy which involves buying all properties the player lands on. 
 ##-----------------------------------------------------------------------------------
 strategy1 <- function(x, y){
+  setPlayer()
   return(TRUE)
 }
 
@@ -267,6 +277,7 @@ strategy1 <- function(x, y){
 ##  Simple strategy of buying all properties the player lands on with probability 0.5.
 ##-----------------------------------------------------------------------------------
 strategy2 <- function(x, y){
+  setPlayer()
   if(sample(0:1, prob = c(0.5, 0.5), 1) == 1){
     return(TRUE)
   }else{
@@ -279,11 +290,7 @@ strategy2 <- function(x, y){
 ##  Buys all properties as long as price < 50% of total income.
 ##-----------------------------------------------------------------------------------
 strategy3 <- function(x, y){
-  if(!missing(x)){
-    stratPlayer <<- x
-  }else{
-    stratPlayer <<- cur_player
-  }
+  setPlayer()
   
   if(propPrice/players$fortune[stratPlayer] <= 0.5){
     return(TRUE)
@@ -308,8 +315,7 @@ strategy4 <- function(x, y){
 ##  Strategy 5: Red & Orange
 ##-----------------------------------------------------------------------------------
 strategy5 <- function(x, y){
-  
-  ##FORENKLE??
+  setPlayer()
   if(propCol == 'orange' || propCol == 'red'){
     return(TRUE)
   }else{
@@ -322,6 +328,7 @@ strategy5 <- function(x, y){
 ##  Strategy 6: Railroads
 ##-----------------------------------------------------------------------------------
 strategy6 <- function(x, y){
+  setPlayer()
   if(propType == 3){
     return(TRUE)
   }else{
@@ -333,6 +340,7 @@ strategy6 <- function(x, y){
 ##  Strategy 7: Utilities
 ##-----------------------------------------------------------------------------------
 strategy7 <- function(x, y){
+  setPlayer()
   if(propType == 2){
     return(TRUE)
   }else{
@@ -344,6 +352,7 @@ strategy7 <- function(x, y){
 ##  Strategy 8: Railroads + Utilities
 ##-----------------------------------------------------------------------------------
 strategy8 <- function(x, y){
+  setPlayer()
   if(propType == 2 | propType== 3){
     return(TRUE)
   }else{
@@ -355,6 +364,7 @@ strategy8 <- function(x, y){
 ##  Strategy 9: Railroads + Utilities, then Conservative
 ##-----------------------------------------------------------------------------------
 strategy9 <- function(x, y){
+  setPlayer()
   if(propType == 2 | propType == 3){
     return(TRUE)
   }else{
@@ -372,6 +382,7 @@ strategy9 <- function(x, y){
 ##  Strategy 10: Solid
 ##-----------------------------------------------------------------------------------
 strategy10 <- function(x, y){
+  setPlayer()
   if(!missing(x)){
     stratPlayer <<- x
   }else{
@@ -391,14 +402,13 @@ strategy10 <- function(x, y){
   else{
     return(FALSE)
   }
-
-
 }
-##-----------------------------------------------------------------------------------
-##  Strategy 11: Agressive(?)
-##-----------------------------------------------------------------------------------
 
+##-----------------------------------------------------------------------------------
+##  Strategy 11: Best Practice
+##-----------------------------------------------------------------------------------
 strategy11 <- function(x, y){
+  setPlayer()
   if(!missing(x)){
     stratPlayer <<- x
   }else{
@@ -441,6 +451,7 @@ strategy11 <- function(x, y){
 ##-----------------------------------------------------------------------------------
 
 strategyH1 <- function(){
+  setPlayer()
   return(placesToBuy[1,]$name)
 }
   
@@ -450,6 +461,7 @@ strategyH1 <- function(){
 ##-----------------------------------------------------------------------------------
 
 strategyH2 <- function(){
+  setPlayer()
   curFortune <- players$fortune[players$id==cur_player]
   if(players$fortune[players$id==cur_player]<1000){
     return(FALSE)
@@ -465,7 +477,8 @@ strategyH2 <- function(){
 ##  Strategy H3: Timid
 ##-----------------------------------------------------------------------------------
 
-strategyHALFRED <- function(){
+strategyH3 <- function(){
+  setPlayer()
   return(placesToBuy[length(placesToBuy$name),]$name)
 }
 
@@ -475,11 +488,8 @@ strategyHALFRED <- function(){
 #####################################################################################
 
 M1 <- function(x,y){
-  if(!missing(x)){
-    stratPlayer <<- x
-  }else{
-    stratPlayer <<- cur_player
-  }
+  setPlayer()
+  
   #denne strategien prøver å pantsette minst verdifulle eiendommer
   countFreq(stratPlayer)
   allOfCol <- c()
