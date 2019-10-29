@@ -248,6 +248,7 @@ mayLiftMortage <- function(){                           # Function for the buyin
   }
 }
 
+
 # function: setPlayer()
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 setPlayer <- function(x){
@@ -291,8 +292,8 @@ strategy2 <- function(x, y){
 ##-----------------------------------------------------------------------------------
 strategy3 <- function(x, y){
   setPlayer()
-  
-  if(propPrice/players$fortune[stratPlayer] <= 0.5){
+  playerLiq <- players$fortune[players$id==stratPlayer] + sum(board$price[board$owner==stratPlayer & board$mortaged == 0 & !is.na(board$owner)]*1/2)
+  if(propPrice/playerLiq <= 0.3){
     return(TRUE)
   }else{
     return(FALSE)
