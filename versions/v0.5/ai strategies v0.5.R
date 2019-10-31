@@ -394,40 +394,40 @@ strategy106 <- function(x, y){
   if(!missing(y)){
     if(y == "liftmortagestart"){
       test<-data.frame(matrix(NA, 0, 41))
-      test<- rbind(test, c(streetColFreq, houseColFreq,  sum(logForNN4temp$mortage[logForNN4temp$id == 1]), sum(logForNN4temp$liftmortage[logForNN4temp$id == 1]), sum(logForNN4temp$mortage[logForNN4temp$id != 1]),sum(logForNN4temp$liftmortage[logForNN4temp$id != 1]), sum(players$fortune[players$id != stratPlayer]), streetColFreqOthers, houseColFreqOthers))
+      test<- rbind(test, c(streetColFreq, houseColFreq,  sum(logForNN4temp$mortage[logForNN4temp$id == stratPlayer]), sum(logForNN4temp$liftmortage[logForNN4temp$id == stratPlayer]), sum(logForNN4temp$mortage[logForNN4temp$id != stratPlayer]),sum(logForNN4temp$liftmortage[logForNN4temp$id != stratPlayer]), sum(players$fortune[players$id != stratPlayer]), streetColFreqOthers, houseColFreqOthers))
       predictFunc(test)
       return(Predict$net.result)
     }else if(y == "liftmortage"){
       test<-data.frame(matrix(NA, 0, 41))
       hypStreet <- streetColFreq
       hypStreet[which(uniqueC==propCol)] <- hypStreet[which(uniqueC==propCol)] + 1
-      test<- rbind(test, c(hypStreet, houseColFreq,  sum(logForNN4temp$mortage[logForNN4temp$id == 1]), sum(logForNN4temp$liftmortage[logForNN4temp$id == 1]) + 1, sum(logForNN4temp$mortage[logForNN4temp$id != 1]),sum(logForNN4temp$liftmortage[logForNN4temp$id != 1]), sum(players$fortune[players$id != stratPlayer]), streetColFreqOthers, houseColFreqOthers))
+      test<- rbind(test, c(hypStreet, houseColFreq,  sum(logForNN4temp$mortage[logForNN4temp$id == stratPlayer]), sum(logForNN4temp$liftmortage[logForNN4temp$id == stratPlayer]) + 1, sum(logForNN4temp$mortage[logForNN4temp$id != stratPlayer]),sum(logForNN4temp$liftmortage[logForNN4temp$id != stratPlayer]), sum(players$fortune[players$id != stratPlayer]), streetColFreqOthers, houseColFreqOthers))
       predictFunc(test)
       return(Predict$net.result)
     }else if(y == "mortage"){
       test<-data.frame(matrix(NA, 0, 41))
       #ikke mortage noen..
-      test<- rbind(test, c(streetColFreq, houseColFreq,  sum(logForNN4temp$mortage[logForNN4temp$id == 1]), sum(logForNN4temp$liftmortage[logForNN4temp$id == 1]), sum(logForNN4temp$mortage[logForNN4temp$id != 1]),sum(logForNN4temp$liftmortage[logForNN4temp$id != 1]), sum(players$fortune[players$id != stratPlayer]), streetColFreqOthers, houseColFreqOthers))
+      test<- rbind(test, c(streetColFreq, houseColFreq,  sum(logForNN4temp$mortage[logForNN4temp$id == stratPlayer]), sum(logForNN4temp$liftmortage[logForNN4temp$id == stratPlayer]), sum(logForNN4temp$mortage[logForNN4temp$id != stratPlayer]),sum(logForNN4temp$liftmortage[logForNN4temp$id != stratPlayer]), sum(players$fortune[players$id != stratPlayer]), streetColFreqOthers, houseColFreqOthers))
       #finne ut hva å mortage
       countFreq(stratPlayer)
       propsOfCol <- unique(board$color[board$owner == stratPlayer & !(is.na(board$owner)) & board$mortaged != 1])
       if(length(propsOfCol) > 0){
         for (i in 1:length(propsOfCol)) {
           hypStreet <- streetColFreq
-          hypStreet[which(uniqueC==propCol)] <- hypStreet[which(uniqueC==propsOfCol[i])] + 1
+          hypStreet[which(uniqueC==propCol)] <- hypStreet[which(uniqueC==propsOfCol[i])] - 1
           
           fort3 <- fort + board$mortageval[board$position == min(board$position[board$color == propsOfCol[i]])]
-          test<- rbind(test, c(hypStreet, houseColFreq,  sum(logForNN4temp$mortage[logForNN4temp$id == 1]) + 1, sum(logForNN4temp$liftmortage[logForNN4temp$id == 1]), sum(logForNN4temp$mortage[logForNN4temp$id != 1]),sum(logForNN4temp$liftmortage[logForNN4temp$id != 1]), sum(players$fortune[players$id != stratPlayer]), streetColFreqOthers, houseColFreqOthers))
+          test<- rbind(test, c(hypStreet, houseColFreq,  sum(logForNN4temp$mortage[logForNN4temp$id == stratPlayer]) + 1, sum(logForNN4temp$liftmortage[logForNN4temp$id == stratPlayer]), sum(logForNN4temp$mortage[logForNN4temp$id != stratPlayer]),sum(logForNN4temp$liftmortage[logForNN4temp$id != stratPlayer]), sum(players$fortune[players$id != stratPlayer]), streetColFreqOthers, houseColFreqOthers))
         }
         predictFunc(test)
         if(Predict$net.result[1] == max(Predict$net.result)){
           cat(sprintf("ai did not mortage %s", Predict$net.result))
           return(FALSE)
         }else{
-          propColToMort <- propsOfCol[which(Predict$net.result == max(Predict$net.result))-1][1]
+          propColToMort <- propsOfCol[which(Predict$net.result == max(Predict$net.result)) - 1]
           posToMort <- min(board$position[board$color == propColToMort & board$owner == stratPlayer & !(is.na(board$owner)) & board$mortaged != 1])
-          
           if(is.na(sum(board$houses[board$color %in% propColToMort])) | sum(board$houses[board$color %in% propColToMort]) == 0){
+            
             #ingen hus -> pantsett
             if((bankMoney - board$mortageval[board$position == posToMort]) > 0){
               updateBalance(stratPlayer, "pluss", board$mortageval[board$position == posToMort], "Mortage")
@@ -460,8 +460,8 @@ strategy106 <- function(x, y){
     hypStreet[which(uniqueC==propCol)] <- hypStreet[which(uniqueC==propCol)] + 1
     
     test<-data.frame(matrix(NA, 0, 41))
-    test<- rbind(test, c(streetColFreq, houseColFreq,  sum(logForNN4temp$mortage[logForNN4temp$id == 1]), sum(logForNN4temp$liftmortage[logForNN4temp$id == 1]), sum(logForNN4temp$mortage[logForNN4temp$id != 1]),sum(logForNN4temp$liftmortage[logForNN4temp$id != 1]), sum(players$fortune[players$id != stratPlayer]), streetColFreqOthers, houseColFreqOthers))
-    test<- rbind(test, c(hypStreet, houseColFreq,  sum(logForNN4temp$mortage[logForNN4temp$id == 1]), sum(logForNN4temp$liftmortage[logForNN4temp$id == 1]), sum(logForNN4temp$mortage[logForNN4temp$id != 1]),sum(logForNN4temp$liftmortage[logForNN4temp$id != 1]), sum(players$fortune[players$id != stratPlayer]), streetColFreqOthers, houseColFreqOthers))
+    test<- rbind(test, c(streetColFreq, houseColFreq,  sum(logForNN4temp$mortage[logForNN4temp$id == stratPlayer]), sum(logForNN4temp$liftmortage[logForNN4temp$id == stratPlayer]), sum(logForNN4temp$mortage[logForNN4temp$id != stratPlayer]),sum(logForNN4temp$liftmortage[logForNN4temp$id != stratPlayer]), sum(players$fortune[players$id != stratPlayer]), streetColFreqOthers, houseColFreqOthers))
+    test<- rbind(test, c(hypStreet, houseColFreq,  sum(logForNN4temp$mortage[logForNN4temp$id == stratPlayer]), sum(logForNN4temp$liftmortage[logForNN4temp$id == stratPlayer]), sum(logForNN4temp$mortage[logForNN4temp$id != stratPlayer]),sum(logForNN4temp$liftmortage[logForNN4temp$id != stratPlayer]), sum(players$fortune[players$id != stratPlayer]), streetColFreqOthers, houseColFreqOthers))
     
     predictFunc(test)
     
@@ -482,6 +482,219 @@ strategy106 <- function(x, y){
   }
 }
 
+######107
+####Måler hvor lenge en spiller har eid en eiendom ut fra når i spillet den ble kjøp (målt i terningkast)
+strategy107 <- function(x, y){
+  colnames(logForNN4temp) <<- c("throws", 
+                                "fortune", 
+                                as.character(uniqueC), 
+                                as.character(paste(uniqueC, "houses", sep = '')),
+                                "buyStreet", 
+                                "buyHouse", 
+                                "mortage", 
+                                "liftmortage", 
+                                "fortuneOthers", 
+                                as.character(paste(uniqueC, "Others", sep = '')), 
+                                as.character(paste(uniqueC, "housesOthers", sep = '')), 
+                                "id")
+  if(!missing(x)){
+    stratPlayer <<- x
+  }else{
+    stratPlayer <<- cur_player
+  }
+  pos <- players$throws[stratPlayer]
+  fort <- players$fortune[stratPlayer]
+  countFreq(stratPlayer)
+  fort2 <- fort - propPrice
+  normalize2 <- function(x){
+    return((x - min(logForNN7)) / (max(logForNN7) - min(logForNN7)))
+  }
+  streetNames <- as.character(board$name[board$name != "Start" & board$color != "" & board$color != "grey"])
+  streetHouses <- paste(streetNames, "Houses")
+  streetOther <- paste(streetNames, "Other")
+  streetHousesOther <- paste(streetNames, "Other Houses")
+  # setNames( 
+   #                              , c(#"throws",
+    # #"fortune", 
+    # streetNames, 
+    # streetHouses, 
+    # streetOther, 
+    # streetHousesOther,
+    # "mortagedSelf", 
+    # "liftMortageSelf", 
+    # "mortagedOther", 
+    # "liftMortageOthers",  
+    # "fortuneOthers"))
+  test <- data.frame()
+  # colnames(testBASE) <- c(#"throws",#"fortune",
+  #                                                                          streetNames,
+  #                                                                          streetHouses,
+  #                                                                          streetOther,
+  #                                                                          streetHousesOther,
+  #                                                                          "mortagedSelf",
+  #                                                                          "liftMortageSelf",
+  #                                                                          "mortagedOther",
+  #                                                                          "liftMortageOthers",
+  #                                                                          "fortuneOthers")
+  
+  predictFunc <- function(x){
+    colnames(x) <-  c(#"throws",
+                              "fortune", 
+                              streetNames, 
+                              streetHouses, 
+                              streetOther, 
+                              streetHousesOther,
+                              "mortagedSelf", 
+                              "liftMortageSelf", 
+                              "mortagedOther", 
+                              "liftMortageOthers",  
+                              "fortuneOthers")
+    n <- colnames(x)
+    n <- gsub("&", "", n)
+    n <- gsub(" ", ".", n)
+    colnames(x) <- n
+    x <- x %>%
+      replace(., is.na(.), as.integer("0"))
+    Predict<<-neuralnet::compute(nn,x)
+    for (i in 1:length(Predict$net.result)) {
+      if(is.na(Predict$net.result[i])){
+        Predict$net.result[i] <<- 0
+      }
+    }
+    #Predict$net.result
+  }
+  if(!missing(y)){
+    if(y == "liftmortagestart"){
+      test <- data.frame()
+      test <- rbind(test, c(#players$throws[players$id == 1],
+                              players$fortune[players$id == stratPlayer],
+                              purchasedLogDF,
+                              sum(logForNN4temp$mortage[logForNN4temp$id == stratPlayer]),
+                              sum(logForNN4temp$liftmortage[logForNN4temp$id == stratPlayer]),
+                              sum(logForNN4temp$mortage[logForNN4temp$id != stratPlayer]),
+                              sum(logForNN4temp$liftmortage[logForNN4temp$id != stratPlayer]),
+                              sum(players$fortune[players$id != stratPlayer])))
+      predictFunc(test)
+      return(Predict$net.result)
+    }else if(y == "liftmortage"){
+      test <- data.frame()
+      test <- rbind(test, c(#players$throws[players$id == stratPlayer],
+                     players$fortune[players$id == stratPlayer] - board$mortageval[board$position == propPos]*1.1,
+                     purchasedLogDF,
+                     sum(logForNN4temp$mortage[logForNN4temp$id == stratPlayer]),
+                     sum(logForNN4temp$liftmortage[logForNN4temp$id == stratPlayer]) + 1,
+                     sum(logForNN4temp$mortage[logForNN4temp$id != stratPlayer]),
+                     sum(logForNN4temp$liftmortage[logForNN4temp$id != stratPlayer]),
+                     sum(players$fortune[players$id != stratPlayer])))
+     predictFunc(test)
+      return(Predict$net.result)
+    }else if(y == "mortage"){
+      test <- data.frame()
+      #ikke mortage noen..
+      test <- rbind(test, c(#players$throws[players$id == stratPlayer],
+                     players$fortune[players$id == stratPlayer],
+                    purchasedLogDF,
+                    sum(logForNN4temp$mortage[logForNN4temp$id == stratPlayer]),
+                     sum(logForNN4temp$liftmortage[logForNN4temp$id == stratPlayer]),
+                     sum(logForNN4temp$mortage[logForNN4temp$id != stratPlayer]),
+                     sum(logForNN4temp$liftmortage[logForNN4temp$id != stratPlayer]),
+                     sum(players$fortune[players$id != stratPlayer])))
+      #finne ut hva å mortage
+      countFreq(stratPlayer)
+      propsOfCol <- unique(board$color[board$owner == stratPlayer & !(is.na(board$owner)) & board$mortaged != 1])
+      if(length(propsOfCol) > 0){
+        for (i in 1:length(propsOfCol)) {
+          test <- unname(test)
+          test <- rbind(test, c(#players$throws[players$id == stratPlayer],
+                         players$fortune[players$id == stratPlayer] + board$mortageval[board$position == min(board$position[board$color == propsOfCol[i]])],
+                         purchasedLogDF,
+                         sum(logForNN4temp$mortage[logForNN4temp$id == stratPlayer]) + 1,
+                         sum(logForNN4temp$liftmortage[logForNN4temp$id == stratPlayer]),
+                         sum(logForNN4temp$mortage[logForNN4temp$id != stratPlayer]),
+                         sum(logForNN4temp$liftmortage[logForNN4temp$id != stratPlayer]),
+                         sum(players$fortune[players$id != stratPlayer])))
+         }
+        predictFunc(test)
+        if(Predict$net.result[1] >= max(Predict$net.result)){
+          cat(sprintf("ai did not mortage %s", Predict$net.result))
+          return(FALSE)
+        }else{
+          propColToMort <- propsOfCol[min(which(Predict$net.result == max(Predict$net.result))) - 1]
+          posToMort <- min(board$position[board$color == propColToMort & board$owner == stratPlayer & !(is.na(board$owner)) & board$mortaged != 1])
+          if(is.na(sum(board$houses[board$color %in% propColToMort])) | sum(board$houses[board$color %in% propColToMort]) == 0){
+            #ingen hus -> pantsett
+            if((bankMoney - board$mortageval[board$position == posToMort]) > 0){
+              
+              cat(sprintf("ai did mortage %s", Predict$net.result))
+              updateBalance(stratPlayer, "pluss", board$mortageval[board$position == posToMort], "Mortage")
+              board$mortaged[board$position == posToMort] <<- 1
+              return(TRUE)
+            }else{
+              #print("banken har ikke råd til pantsetting")
+              return(FALSE)
+            }
+          }else{
+            if(bankMoney - (board$housePrice[board$position == posToMort])/2 > 0){
+              updateBalance(stratPlayer, "pluss", (board$housePrice[board$position == posToMort])/2, "sold house")
+              board$houses[board$position == posToMort] <<- board$houses[board$position == posToMort] - 1
+              return(TRUE)
+            }else{
+              #print("banken har ikke råd til kjøpe hus")
+              return(FALSE)
+            }
+            #selg hus til banken for halve prisen
+          }
+          return(TRUE)
+        }
+      }else{
+        return(FALSE)
+      }
+    }
+  }else{
+    #nn=neuralnet(win~throws+fortune+white+brown+lblue+purple+orange+red+yellow+green+blue+whitehouses+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+buyStreet+buyHouse,data=filteredNN, act.fct = "tanh", linear.output = FALSE, stepmax=1e6, lifesign="full")
+
+    test <-data.frame()
+    test <- rbind(test, c(players$fortune[players$id == stratPlayer],
+                    purchasedLogDF,
+                   sum(logForNN4temp$mortage[logForNN4temp$id == stratPlayer]),
+                   sum(logForNN4temp$liftmortage[logForNN4temp$id == stratPlayer]),
+                   sum(logForNN4temp$mortage[logForNN4temp$id != stratPlayer]),
+                   sum(logForNN4temp$liftmortage[logForNN4temp$id != stratPlayer]),
+                   sum(players$fortune[players$id != stratPlayer])))
+    
+    testPurchLog <- purchasedLogDF
+    testPurchLog[[propName]] <- 1
+    test <- unname(test)
+    test <- rbind(test, c(players$fortune[players$id == stratPlayer] - board$price[board$name == propName],
+                          testPurchLog,
+                           sum(logForNN4temp$mortage[logForNN4temp$id == stratPlayer]),
+                           sum(logForNN4temp$liftmortage[logForNN4temp$id == stratPlayer]),
+                           sum(logForNN4temp$mortage[logForNN4temp$id != stratPlayer]),
+                           sum(logForNN4temp$liftmortage[logForNN4temp$id != stratPlayer]),
+                           sum(players$fortune[players$id != stratPlayer])))
+    predictFunc(test)
+
+    for (i in 1:length(Predict$net.result)) {
+      if(is.na(Predict$net.result[i])){
+        Predict$net.result[i] <- 0
+      }
+    }
+    if(Predict$net.result[1] >= Predict$net.result[2]){
+      #print("AI KJØPTE IKKKKKE GATE")
+      if(!missing(x)){
+        #print("på auksjonnn")
+      }
+      #testTemp <<- as.data.frame(testNORM)
+      #cat(sprintf("throws : %s", Predict$net.result))
+      return(FALSE)
+    }else{
+      #print("AI KJØPTE GATE")
+      #cat(sprintf("%s", Predict$net.result))
+      #testTemp <<- as.data.frame(test)
+      return(TRUE)
+    }
+  }
+}
 ######################################################################################
 ##  AI - House-Strategies
 ######################################################################################
@@ -605,7 +818,7 @@ strategyH106 <- function(x){
   testNORM <<- as.data.frame(lapply(test, normalize2))
   testNORM <<- testNORM %>%
     replace(is.na(.), 0)
-  Predict=neuralnet::compute(nn,testNORM)
+  Predict=neuralnet::compute(nn,test)
   Predict$net.result
   
   #i tilfelle noen gir NA -> NA satt til 0
@@ -627,6 +840,90 @@ strategyH106 <- function(x){
     placesToBuyTemp <- placesToBuy %>%
       filter(color == colToBuy)
     return(placesToBuy[length(placesToBuyTemp$name),]$name) #kjøper hus på den eiendomen lengst ut ut i brettet av fargen den har valgt
+  }
+}
+
+strategyH107 <- function(x){
+  if(!missing(x)){
+    stratPlayer <<- x
+  }else{
+    stratPlayer <<- cur_player
+  }
+  streetNames <- as.character(board$name[board$name != "Start" & board$color != "" & board$color != "grey"])
+  streetHouses <- paste(streetNames, "Houses")
+  streetOther <- paste(streetNames, "Other")
+  streetHousesOther <- paste(streetNames, "Other Houses")
+
+  test <- data.frame()
+  #ikke kjøpe hus 
+  test <- rbind(test, c(#players$throws[players$id == stratPlayer],
+    players$fortune[players$id == stratPlayer],
+    purchasedLogDF,
+    sum(logForNN4temp$mortage[logForNN4temp$id == stratPlayer]),
+    sum(logForNN4temp$liftmortage[logForNN4temp$id == stratPlayer]),
+    sum(logForNN4temp$mortage[logForNN4temp$id != stratPlayer]),
+    sum(logForNN4temp$liftmortage[logForNN4temp$id != stratPlayer]),
+    sum(players$fortune[players$id != stratPlayer])))
+  
+  streetNames2 <- as.character(board$name[board$name != "Start" & board$color != "" & board$color != "grey" & board$color != "white" & board$name %in% placesToBuy$name])
+  #for hver gate
+  for(i in 1:length(streetNames2)){
+    testPurchLog <- purchasedLogDF
+    testPurchLog <- testPurchLog %>%
+      replace(., is.na(.), as.integer("0"))
+    if(!is.na(streetNames2[i])){
+      #print("notna")
+      testPurchLog[[paste(propName, "Houses")]] <- testPurchLog[[paste(streetNames2[i], "Houses")]]+1
+      test <- unname(test)
+      test <- rbind(test, c(#players$throws[players$id == stratPlayer],
+        players$fortune[players$id == stratPlayer]-board$housePrice[board$name == streetNames2[i]],
+        testPurchLog,
+        sum(logForNN4temp$mortage[logForNN4temp$id == stratPlayer]),
+        sum(logForNN4temp$liftmortage[logForNN4temp$id == stratPlayer]),
+        sum(logForNN4temp$mortage[logForNN4temp$id != stratPlayer]),
+        sum(logForNN4temp$liftmortage[logForNN4temp$id != stratPlayer]),
+        sum(players$fortune[players$id != stratPlayer])))
+    }
+  }
+  
+  colnames(test) <-  c(#"throws",
+    "fortune", 
+    streetNames, 
+    streetHouses, 
+    streetOther, 
+    streetHousesOther,
+    "mortagedSelf", 
+    "liftMortageSelf", 
+    "mortagedOther", 
+    "liftMortageOthers",  
+    "fortuneOthers")
+  n <- colnames(test)
+  n <- gsub("&", "", n)
+  n <- gsub(" ", ".", n)
+  colnames(test) <- n
+  test <- test %>%
+    replace(is.na(.), 0)
+  Predict=neuralnet::compute(nn,test)
+  Predict$net.result
+  
+  #i tilfelle noen gir NA -> NA satt til 0
+  for (i in 1:length(Predict$net.result)) {
+    if(is.na(Predict$net.result[i])){
+      Predict$net.result[i] <- 0
+    }
+  }
+  #velger farge eller ikke kjøp
+  if(Predict$net.result[1] >= max(Predict$net.result)){
+    #ikke kjøp
+    #print("AI KJØPTE IKKKKKE HUS")
+    #cat(sprintf("%s", Predict$net.result))
+    return(FALSE)
+  }else{
+    #print("AI KJØPTE HUS")
+    colToBuy <- streetNames2[which(Predict$net.result == max(Predict$net.result))[1] - 1] #minus 1 pga predict har én mer rad enn placestobuy pga ikke kjøp alternativet
+    placesToBuyTemp <- placesToBuy %>%
+      filter(color == colToBuy)
+    return(colToBuy) #kjøper hus på den eiendomen lengst ut ut i brettet av fargen den har valgt
   }
 }
 

@@ -12,13 +12,8 @@ initGame <- function(i){
   #------------------------------  Settings  ------------------------------ 
   version <- 5                              # Sets game version.
   setwd("../v0.5")                          # Set working directory to correct version number
-<<<<<<< HEAD
-  strategy <- c(sample(1:11, 1), 106)         # Set player strategies, first parameter sets strategy for player 1, etc...
-  houseStrategy <- c("H1", "H106")            # Set player house-buying strategies
-=======
-  strategy <- c(1, 2)                       # Set player strategies, first parameter sets strategy for player 1, etc...
-  houseStrategy <- c("H1", "H2")            # Set player house-buying strategies
->>>>>>> origin/master
+  strategy <- c(i, 107)                       # Set player strategies, first parameter sets strategy for player 1, etc...
+  houseStrategy <- c(sample(c("H1", "H2"), 1), "H107")            # Set player house-buying strategies
   mortageStrategy <- c("M1", "M1")          # Set player mortgage strategies
   N <<- length(strategy)                    # N = Number of player
   startCap <<- 1500                         # Sets start capital for all players.
@@ -31,7 +26,7 @@ initGame <- function(i){
 
   printResult <<- FALSE                     # Turns printing result on and off.
   enableAiData <<- FALSE                    # Turn AI on/off.
-  enableTransLog <<- TRUE                  # Turn transaction log on/off.
+  enableTransLog <<- FALSE                  # Turn transaction log on/off.
   printGame <<- FALSE                       # Turn printlog of game on/off.
 
   #---------------------------------------------------------------------------
@@ -60,6 +55,28 @@ initGame <- function(i){
   logForNN6temp <<- data.frame(matrix(NA, 0, 44))
   colnames(logForNN6temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "mortagedSelf", "liftMortageSelf" , "mortagedOther", "liftMortageOthers",  "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "win")
 
+  
+  streetNames <- as.character(board$name[board$name != "Start" & board$color != "" & board$color != "grey"])
+  streetHouses <- paste(streetNames, "Houses")
+  streetOther <- paste(streetNames, "Other")
+  streetHousesOther <- paste(streetNames, "Other Houses")
+  logForNN7temp <<- setNames(data.frame(matrix(0,ncol = 120, nrow = 1)), c("throws",
+                                                                           "fortune", 
+                                                                           streetNames, 
+                                                                            streetHouses, 
+                                                                            streetOther, 
+                                                                            streetHousesOther,
+                                                                           "mortagedSelf", 
+                                                                           "liftMortageSelf", 
+                                                                           "mortagedOther", 
+                                                                           "liftMortageOthers",  
+                                                                           "fortuneOthers", 
+                                                                           "win"))
+  purchasedLogDF <<- setNames(data.frame(matrix(NA,ncol = 112, nrow = 1)), c(streetNames, 
+                                                                             streetHouses, 
+                                                                             streetOther, 
+                                                                             streetHousesOther))
+  
   source('functions v0.5.R')
   source('ai training v0.5.R')
 }
@@ -75,6 +92,7 @@ startGame <- function(i){
     av_dices <<- 1                          # Available dice throws.
     eqDicesCount <<- 0                      # Check number of times equal dice are thrown in the same round. 
     while (av_dices >= 1 & players$active[cur_player] == 1) {
+      players$throws[cur_player] <<- players$throws[cur_player] + 1   # Increments throw number.
       av_dices <<- av_dices - 1
       dice_res <- throwDice()               # Throw dice.
       if(length(unique(dice_res)) == 1){    # If both dice show same number of eyes...  
@@ -110,7 +128,7 @@ startGame <- function(i){
     setNextPlayer()                         # Changes current player before next round. 
 
     currentPlaytime <- Sys.time() - ptm     # Updates current playtime variable.
-    if(currentPlaytime > 40){               # Checks to see if current playtime is longer than 10s.
+    if(currentPlaytime > 60){               # Checks to see if current playtime is longer than 10s.
       cat(sprintf("Time out, %s! Round took longer than 10 seconds.",Sys.time()))
       players$active <<- 0                  # Sets all players to inactive.
       game_over <- TRUE                     # Sets game to be over. 
@@ -132,7 +150,6 @@ startGame <- function(i){
 # function: collectRoundStatistics()
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 collectRoundStatistics <- function(){                             # Collects statistice for each round of the game. 
-  players$throws[cur_player] <<- players$throws[cur_player] + 1   # Increments throw number.
   fortune <<- cbind(fortune, players$fortune)                     # Appends new fortune-data. 
   curProps <- rep(0, N)
   curHouses <- rep(0, N)
@@ -171,32 +188,24 @@ printRoundResult <- function(){              # Creates ggplot of development of 
 
 ###SLETT FØR INNLEVERING
 
-k <- 50
-winners = 1:k*0
-numberOfRounds <- 1:k*0
-for (j in 1:k) {
-  startGame()
-  cat(sprintf("Round: %s, winnner %s", j, winnerStrategy))
-  winners[j] <- roundWinner
-}
-
-k <- 50
-st <- 11
-winners = 1:(k*st)*0
-numberOfRounds <- 1:k*st*0
-for (a in 1:11) {
+k <- 100
+a <- 11
+winners = 1:(k*a)*0
+winners <- 1:15
+numberOfRounds <- 1:(k*a)*0
+z <- 0
+for (i in 1:a) {
   for (j in 1:k) {
-    startGame(a)
+    z <- z + 1
+    startGame(i)
     cat(sprintf("Round: %s, winnner %s", j, winnerStrategy))
-    winners[j] <- winnerStrategy
+    winners[z] <- winnerStrategy
   }
 }
 
-
-
 #hist(winners)
 table(winners)
-pbinom(290, 500, prob=0.5)
+pbinom(179/11, 30, prob=0.5)
 ################################################################
 
 startGame()

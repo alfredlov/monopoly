@@ -125,6 +125,11 @@ processJail <- function(){                            # If the player lands on '
         cat(sprintf("Player %s got out of jail by throw two dice with same face.\n",cur_player))
       }
     }
+    ##SLETT?!
+    #cat(sprintf("Player %s KOM ikkkkke UT AV FENGSEL PGA TERNINGKAST",cur_player))
+     #teleporter til jail
+    #for å holde spilleren i jail trenger vi et element i df for å se om just visiting eller i jail
+    #  og for å se hvor mange kast spilleren har forsøkt å komme ut
   }
 }
 
@@ -306,6 +311,16 @@ checkGameOver <- function(){                            # Checks to see if game 
     countFreq(1)
     colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
     logForNN6temp <<- rbind(logForNN6temp, c(players$throws[players$id == 1],players$fortune[players$id == 1],streetColFreq, houseColFreq, sum(logForNN4temp$mortage[logForNN4temp$id == 1]), sum(logForNN4temp$liftmortage[logForNN4temp$id == 1]), sum(logForNN4temp$mortage[logForNN4temp$id != 1]),sum(logForNN4temp$liftmortage[logForNN4temp$id != 1]), sum(players$fortune[players$id != 1]),streetColFreqOthers,houseColFreqOthers, ifelse(roundWinner == 1, 1, 0)))
+    logForNN7temp[1,] <<- c(players$throws[players$id == 1],
+                           players$fortune[players$id == 1],
+                           purchasedLogDF,
+                           sum(logForNN4temp$mortage[logForNN4temp$id == 1]),
+                           sum(logForNN4temp$liftmortage[logForNN4temp$id == 1]),
+                           sum(logForNN4temp$mortage[logForNN4temp$id != 1]),
+                           sum(logForNN4temp$liftmortage[logForNN4temp$id != 1]),
+                           sum(players$fortune[players$id != 1]),
+                           ifelse(roundWinner == 1, 1, 0))
+    
     print(roundWinner)
     
     if(printGame==TRUE){                                # Print event.

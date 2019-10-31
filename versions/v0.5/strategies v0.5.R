@@ -9,6 +9,7 @@ source('ai strategies v0.5.R')
 # function: runStrategy()
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 runStrategy <- function(){                                           # Helper function for handling the purchase of properties. 
+  propName <<- as.character(board$name[players$position[cur_player]])
   propPrice <<- board$price[players$position[cur_player]]            # Gets price, type, colors and position of current property.
   propType <<- board$prop[players$position[cur_player]]
   propCol <<- board$color[players$position[cur_player]]
@@ -18,7 +19,7 @@ runStrategy <- function(){                                           # Helper fu
   if(get(strategyName)() == TRUE){                                   # If the strategy allows for purchasing property...
     position <- players$position[cur_player]              
     board$owner[position] <<- cur_player                             # Change owner of the property on the board to cur_player.
-    gatherStat("street", 1)
+    gatherStat("street", 1, propName)
     updateBalance(cur_player, "minus", propPrice, "bought street")   # Pays the bank for the property.
     
     if(printGame == TRUE){
@@ -48,7 +49,7 @@ runStrategy <- function(){                                           # Helper fu
             position <- players$position[cur_player]
             board$owner[position] <<- bidWinner
             updateBalance(bidWinner, "minus", propPrice, "bought street on auction")
-            
+            gatherStat("street", 1, propName)
             if(printGame==TRUE){
               cat(sprintf("Player %s won auction of property at position %s and paid $%s! \n",bidWinner, position, propPrice))
             }
@@ -69,7 +70,7 @@ runStrategy <- function(){                                           # Helper fu
               position <- players$position[cur_player]
               board$owner[position] <<- bidWinner$playersBidDf.id
               updateBalance(bidWinner$playersBidDf.id, "minus", propPrice, "bought street on auction")
-              
+              gatherStat("street", 1, propName)
               if(printGame==TRUE){
                 cat(sprintf("Player %s won auction of property at position %s by random selection and paid  %s. \n",bidWinner, position, propPrice))
               }
@@ -126,9 +127,7 @@ runHouseStrategy <- function(){                           # Handles running of h
           
         if(length(placesToBuy$name) == 0){                # If no properties fit the above criterea...
           considerBuy <<- FALSE                           # ... decline to buy houses.
-        }
-          
-        else{
+        } else{
           placesToBuy <<- placesToBuy  %>%
             group_by(color) %>%
             filter(houses == min(houses)) %>%
@@ -138,16 +137,14 @@ runHouseStrategy <- function(){                           # Handles running of h
           
           if(houseToBuy != FALSE){                        # If the strategy allowed for buying a house, deduct house price and increment number of houses.
             housePrice <- board$housePrice[board$name == houseToBuy]
-            
+            if(housePrice)
             board$houses[board$name == houseToBuy] <<- board$houses[board$name == houseToBuy] + 1 
             players$fortune[cur_player] <<- players$fortune[cur_player] - housePrice
-            gatherStat("house", 1)
-            
+            gatherStat("house", 1, houseToBuy)
             if(printGame==TRUE){
               cat(sprintf("Player %s has bought a house!", cur_player))
             }
-          }
-          else{
+          }else{
             considerBuy <<- FALSE
           }
         }
@@ -171,15 +168,9 @@ runMortStrategy <- function(x, y, z){                 # Mortgage strategy depend
   if(missing(y)){                                     # If no cap-requirement is supplied the player mortgages until he has a fortune above 0. 
      if(sum(streetColFreq) > 0){                      
       strategyName <- paste("strategy", players$strategy[stratPlayer], sep="")
-<<<<<<< HEAD
       if(players$strategy[stratPlayer] > 100){
-        if(strategy106(stratPlayer, "mortage") == FALSE){
+        if(M1(stratPlayer, "mortage") == FALSE){
           #gatherStat("pantsatt", 0)
-=======
-      
-      if(strategyName == "strategy104"){
-        if(strategy104(stratPlayer, "mortage") == FALSE){
->>>>>>> origin/master
           return(FALSE)
         }
         
@@ -217,12 +208,7 @@ mayLiftMortage <- function(){                           # Function for the buyin
   
   if(length(mortagedProps$name) > 0){
       strategyName <- paste("strategy", players$strategy[cur_player], sep="")
-<<<<<<< HEAD
-      if(strategyName == "strategy1006"){
-=======
-      
-      if(strategyName == "strategy104"){                # If the AI deals with mortgage, run seperate code...
->>>>>>> origin/master
+      if(players$strategy[cur_player] > 100){                # If the AI deals with mortgage, run seperate code...
         inConcideration <- c(inConcideration, get(strategyName)(cur_player, "liftmortagestart"))
         for(i in 1:nrow(mortagedProps)){
           propPrice <<- mortagedProps$mortageval[i]*1.1
@@ -243,17 +229,28 @@ mayLiftMortage <- function(){                           # Function for the buyin
         }
       }
     
-    if(!is.null(inConcideration)){                       # If there are properties which are considered for unmortgaging....
-      if(TRUE %in% inConcideration){                     # ... unmortgage possible properties.
-        gatherStat("unpantsatt", 1)
-        liftMort <- max(which(inConcideration == max(inConcideration)))
-        posOfLiftMort <- mortagedProps$position[liftMort]
-        board$mortaged[board$position == posOfLiftMort] <<- 0
-        updateBalance(cur_player, "minus", board$mortageval[board$position == posOfLiftMort]*1.1, sprintf("lif-mortage of %s", posOfLiftMort))
+    if(!is.null(inConcideration)){     
+      strategyName <- paste("strategy", players$strategy[cur_player], sep="")
+      if(players$strategy[cur_player] > 100){ 
+        if(inConcideration[1] >= max(inConcideration)){
+          
+        }else{
+          gatherStat("unpantsatt", 1)
+          liftMort <- max(which(inConcideration == max(inConcideration)))
+          posOfLiftMort <- mortagedProps$position[liftMort-1]
+          board$mortaged[board$position == posOfLiftMort] <<- 0
+          updateBalance(cur_player, "minus", board$mortageval[board$position == posOfLiftMort]*1.1, sprintf("lif-mortage of %s", posOfLiftMort))
+          
+        }
+      }else{
+        if(TRUE %in% inConcideration){                     # ... unmortgage possible properties.
+          gatherStat("unpantsatt", 1)
+          liftMort <- max(which(inConcideration == max(inConcideration)))
+          posOfLiftMort <- mortagedProps$position[liftMort]
+          board$mortaged[board$position == posOfLiftMort] <<- 0
+          updateBalance(cur_player, "minus", board$mortageval[board$position == posOfLiftMort]*1.1, sprintf("lif-mortage of %s", posOfLiftMort))
+        }
       }
-      else{
-        # SLETT?! gatherStat("unpantsatt", 0)
-      }    
     }
   }
 }

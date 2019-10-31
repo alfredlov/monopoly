@@ -4,20 +4,83 @@
 
 # function: gatherStat()
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-gatherStat <- function(x, y){                         # Collects game stats for use in AI-agent. 
+gatherStat <- function(x, y, z){                         # Collects game stats for use in AI-agent. 
   if(collectStats == TRUE){
     countFreq(cur_player)
     wola <- cur_player
     if(x == "house"){
-      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, y, 0,0, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
+      logForNN4temp <<- rbind(logForNN4temp, 
+                              c(players$throws[cur_player],
+                                players$fortune[cur_player],
+                                streetColFreq, 
+                                houseColFreq, 
+                                0, y, 0,0, 
+                                sum(players$fortune[players$id != cur_player]),
+                                streetColFreqOthers,
+                                houseColFreqOthers, wola))
+      
+      nameOfPurchased <- z
+      whoPurchased <- cur_player
+      if(whoPurchased == 1){
+        purchasedLogDF[[paste(nameOfPurchased, "Houses")]] <<- purchasedLogDF[[paste(nameOfPurchased, "Houses")]] + 1
+      }else{
+        purchasedLogDF[[paste(nameOfPurchased, "Other Houses")]] <<- purchasedLogDF[[paste(nameOfPurchased, "Other Houses")]] + 1
+      }
+      
     }else if (x == "pantsatt"){
-      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, 0, y,0, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
+      logForNN4temp <<- rbind(logForNN4temp, 
+                              c(players$throws[cur_player],
+                                players$fortune[cur_player],
+                                streetColFreq, houseColFreq, 
+                                0, 0, y,0, 
+                                sum(players$fortune[players$id != cur_player]),
+                                streetColFreqOthers,
+                                houseColFreqOthers, 
+                                wola))
     }else if (x == "unpantsatt"){
-      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, 0, 0, 0, y, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
+      logForNN4temp <<- rbind(logForNN4temp, 
+                              c(players$throws[cur_player],
+                                players$fortune[cur_player],
+                                streetColFreq, 
+                                houseColFreq, 
+                                0, 0, 0, y, 
+                                sum(players$fortune[players$id != cur_player]),
+                                streetColFreqOthers,
+                                houseColFreqOthers, 
+                                wola))
     }else{
-      logForNN4temp <<- rbind(logForNN4temp, c(players$throws[cur_player],players$fortune[cur_player],streetColFreq, houseColFreq, y, 0, 0,0, sum(players$fortune[players$id != cur_player]),streetColFreqOthers,houseColFreqOthers, wola))
+      nameOfPurchased <- z
+      whoPurchased <- board$owner[board$name == nameOfPurchased]
+      if(whoPurchased == 1){
+        purchasedLogDF[[nameOfPurchased]] <<- 1
+        #cat(sprintf("player %s at throw %s purchased %s \n", whoPurchased, players$throws[1], nameOfPurchased))
+      }else{
+        purchasedLogDF[[paste(nameOfPurchased, "Other")]] <<- 1
+      }
+      
+      logForNN4temp <<- rbind(logForNN4temp, 
+                              c(players$throws[cur_player],
+                                players$fortune[cur_player],
+                                streetColFreq, 
+                                houseColFreq, 
+                                y, 0, 0,0, 
+                                sum(players$fortune[players$id != cur_player]),
+                                streetColFreqOthers,
+                                houseColFreqOthers, 
+                                wola))
     }
-    colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
+    colnames(logForNN4temp) <<- c("throws", 
+                                 "fortune", 
+                                 as.character(uniqueC), 
+                                 as.character(paste(uniqueC, "houses", sep = '')),
+                                 "buyStreet", 
+                                 "buyHouse", 
+                                 "mortage", 
+                                 "liftmortage", 
+                                 "fortuneOthers", 
+                                 as.character(paste(uniqueC, "Others", sep = '')), 
+                                 as.character(paste(uniqueC, "housesOthers", sep = '')), 
+                                 "id")
   }
 }
 
@@ -39,14 +102,14 @@ gatherStat <- function(x, y){                         # Collects game stats for 
 #nn=neuralnet(win~throws+fortune+white+brown+lblue+purple+orange+red+yellow+green+blue+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+buyStreet+buyHouse+mortage+liftmortage+fortuneOthers+whiteOthers+brownOthers+lblueOthers+purpleOthers+orangeOthers+redOthers+yellowOthers+greenOthers+blueOthers+brownhousesOthers+lbluehousesOthers+purplehousesOthers+orangehousesOthers+redhousesOthers+yellowhousesOthers+greenhousesOthers+bluehousesOthers,data=logForNN4NORM, hidden=c(2,1), linear.output = FALSE, stepmax=1e6, lifesign="full")
 
 
-#gwplot(x=nn, min=0)
+#gwplot(x=nn, min=-10000000000000000, max=10000000000000000)
 #plot(nn)
 
 ################################################################
 #############           START NN DATA             ###############
 ################################################################
 
-#write.csv(logForNN4,'logForNN4.csv')
+#write.csv(logForNN7,'logForNN7.csv')
 #logForNN <<- data.frame(matrix(NA, 0, 5))
 #logForNN2 <<- data.frame(matrix(NA, 0, 5))
 #logForNN3 <<- data.frame(matrix(NA, 0, 17))
@@ -55,8 +118,15 @@ gatherStat <- function(x, y){                         # Collects game stats for 
 #logForNN5 <<- data.frame(matrix(NA, 0, 3))
 #logForNN6 <<- data.frame(matrix(NA, 0, 44))
 
+#logForNN7 <<- data.frame(matrix(NA, 0, 120))
+
 
 if(enableAiData == "Talfred"){
+  streetNames <- as.character(board$name[board$name != "Start" & board$color != "" & board$color != "grey"])
+  streetHouses <- paste(streetNames, "Houses")
+  streetOther <- paste(streetNames, "Other")
+  streetHousesOther <- paste(streetNames, "Other Houses")
+
 
   #nn=neuralnet(win~throws+fortune+white+brown+lblue+purple+orange+red+yellow+green+blue+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+buyStreet+buyHouse+mortage+liftmortage+fortuneOthers+whiteOthers+brownOthers+lblueOthers+purpleOthers+orangeOthers+redOthers+yellowOthers+greenOthers+blueOthers+brownhousesOthers+lbluehousesOthers+purplehousesOthers+orangehousesOthers+redhousesOthers+yellowhousesOthers+greenhousesOthers+bluehousesOthers,data=logForNN4NORM, 
 
@@ -76,20 +146,46 @@ if(enableAiData == "Talfred"){
   #              threshold=0.01)
   nn=neuralnet(win~white+brown+lblue+purple+orange+red+yellow+green+blue+brownhouses+lbluehouses+purplehouses+orangehouses+redhouses+yellowhouses+greenhouses+bluehouses+mortagedSelf+liftMortageSelf+mortagedOther+liftMortageOthers+fortuneOthers+whiteOthers+brownOthers+lblueOthers+purpleOthers+orangeOthers+redOthers+yellowOthers+greenOthers+blueOthers+brownhousesOthers+lbluehousesOthers+purplehousesOthers+orangehousesOthers+redhousesOthers+yellowhousesOthers+greenhousesOthers+bluehousesOthers,
                data=logForNN6NORM, 
-               hidden=c(2), 
+               hidden=c(5,5,5,5), 
                #act.fct = "logistic", 
                linear.output = FALSE, 
                stepmax=1e6, 
                lifesign="full", 
                #startweights = nn[["startweights"]],
-               threshold=0.01)
-   replicate(200, buildDataBaseforNN())
+               threshold=0.1)
+  
+  #  +gsub(" ", ".", paste(board$name[board$name != "Start" & board$color != "" & board$color != "grey"],collapse="+"), fixed = TRUE)
+  # +gsub(" ", ".", paste(paste(board$name[board$name != "Start" & board$color != "" & board$color != "grey"], "Houses"),collapse="+"), fixed = TRUE)
+  # +gsub(" ", ".", paste(paste(board$name[board$name != "Start" & board$color != "" & board$color != "grey"], "Other"),collapse="+"))
+  # +gsub(" ", ".", paste(paste(board$name[board$name != "Start" & board$color != "" & board$color != "grey"], "Other Houses"),collapse="+"))
+  scale2 <- function(x, na.rm = FALSE) (ifelse(x > 0, 1, 0))
+  logForNN72 <- logForNN7
+  logForNN72 <- logForNN72 %>%
+    mutate_at(n[!n %in% c("win", "fortune", "throws", "mortagedSelf", "liftMortageSelf", "liftMortageOthers", "fortuneOthers")], scale2)
+  n <- colnames(logForNN72)
+  n <- gsub("&", "", n)
+  n <- gsub(" ", ".", n)
+  colnames(logForNN72) <- n
+  a<-paste("win ~", paste(n[!n %in% c("win",
+                                      #"fortune",
+                                      "throws")], collapse = " + "))
+  f <- as.formula(a)
+  f
+    
+  nn=neuralnet(f,data=logForNN72,hidden=c(118, 118, 118, 118, 118, 118, 118),
+               #act.fct = "logistic",
+               linear.output = FALSE,
+               stepmax=1e6,
+               lifesign="full",
+               #startweights = nn[["startweights"]],
+               threshold=0.001)
+  replicate(200, buildDataBaseforNN())
   replicate(20, buildDataBaseforNN2())
   replicate(200, buildDataBaseforNN3())
   
   replicate(10, buildDataBaseforNN4())
   
-  replicate(200, buildDataBaseforNN7())
+  replicate(5000, buildDataBaseforNN8())
   #normalize data for optimized learning 
   normalize <- function(x){
     return((x - min(x)) / (max(x) - min(x)))
@@ -97,8 +193,8 @@ if(enableAiData == "Talfred"){
   logForNN4 <<- logForNN4 %>%
     mutate(win = ifelse(win == 1, 1, 0))
   
-  logForNN6NORM <<- as.data.frame(lapply(logForNN6, normalize))
-  logForNN6NORM <<- logForNN6NORM %>%
+  logForNN7NORM <<- as.data.frame(lapply(logForNN7, normalize))
+  logForNN7 <<- logForNN7 %>%
     replace(., is.na(.), as.integer("0"))
   
   hist(logForNN4$id[logForNN4$win == 1])
@@ -205,6 +301,22 @@ if(enableAiData == "Talfred"){
     colnames(logForNN6temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "mortagedSelf", "liftMortageSelf" , "mortagedOther", "liftMortageOthers",  "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "win")
     colnames(logForNN6) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "mortagedSelf", "liftMortageSelf" , "mortagedOther", "liftMortageOthers", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "win")
     logForNN6 <<- rbind(logForNN6, logForNN6temp)
+  }
+  buildDataBaseforNN8 <- function(){
+    startGame()
+    colnames(logForNN7) <-  c("throws",
+                              "fortune", 
+                              streetNames, 
+                              streetHouses, 
+                              streetOther, 
+                              streetHousesOther,
+                              "mortagedSelf", 
+                              "liftMortageSelf", 
+                              "mortagedOther", 
+                              "liftMortageOthers",  
+                              "fortuneOthers", 
+                              "win")
+    logForNN7 <<- rbind(logForNN7, logForNN7temp)
   }
 }
 ################################################################
