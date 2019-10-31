@@ -12,8 +12,13 @@ initGame <- function(i){
   #------------------------------  Settings  ------------------------------ 
   version <- 5                              # Sets game version.
   setwd("../v0.5")                          # Set working directory to correct version number
+<<<<<<< HEAD
   strategy <- c(i, 107)                       # Set player strategies, first parameter sets strategy for player 1, etc...
   houseStrategy <- c(sample(c("H1", "H2"), 1), "H107")            # Set player house-buying strategies
+=======
+  strategy <- c(2, 2)                      # Set player strategies, first parameter sets strategy for player 1, etc...
+  houseStrategy <- c("H1", "H1")            # Set player house-buying strategies
+>>>>>>> origin/master
   mortageStrategy <- c("M1", "M1")          # Set player mortgage strategies
   N <<- length(strategy)                    # N = Number of player
   startCap <<- 1500                         # Sets start capital for all players.
@@ -22,17 +27,20 @@ initGame <- function(i){
   bid_Active <<- TRUE                       # Turn bidding on and off.
   mort_Active <<- TRUE                      # Turn mortage on and off.
   collectStats <<- TRUE                     # Turns collecting stats on and off. 
-
-
   printResult <<- FALSE                     # Turns printing result on and off.
   enableAiData <<- FALSE                    # Turn AI on/off.
   enableTransLog <<- FALSE                  # Turn transaction log on/off.
+<<<<<<< HEAD
   printGame <<- FALSE                       # Turn printlog of game on/off.
+=======
+  printGame <<- FALSE                       # Turn printing of game log on/off.
+>>>>>>> origin/master
 
   #---------------------------------------------------------------------------
   id <- c(1:N)                              # Creates unique player ID.
   throws <<- rep(0, times=N)                # Sets number of throws per player to initial value 0. 
   fortune <<- rep(startCap, times=N)        # Sets initial fortune for each player to startCap (e.g. 200)
+  liquidity <<- rep(startCap, times=N)      # Sets initial liquidity for each player to startCap (e.g. 200)
   nHouses <<- rep(0, times=N)               # Sets inital number of houses to 0.
   nProps <<- rep(0, times=N)                # Sets initial number of properties to 0.
   active <- rep(1, times=N)                 # Initially sets all players to be active. 
@@ -47,7 +55,7 @@ initGame <- function(i){
   # Creates global vector containing all the propty colors.
   uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
 
-  
+  ##SLETT?!
   logForNN4temp <<- data.frame(matrix(NA, 0, 44))
   colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
   logForNN5temp <<- data.frame(matrix(NA, 0, 2))
@@ -128,8 +136,13 @@ startGame <- function(i){
     setNextPlayer()                         # Changes current player before next round. 
 
     currentPlaytime <- Sys.time() - ptm     # Updates current playtime variable.
+<<<<<<< HEAD
     if(currentPlaytime > 60){               # Checks to see if current playtime is longer than 10s.
       cat(sprintf("Time out, %s! Round took longer than 10 seconds.",Sys.time()))
+=======
+    if(currentPlaytime > 10){               # Checks to see if current playtime is longer than 10s.
+      cat(sprintf("Time out, %s! Round took longer than 10 seconds. \n",Sys.time()))
+>>>>>>> origin/master
       players$active <<- 0                  # Sets all players to inactive.
       game_over <- TRUE                     # Sets game to be over. 
       if(enableAiData == TRUE){             # Data collection for AI...
@@ -150,33 +163,79 @@ startGame <- function(i){
 # function: collectRoundStatistics()
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 collectRoundStatistics <- function(){                             # Collects statistice for each round of the game. 
+<<<<<<< HEAD
   fortune <<- cbind(fortune, players$fortune)                     # Appends new fortune-data. 
   curProps <- rep(0, N)
   curHouses <- rep(0, N)
+=======
+  players$throws[cur_player] <<- players$throws[cur_player] + 1   # Increments throw number.
+  curLiquidity <- rep(0, N)
+  curProps <<- rep(0, N)
+  curHouses <<- rep(0, N)
+  
+  curLiquidity <- players$fortune
+  for (i in 1:length(curLiquidity)){
+    curLiquidity[i] <- (as.numeric(curLiquidity[i]) + sum(board$price[board$owner==i & board$mortaged == 0 & !is.na(board$owner)]*1/2))
+  }
+  liquidity <<- cbind(liquidity, curLiquidity)                    # Appends new properties-data.
+  
+  
+  
+  
+>>>>>>> origin/master
   
   for (i in 1:N) {
-    curProps[i] <- length(board$owner[(board$owner==i) & !(is.na(board$owner))])
+    curProps[i] <<- length(board$owner[(board$owner==i) & !(is.na(board$owner))])
     sumHouses <- sum(board$houses[(board$owner==i) & !(is.na(board$owner))  & !(is.na(board$houses))])
-    curHouses[i] <- sumHouses
+    curHouses[i] <<- sumHouses
   }
-
+  
+  fortune <<- cbind(fortune, players$fortune)                     # Appends new fortune-data.
   nProps <<- cbind(nProps, curProps)                              # Appends new properties-data.
   nHouses <<- cbind(nHouses, curHouses)                           # Appends new houses-data.
 }
 
-
+newVARS <- rbind(fortune, liquidity)
 
 
 # function: printRoundResult()
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-printRoundResult <- function(){              # Creates ggplot of development of fortune-variable post-game.
-  test_data <- melt(fortune)
-  thisThrows <- length(test_data[,1])
-
-  ggplot(data=test_data, aes(x=1:thisThrows, y=value, group=Var1, color=as.factor(Var1)))+
+printRoundResult <- function(){              # Creates ggplots og relevent post-game variables.
+  fortune_data <- melt(fortune)
+  fThrows <- length(fortune_data[,1])
+  liq_data <- melt(liquidity)
+  lThrows <- length(liq_data[,1])
+  prop_data <- melt(nProps)
+  pThrows <- length(prop_data[,1])
+  house_data <- melt(nHouses)
+  hThrows <- length(house_data[,1])
+  
+                                             # Plotting fortune development.
+  ggplot(data=fortune_data, aes(x=1:fThrows, y=value, group=Var1, color=as.factor(Var1)))+
     geom_line()+
     theme_classic()+
-    labs(title="Results", x="Throws", y="Fortune", color="Players")+
+    labs(title="Results", x="Throws", y="Fortune", color="Players", tag = 'For')+
+    geom_hline(yintercept=0, linetype="dashed")
+  
+                                              # Plotting liquidity development.
+  ggplot(data=liq_data, aes(x=1:lThrows, y=value, group=Var1, color=as.factor(Var1)))+
+    geom_line()+
+    theme_classic()+
+    labs(title="Results", x="Throws", y="Fortune", color="Players", tag = 'Liq')+
+    geom_hline(yintercept=0, linetype="dashed")
+  
+                                              # Plotting number of properties development.
+  ggplot(data=prop_data, aes(x=1:pThrows, y=value, group=Var1, color=as.factor(Var1)))+
+    geom_line()+
+    theme_classic()+
+    labs(title="Results", x="Throws", y="Fortune", color="Players", tag = 'Prop')+
+    geom_hline(yintercept=0, linetype="dashed")
+  
+                                              # Plotting number of houses development.
+  ggplot(data=house_data, aes(x=1:hThrows, y=value, group=Var1, color=as.factor(Var1)))+
+    geom_line()+
+    theme_classic()+
+    labs(title="Results", x="Throws", y="Fortune", color="Players", tag = 'House')+
     geom_hline(yintercept=0, linetype="dashed")
 }
 
@@ -186,7 +245,7 @@ printRoundResult <- function(){              # Creates ggplot of development of 
 #                         TEST-SUITE                           #
 ################################################################
 
-###SLETT FØR INNLEVERING
+## SLETT FØR INNLEVERING
 
 k <- 100
 a <- 11
@@ -206,6 +265,7 @@ for (i in 1:a) {
 #hist(winners)
 table(winners)
 pbinom(179/11, 30, prob=0.5)
+
 ################################################################
 
-startGame()
+#startGame()

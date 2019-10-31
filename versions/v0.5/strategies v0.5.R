@@ -255,6 +255,7 @@ mayLiftMortage <- function(){                           # Function for the buyin
   }
 }
 
+
 # function: setPlayer()
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 setPlayer <- function(x){
@@ -298,8 +299,8 @@ strategy2 <- function(x, y){
 ##-----------------------------------------------------------------------------------
 strategy3 <- function(x, y){
   setPlayer()
-  
-  if(propPrice/players$fortune[stratPlayer] <= 0.5){
+  playerLiq <- players$fortune[players$id==stratPlayer] + sum(board$price[board$owner==stratPlayer & board$mortaged == 0 & !is.na(board$owner)]*1/2)
+  if(propPrice/playerLiq <= 0.3){
     return(TRUE)
   }else{
     return(FALSE)
@@ -368,7 +369,7 @@ strategy8 <- function(x, y){
 }
 
 ##-----------------------------------------------------------------------------------
-##  Strategy 9: Railroads + Utilities, then Conservative
+##  Strategy 9: Railroads + Utilities, then Buy-all
 ##-----------------------------------------------------------------------------------
 strategy9 <- function(x, y){
   setPlayer()
@@ -449,6 +450,15 @@ strategy11 <- function(x, y){
 }
 
 
+##-----------------------------------------------------------------------------------
+##  Strategy 12: Hotel-seeker
+##-----------------------------------------------------------------------------------
+strategy11 <- function(x, y){
+  setPlayer()
+  #if throws < N then set selected hotell property to FALSE
+  #after person gets all of one colors, put all money into houses tehre in order to clinch win. 
+  
+}
 #####################################################################################
 #                               HOUSE-STRATEGIES                                    #
 #####################################################################################
