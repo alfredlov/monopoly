@@ -12,13 +12,9 @@ initGame <- function(i){
   #------------------------------  Settings  ------------------------------ 
   version <- 5                              # Sets game version.
   setwd("../v0.5")                          # Set working directory to correct version number
-<<<<<<< HEAD
   strategy <- c(i, 107)                       # Set player strategies, first parameter sets strategy for player 1, etc...
   houseStrategy <- c(sample(c("H1", "H2"), 1), "H107")            # Set player house-buying strategies
-=======
-  strategy <- c(2, 2)                      # Set player strategies, first parameter sets strategy for player 1, etc...
-  houseStrategy <- c("H1", "H1")            # Set player house-buying strategies
->>>>>>> origin/master
+
   mortageStrategy <- c("M1", "M1")          # Set player mortgage strategies
   N <<- length(strategy)                    # N = Number of player
   startCap <<- 1500                         # Sets start capital for all players.
@@ -30,11 +26,8 @@ initGame <- function(i){
   printResult <<- FALSE                     # Turns printing result on and off.
   enableAiData <<- FALSE                    # Turn AI on/off.
   enableTransLog <<- FALSE                  # Turn transaction log on/off.
-<<<<<<< HEAD
   printGame <<- FALSE                       # Turn printlog of game on/off.
-=======
-  printGame <<- FALSE                       # Turn printing of game log on/off.
->>>>>>> origin/master
+
 
   #---------------------------------------------------------------------------
   id <- c(1:N)                              # Creates unique player ID.
@@ -136,13 +129,8 @@ startGame <- function(i){
     setNextPlayer()                         # Changes current player before next round. 
 
     currentPlaytime <- Sys.time() - ptm     # Updates current playtime variable.
-<<<<<<< HEAD
-    if(currentPlaytime > 60){               # Checks to see if current playtime is longer than 10s.
-      cat(sprintf("Time out, %s! Round took longer than 10 seconds.",Sys.time()))
-=======
     if(currentPlaytime > 10){               # Checks to see if current playtime is longer than 10s.
       cat(sprintf("Time out, %s! Round took longer than 10 seconds. \n",Sys.time()))
->>>>>>> origin/master
       players$active <<- 0                  # Sets all players to inactive.
       game_over <- TRUE                     # Sets game to be over. 
       if(enableAiData == TRUE){             # Data collection for AI...
@@ -163,11 +151,6 @@ startGame <- function(i){
 # function: collectRoundStatistics()
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 collectRoundStatistics <- function(){                             # Collects statistice for each round of the game. 
-<<<<<<< HEAD
-  fortune <<- cbind(fortune, players$fortune)                     # Appends new fortune-data. 
-  curProps <- rep(0, N)
-  curHouses <- rep(0, N)
-=======
   players$throws[cur_player] <<- players$throws[cur_player] + 1   # Increments throw number.
   curLiquidity <- rep(0, N)
   curProps <<- rep(0, N)
@@ -178,11 +161,6 @@ collectRoundStatistics <- function(){                             # Collects sta
     curLiquidity[i] <- (as.numeric(curLiquidity[i]) + sum(board$price[board$owner==i & board$mortaged == 0 & !is.na(board$owner)]*1/2))
   }
   liquidity <<- cbind(liquidity, curLiquidity)                    # Appends new properties-data.
-  
-  
-  
-  
->>>>>>> origin/master
   
   for (i in 1:N) {
     curProps[i] <<- length(board$owner[(board$owner==i) & !(is.na(board$owner))])
@@ -268,4 +246,4 @@ pbinom(179/11, 30, prob=0.5)
 
 ################################################################
 
-#startGame()
+startGame()
