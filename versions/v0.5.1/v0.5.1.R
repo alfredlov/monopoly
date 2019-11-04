@@ -11,7 +11,7 @@ library(reshape2)
 initGame <- function(i){
   #------------------------------  Settings  ------------------------------ 
   version <- 5                              # Sets game version.
-  setwd("../v0.5")                          # Set working directory to correct version number
+  setwd("../v0.5.1")                          # Set working directory to correct version number
   strategy <- c(i, 107)                       # Set player strategies, first parameter sets strategy for player 1, etc...
   houseStrategy <- c(sample(c("H1", "H2"), 1), "H107")            # Set player house-buying strategies
 
@@ -43,7 +43,7 @@ initGame <- function(i){
   players <<- data.frame(id, strategy, houseStrategy, fortune, active, position, jailDays, throws) 
 
   # Imports data about the game board from .csv file. 
-  board <<- read.csv("monopoly_data v0.5.csv") 
+  board <<- read.csv("monopoly_data v0.5.1.csv") 
   
   # Creates global vector containing all the propty colors.
   uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
@@ -78,8 +78,8 @@ initGame <- function(i){
                                                                              streetOther, 
                                                                              streetHousesOther))
   
-  source('functions v0.5.R')
-  source('ai training v0.5.R')
+  source('functions v0.5.1.R')
+  source('ai training v0.5.1.R')
 }
 
 # Main-function.
