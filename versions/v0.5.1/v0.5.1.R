@@ -14,7 +14,7 @@ initGame <- function(i){
   #------------------------------ Settings ------------------------------ 
   version <- 5                              # Sets game version.
   setwd("../v0.5.1")                        # Set working directory to correct version number
-  strategy <- c(1, 11)                      # Set player strategies, first parameter sets strategy for player 1, etc...
+  strategy <- c(1, 107)                      # Set player strategies, first parameter sets strategy for player 1, etc...
   houseStrategy <- c("H1", "H1")            # Set player house-buying strategies
   mortageStrategy <- c("M1", "M1")          # Set player mortgage strategies
   N <<- length(strategy)                    # N = Number of player
@@ -224,7 +224,7 @@ printRoundResult <- function(){              # Creates ggplots og relevent post-
 # 
 k <- 50
 winners = 1:(k*a)*0
-winners <- 1:k*0
+winners <- 1:50
 # numberOfRounds <- 1:(k*a)*0
 # z <- 0
 # # for (i in 1:a) {
@@ -238,7 +238,7 @@ winners <- 1:k*0
 for (i in 1:50) {
     startGame()
     #cat(sprintf("Round: %s, winnner %s", winner, winnerStrategy))
-    winners[i] <- winnerStrategy
+    winners[i] <- roundWinner
 
 }
 # 
