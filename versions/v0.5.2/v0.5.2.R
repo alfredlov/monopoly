@@ -27,8 +27,9 @@ initGame <- function(i){
   enableAiData <<- FALSE                    # Turn AI on/off.
   enableTransLog <<- FALSE                  # Turn transaction log on/off.
   printGame <<- FALSE                       # Turn printlog of game on/off.
-  #--------------------------------------------------------------------------------
-
+  #------------------------------------------------------------------------------
+  
+  #------------------------- Initiate game variables ----------------------------
   id <- c(1:N)                              # Creates unique player ID.
   throws <<- rep(0, times=N)                # Sets number of throws per player to initial value 0. 
   fortune <<- rep(startCap, times=N)        # Sets initial fortune for each player to startCap (e.g. 200)
@@ -47,8 +48,9 @@ initGame <- function(i){
   
   # Creates global vector containing all the propty colors.
   uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
-
-  ##SLETT?!
+  #------------------------------------------------------------------------------
+  
+  #-------------------------- Initiate AI Framework -----------------------------
   logForNN4temp <<- data.frame(matrix(NA, 0, 44))
   colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
   
@@ -68,17 +70,21 @@ initGame <- function(i){
                                                                            "liftMortageOthers",  
                                                                            "fortuneOthers", 
                                                                            "win"))
+  
   purchasedLogDF <<- setNames(data.frame(matrix(NA,ncol = 112, nrow = 1)), c(streetNames, 
                                                                              streetHouses, 
                                                                              streetOther, 
                                                                              streetHousesOther))
+  
   source('functions v0.5.1.R')
   source('ai training v0.5.1.R')
+  #------------------------------------------------------------------------------
+  
 }
 
 
 # Main-function.
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 startGame <- function(i){
   initGame(i)                               # Resets the game (board and players dataframes).
   cur_player <<- sample(1:N, 1)             # Randomly selects first player. 
@@ -144,7 +150,7 @@ startGame <- function(i){
 
 
 # function: collectRoundStatistics()
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 collectRoundStatistics <- function(){                             # Collects statistice for each round of the game. 
   players$throws[cur_player] <<- players$throws[cur_player] + 1   # Increments throw number.
   curLiquidity <- rep(0, N)
@@ -170,8 +176,8 @@ collectRoundStatistics <- function(){                             # Collects sta
 
 
 # function: printRoundResult()
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-printRoundResult <- function(){              # Creates ggplots og relevent post-game variables.
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+printRoundResult <- function(){              # Creates ggplots og relavent post-game variables.
   fortune_data <- melt(fortune)
   fThrows <- length(fortune_data[,1])
   liq_data <- melt(liquidity)
@@ -212,38 +218,24 @@ printRoundResult <- function(){              # Creates ggplots og relevent post-
 
 
 
-################################################################
-#                         TEST-SUITE                           #
-################################################################
+##################################################################################
+#                               TEST-SUITE                                       #
+##################################################################################
 
-## SLETT FØR INNLEVERING
-# 
+
 k <- 50
-winners = 1:(k*a)*0
-winners <- 1:50
-# numberOfRounds <- 1:(k*a)*0
-# z <- 0
-# # for (i in 1:a) {
-# #   for (j in 1:k) {
-# #     z <- z + 1
-# #     startGame(i)
-# #     cat(sprintf("Round: %s, winnner %s", j, winnerStrategy))
-# #     winners[z] <- winnerStrategy
-# #   }
-# # }
+winners <- 1:k*0
 for (i in 1:50) {
     startGame()
-    #cat(sprintf("Round: %s, winnner %s", winner, winnerStrategy))
+    cat(sprintf("Round: %s, winnner %s", i, winnerStrategy))
     winners[i] <- roundWinner
 
 }
-# 
-# 
-# #hist(winners)
-table(winners)
-# pbinom(38, 50, prob=0.5)
 
-################################################################
+table(winners)
+pbinom(38, 50, prob=0.5)
+
+##################################################################################
 
 startGame()
 
