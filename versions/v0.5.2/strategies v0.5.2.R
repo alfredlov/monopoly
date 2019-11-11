@@ -156,7 +156,7 @@ runHouseStrategy <- function(){                           # Handles running of h
 # function: runMortStrategy(x, y, z)
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 runMortStrategy <- function(x, y, z){                 # Mortgage strategy depends on player x, whether the player wants a 
-  if(!missing(x)){                                    # variable y is not relevant for the final implementation.
+  if(!missing(x)){                                    # ... variable y is not relevant for the final implementation.
     stratPlayer <<- x
   }else{
     stratPlayer <<- cur_player
@@ -176,7 +176,6 @@ runMortStrategy <- function(x, y, z){                 # Mortgage strategy depend
       return(FALSE)
     }
   }else if (y == TRUE){
-    #SLETT?! spilleren prøver å få z kapital
   }
 }
 
