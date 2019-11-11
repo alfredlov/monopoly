@@ -470,40 +470,50 @@ strategyH3 <- function(){
 #                               MORTGAGE-STRATEGIES                                 #
 #####################################################################################
 
-M1 <- function(x,y){
-  setPlayer(x)
+M1 <- function(x,y){                                              
+  setPlayer(x)                                                    
   countFreq(stratPlayer)
   allOfCol <- c()
-  for(i in 1:length(uniqueC)){
+  
+  for(i in 1:length(uniqueC)){                                  # Counts number of properties of each color.
     total <- length(board$color[board$color == uniqueC[i] & !(is.na(board$owner))])
     allOfCol <- c(allOfCol, total)
   }
-  normVec <- streetColFreq/allOfCol
-  lowest <- min(normVec[normVec>0]) #over 0 fordi de med 0 inneholder 0 eiendommer...
   
-  first <- min(which(normVec == lowest)) #første farge m/ færrest eiendommer
-  colOfInd <- uniqueC[first]
-  #pantsette eiendom med fargen colOfFirst:
+  normVec <- streetColFreq/allOfCol                    
+  lowest <- min(normVec[normVec>0])                             # Finds the color of which you own the least amount of properties.
+  
+  first <- min(which(normVec == lowest))                        # Selects the first color with the least number of properties.
+  colOfInd <- uniqueC[first]                
+
   propsOfCol <- board$position[board$color == colOfInd & board$owner == stratPlayer & !(is.na(board$owner)) & board$mortaged != 1]
   firtStreet <- min(board$position[board$position %in% propsOfCol])
+  
+  # If you have zero houses, got to mortgaging of properties, subject to bank money constraints. 
   if(is.na(sum(board$houses[board$position %in% propsOfCol])) | sum(board$houses[board$position %in% propsOfCol]) <= 0){
-    #ingen hus -> pantsett
     if((bankMoney - board$mortageval[board$position == firtStreet]) > 0){
       updateBalance(stratPlayer, "pluss", board$mortageval[board$position == firtStreet], "Mortage")
       board$mortaged[board$position == firtStreet] <<- 1
       return(TRUE)
-    }else{
-      print("The bank can't afford mortgaging the property.")
+    }
+    else{
+      if(printGame==TRUE){
+        print("The bank can't afford mortgaging the property.")
+      }
       return(FALSE)
     }
-  }else{ # The player attempts to sell the house 
+  }
+  
+  else{                                                  # Attempts to sell house pluss machniations for processing selling of house.
     whereToSell <- max(board$position[board$position %in% propsOfCol & board$houses > 0])
     if(bankMoney - (board$housePrice[board$position == whereToSell])/2 > 0){        # ... to the bank.
       updateBalance(stratPlayer, "pluss", (board$housePrice[board$position == whereToSell])/2, "sold house")
       board$houses[board$position == whereToSell] <<- board$houses[board$position == whereToSell] - 1
       return(TRUE)                                                                 # If the bank can pay for the house, it's sold...
     }else{                                                                         # the players balance and the bank balance is updated.
-      print("The bank can't afford to buy back houses.")                           # Otherwise nothing happens and event is printed.
+      if(printGame==TRUE){                                                         # Otherwise nothing happens and event is printed.
+        print("The bank can't afford to buy back houses.") 
+      }
       return(FALSE)
     }
   }

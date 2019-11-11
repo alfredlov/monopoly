@@ -1,6 +1,6 @@
 ##--------------------------------------------------------------------------------##
-## FUNCTIONS v.0.5.R                                                              ## 
-## Contains the game-functions.                                                   ##
+## Monopoly Simulation - Game Functions Script                                    ##
+## Version 0.5                                                                    ##
 ##--------------------------------------------------------------------------------##
 
 #Importing of libraries and associated scripts.
@@ -9,14 +9,14 @@ library(dplyr)
 
 
 # function: throwDice
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-throwDice <- function(){
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+throwDice <- function(){                            # Smiulates throwing of two dice. 
   dice <- c(sample(1:6, size = 1, replace = TRUE), sample(1:6, size = 1, replace = TRUE))
   return(dice)
 }
 
 # function: move()
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 move <- function(x){
   cur_position <- players$position[cur_player]
   if(cur_position + x > nrow(board)){                 # If the player moves past 'Go'...
@@ -63,7 +63,7 @@ move <- function(x){
 
 
 # function: processPos()
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 processPos <- function(){                             # Hands off player to correct processing function based on where he landed. 
   position <<- players$position[cur_player]
   playerFortune <- players$fortune[cur_player]
@@ -92,8 +92,10 @@ processPos <- function(){                             # Hands off player to corr
   runHouseStrategy()                                  # Runs the house strategy set in 'Settings'. 
 } 
 
+
+
 # function: processFree
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 processFree <- function(){                            # If the player lands on 'Free Parking'...
                                                       # ... nothing happens.
   
@@ -103,8 +105,9 @@ processFree <- function(){                            # If the player lands on '
 }                      
 
 
+
 # function: processJail
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 processJail <- function(){                            # If the player lands on 'Go to Jail'...
   if(board$position[position] == 27){
     players$position[cur_player] <<- 9                # ... teleports player to 'Jail'...
@@ -125,17 +128,13 @@ processJail <- function(){                            # If the player lands on '
         cat(sprintf("Player %s got out of jail by throw two dice with same face.\n",cur_player))
       }
     }
-    ##SLETT?!
-    #cat(sprintf("Player %s KOM ikkkkke UT AV FENGSEL PGA TERNINGKAST",cur_player))
-     #teleporter til jail
-    #for å holde spilleren i jail trenger vi et element i df for å se om just visiting eller i jail
-    #  og for å se hvor mange kast spilleren har forsøkt å komme ut
   }
 }
 
 
+
 # function: processAuto: 
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 processAuto <- function(){                            # Processing the player landing on an auto-pay tile (e.g. income tax).
   updateBalance(cur_player, "minus", board$autopay[position], "autopay")
   
@@ -145,8 +144,9 @@ processAuto <- function(){                            # Processing the player la
 }
 
 
+
 # function: processUtil: 
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 processUtil <- function(){                            # Processes the player landing on a utility property.
   numberOfUtilities <- nrow(board[board$prop  == "2" & board$owner == owner,])
   utilR <- c(4, 10)                                   # Rent multipliers depending on numberOfUtilities
@@ -160,8 +160,9 @@ processUtil <- function(){                            # Processes the player lan
 }
 
 
+
 ## function: processTrain()
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 processTrain <- function(){                           # Processes the player landing on a train property.
   numberOfTrains <- nrow(board[board$prop  == "3" & board$owner == owner,])
   rentToPay <- board$rent[position]*2^(numberOfTrains-1)
@@ -174,8 +175,9 @@ processTrain <- function(){                           # Processes the player lan
 }
 
 
+
 # function: processProp()
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 processProp <- function(){                            # Processes the player landing on a regular property.
   color <<- as.character(board$color[position])       # Finds color of the street you landed on. 
   
@@ -204,8 +206,9 @@ processProp <- function(){                            # Processes the player lan
 }
 
 
+
 # function: checkStreetPer(x, y)
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 checkStreetPer <- function(x, y){                   # Checks to see if player y also owns the other properties of the same color as x.
   NoC <- nrow(board[board$color  == x,])            # Number of properties with that color x.
   NoCo <- nrow(board[board$color  == x & board$owner == y,]) # Number of properties with that color x, owned by y.
@@ -218,8 +221,9 @@ checkStreetPer <- function(x, y){                   # Checks to see if player y 
 }
 
 
+
 # function: countFreq(x)
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 countFreq <- function(x){                            # Finds the number of houses, and how many properties each player has of each color.
   streetColFreq <<- c()
   streetColFreqOthers <<- c()
@@ -240,8 +244,9 @@ countFreq <- function(x){                            # Finds the number of house
 }
 
 
+
 # function: updateBalance(x, y, z, what)
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 updateBalance <- function(x, y, z, what){             # Transfers money z from/to (depending on y) player x.
   if(y == "pluss"){
     players$fortune[x] <<- players$fortune[x] + z
@@ -266,8 +271,9 @@ updateBalance <- function(x, y, z, what){             # Transfers money z from/t
 } 
 
 
+
 # function: checkPlayerLoss()
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 checkPlayerLoss <- function(){                       # Checks to see if cur_player has lost.
   if(mort_Active == TRUE){
     while(length(board$name[(board$owner==cur_player) & !(is.na(board$owner)) & !(is.na(board$houses)) & board$mortaged != 1]) > 0 & players$fortune[cur_player] < 0){
@@ -286,7 +292,7 @@ checkPlayerLoss <- function(){                       # Checks to see if cur_play
       mutate(owner=replace(owner, owner==cur_player, 0)) %>%
       as.data.frame()
     
-    if(printGame==TRUE){
+    if(printGame==TRUE){                              # Print event. 
       cat(sprintf("Player %s ran out of cash! \n", cur_player))
     }
     
@@ -298,25 +304,28 @@ checkPlayerLoss <- function(){                       # Checks to see if cur_play
 }
 
 
+
 # function: checkGameOver()
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 checkGameOver <- function(){                            # Checks to see if game is over, which happens if only one player is active.
   if(length(players$active[players$active==TRUE])==1){
     game_over <<- TRUE                                  # Declares game over. 
     roundWinner <<- players$id[players$active==TRUE]    # Finds round winner and his strategy.
     winnerStrategy <<- players$strategy[players$active==TRUE]
     
-    countFreq(1)
-    colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
-    logForNN7temp[1,] <<- c(players$throws[players$id == 1],
-                           players$fortune[players$id == 1],
-                           purchasedLogDF,
-                           sum(logForNN4temp$mortage[logForNN4temp$id == 1]),
-                           sum(logForNN4temp$liftmortage[logForNN4temp$id == 1]),
-                           sum(logForNN4temp$mortage[logForNN4temp$id != 1]),
-                           sum(logForNN4temp$liftmortage[logForNN4temp$id != 1]),
-                           sum(players$fortune[players$id != 1]),
-                           ifelse(roundWinner == 1, 1, 0))
+    if (enableAiData == TRUE){
+      countFreq(1)
+      colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
+      logForNN7temp[1,] <<- c(players$throws[players$id == 1],
+                             players$fortune[players$id == 1],
+                             purchasedLogDF,
+                             sum(logForNN4temp$mortage[logForNN4temp$id == 1]),
+                             sum(logForNN4temp$liftmortage[logForNN4temp$id == 1]),
+                             sum(logForNN4temp$mortage[logForNN4temp$id != 1]),
+                             sum(logForNN4temp$liftmortage[logForNN4temp$id != 1]),
+                             sum(players$fortune[players$id != 1]),
+                             ifelse(roundWinner == 1, 1, 0))
+    }
     
     print(roundWinner)
     
@@ -328,7 +337,7 @@ checkGameOver <- function(){                            # Checks to see if game 
 
 
 # function: setNextPlayer()
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 setNextPlayer <- function(){                            # Changes current player before next turn. 
   if(cur_player == N){                                  # If current player is the last in the list, wrap around...
     cur_player <<- 1
