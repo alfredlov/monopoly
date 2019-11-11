@@ -26,7 +26,7 @@ initGame <- function(i){
   collectStats <<- TRUE                     # Turns collecting stats on and off. 
   printResult <<- TRUE                      # Turns printing result on and off.
   enableAiData <<- FALSE                    # Turn AI on/off.
-  enableTransLog <<- TRUE                   # Turn transaction log on/off.
+  enableTransLog <<- FALSE                  # Turn transaction log on/off.
   printGame <<- FALSE                       # Turn printlog of game on/off.
 
   #---------------------------------------------------------------------------
@@ -39,8 +39,12 @@ initGame <- function(i){
   active <- rep(1, times=N)                 # Initially sets all players to be active. 
   position <- rep(1, times=N)               # Sets start position for each player to 1 (i.e. 'Go'). 
   jailDays <- rep(0, times=N)               # Initializes remaining jail days variable to 0. 
-  # Creates the players-dataframe fmor the variables listed above.
+  
+  # Creates the players-dataframe from the variables listed above.
   players <<- data.frame(id, strategy, houseStrategy, fortune, active, position, jailDays, throws) 
+  
+  # Creates global vector containing all the propty colors.
+  uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
 
   ##SLETT?!
   logForNN4temp <<- data.frame(matrix(NA, 0, 44))
@@ -166,7 +170,7 @@ collectRoundStatistics <- function(){                             # Collects sta
   nHouses <<- cbind(nHouses, curHouses)                           # Appends new houses-data.
 }
 
-newVARS <- rbind(fortune, liquidity)
+#newVARS <- rbind(fortune, liquidity)
 
 
 # function: printRoundResult()
@@ -217,37 +221,33 @@ printRoundResult <- function(){              # Creates ggplots og relevent post-
 ################################################################
 
 ## SLETT FØR INNLEVERING
-
+# 
 k <- 50
 winners = 1:(k*a)*0
 winners <- 1:k*0
-numberOfRounds <- 1:(k*a)*0
-z <- 0
-# for (i in 1:a) {
-#   for (j in 1:k) {
-#     z <- z + 1
-#     startGame(i)
-#     cat(sprintf("Round: %s, winnner %s", j, winnerStrategy))
-#     winners[z] <- winnerStrategy
-#   }
-# }
+# numberOfRounds <- 1:(k*a)*0
+# z <- 0
+# # for (i in 1:a) {
+# #   for (j in 1:k) {
+# #     z <- z + 1
+# #     startGame(i)
+# #     cat(sprintf("Round: %s, winnner %s", j, winnerStrategy))
+# #     winners[z] <- winnerStrategy
+# #   }
+# # }
 for (i in 1:50) {
     startGame()
     #cat(sprintf("Round: %s, winnner %s", winner, winnerStrategy))
-for (i in 1:a) {
-  for (j in 1:k) {
-    z <- z + 1
-    startGame()
-    cat(sprintf("Round: %s, winnner %s", j, winnerStrategy))
     winners[i] <- winnerStrategy
-  
+
 }
-
-
-#hist(winners)
+# 
+# 
+# #hist(winners)
 table(winners)
-pbinom(179, 300, prob=0.5)
+# pbinom(38, 50, prob=0.5)
 
 ################################################################
 
 startGame()
+
