@@ -249,7 +249,6 @@ setPlayer <- function(x){
 
 ##-----------------------------------------------------------------------------------
 ##  Strategy 1: Greedy Naive
-##  Simple naïve strategy which involves buying all properties the player lands on. 
 ##-----------------------------------------------------------------------------------
 strategy1 <- function(x, y){
   setPlayer(x)
@@ -258,7 +257,6 @@ strategy1 <- function(x, y){
 
 ##-----------------------------------------------------------------------------------
 ##  Strategy 2: Probabilistic greedy naive
-##  Simple strategy of buying all properties the player lands on with probability 0.5.
 ##-----------------------------------------------------------------------------------
 strategy2 <- function(x, y){
   setPlayer(x)
@@ -271,7 +269,6 @@ strategy2 <- function(x, y){
 
 ##-----------------------------------------------------------------------------------
 ##  Strategy 3: Simple conservative
-##  Buys all properties as long as price < 50% of total income.
 ##-----------------------------------------------------------------------------------
 strategy3 <- function(x, y){
   setPlayer(x)
@@ -285,7 +282,6 @@ strategy3 <- function(x, y){
 
 ##-----------------------------------------------------------------------------------
 ##  Strategy 4: Middle of the road
-##  Only buys regular properties on the 2nd and 3rd part of the board (purple, red, orange, yellow properties).
 ##-----------------------------------------------------------------------------------
 strategy4 <- function(x, y){
   if(propCol == 'purple' || propCol == 'orange' || propCol == 'red' || propCol == 'yellow'){
