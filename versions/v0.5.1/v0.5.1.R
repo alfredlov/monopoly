@@ -9,12 +9,8 @@ library(reshape2)
 library(dplyr)
 library(readr)
 
-# Imports data about the game board from .csv file. 
-board <<- read.csv("monopoly_data v0.5.1.csv") 
-# Creates global vector containing all the propty colors.
-uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
-
 initGame <- function(i){
+  board <<- read.csv("monopoly_data v0.5.1.csv") 
   #------------------------------ Settings ------------------------------ 
   version <- 5                              # Sets game version.
   setwd("../v0.5.1")                        # Set working directory to correct version number
@@ -28,9 +24,9 @@ initGame <- function(i){
   bid_Active <<- TRUE                       # Turn bidding on and off.
   mort_Active <<- TRUE                      # Turn mortage on and off.
   collectStats <<- TRUE                     # Turns collecting stats on and off. 
-  printResult <<- TRUE                     # Turns printing result on and off.
+  printResult <<- TRUE                      # Turns printing result on and off.
   enableAiData <<- FALSE                    # Turn AI on/off.
-  enableTransLog <<- FALSE                  # Turn transaction log on/off.
+  enableTransLog <<- TRUE                   # Turn transaction log on/off.
   printGame <<- FALSE                       # Turn printlog of game on/off.
 
   #---------------------------------------------------------------------------
@@ -81,7 +77,7 @@ initGame <- function(i){
 
 # Main-function.
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-startGame <- function(i){  
+startGame <- function(i){
   initGame(i)                               # Resets the game (board and players dataframes).
   cur_player <<- sample(1:N, 1)             # Randomly selects first player. 
   game_over <<- FALSE                       # game_over initially set to FALSE.
@@ -238,6 +234,11 @@ z <- 0
 for (i in 1:50) {
     startGame()
     #cat(sprintf("Round: %s, winnner %s", winner, winnerStrategy))
+for (i in 1:a) {
+  for (j in 1:k) {
+    z <- z + 1
+    startGame()
+    cat(sprintf("Round: %s, winnner %s", j, winnerStrategy))
     winners[i] <- winnerStrategy
   
 }
