@@ -488,67 +488,41 @@ strategyH3 <- function(){
 #####################################################################################
 
 M1 <- function(x,y){
-  setPlayer()
-  
-  #denne strategien prøver å pantsette minst verdifulle eiendommer
+  setPlayer(x)
   countFreq(stratPlayer)
   allOfCol <- c()
-  
-  # table(board$color)
-  
   for(i in 1:length(uniqueC)){
     total <- length(board$color[board$color == uniqueC[i] & !(is.na(board$owner))])
     allOfCol <- c(allOfCol, total)
   }
-  
   normVec <- streetColFreq/allOfCol
   lowest <- min(normVec[normVec>0]) #over 0 fordi de med 0 inneholder 0 eiendommer...
   
   first <- min(which(normVec == lowest)) #første farge m/ færrest eiendommer
   colOfInd <- uniqueC[first]
-  
   #pantsette eiendom med fargen colOfFirst:
   propsOfCol <- board$position[board$color == colOfInd & board$owner == stratPlayer & !(is.na(board$owner)) & board$mortaged != 1]
   firtStreet <- min(board$position[board$position %in% propsOfCol])
-  
-  if(is.na(sum(board$houses[board$position %in% propsOfCol])) | sum(board$houses[board$position %in% propsOfCol]) == 0){
+  if(is.na(sum(board$houses[board$position %in% propsOfCol])) | sum(board$houses[board$position %in% propsOfCol]) <= 0){
     #ingen hus -> pantsett
-    
     if((bankMoney - board$mortageval[board$position == firtStreet]) > 0){
       updateBalance(stratPlayer, "pluss", board$mortageval[board$position == firtStreet], "Mortage")
       board$mortaged[board$position == firtStreet] <<- 1
       return(TRUE)
-<<<<<<< HEAD
     }else{
-      print("banken har ikke råd til pantsetting")
-=======
-    }
-    
-    else{
-      if(printGame==TRUE){
-        print("The bank can't afford mortgaging the property.")
-      }
->>>>>>> origin/master
+      print("The bank can't afford mortgaging the property.")
       return(FALSE)
     }
-  }else{
-    if(bankMoney - (board$housePrice[board$position == firtStreet])/2 > 0){
-      updateBalance(stratPlayer, "pluss", (board$housePrice[board$position == firtStreet])/2, "sold house")
-      board$houses[board$position == firtStreet] <<- board$houses[board$position == firtStreet] - 1
-<<<<<<< HEAD
-      return(TRUE)
-    }else{
-      print("banken har ikke råd til kjøpe hus")
-=======
+  }else{ # The player attempts to sell the house 
+    whereToSell <- max(board$position[board$position %in% propsOfCol & board$houses > 0])
+    if(bankMoney - (board$housePrice[board$position == whereToSell])/2 > 0){        # ... to the bank.
+      updateBalance(stratPlayer, "pluss", (board$housePrice[board$position == whereToSell])/2, "sold house")
+      board$houses[board$position == whereToSell] <<- board$houses[board$position == whereToSell] - 1
       return(TRUE)                                                                 # If the bank can pay for the house, it's sold...
     }else{                                                                         # the players balance and the bank balance is updated.
-      if(printGame==TRUE){
-        print("The bank can't afford to buy back houses.")                         # Otherwise nothing happens and event is printed.
-      }
->>>>>>> origin/master
+      print("The bank can't afford to buy back houses.")                           # Otherwise nothing happens and event is printed.
       return(FALSE)
     }
-    #selg hus til banken for halve prisen
   }
 }
 
