@@ -1,7 +1,7 @@
-##---------------------------------------------------------
-## Monopoly Simulation - Main script
-## Version 0.5
-##---------------------------------------------------------
+##--------------------------------------------------------------------------------##
+## Monopoly Simulation - Main script                                              ##
+## Version 0.5                                                                    ##
+##--------------------------------------------------------------------------------##
 
 #Importing of libraries and associated scripts.
 library(ggplot2)
@@ -11,8 +11,8 @@ library(reshape2)
 initGame <- function(i){
   #------------------------------  Settings  ------------------------------ 
   version <- 5                              # Sets game version.
-  setwd("../v0.5.1")                          # Set working directory to correct version number
-  strategy <- c(i, 107)                       # Set player strategies, first parameter sets strategy for player 1, etc...
+  setwd("../v0.5.1")                        # Set working directory to correct version number
+  strategy <- c(i, 107)                     # Set player strategies, first parameter sets strategy for player 1, etc...
   houseStrategy <- c(sample(c("H1", "H2"), 1), "H107")            # Set player house-buying strategies
 
   mortageStrategy <- c("M1", "M1")          # Set player mortgage strategies
@@ -27,7 +27,6 @@ initGame <- function(i){
   enableAiData <<- FALSE                    # Turn AI on/off.
   enableTransLog <<- FALSE                  # Turn transaction log on/off.
   printGame <<- FALSE                       # Turn printlog of game on/off.
-
 
   #---------------------------------------------------------------------------
   id <- c(1:N)                              # Creates unique player ID.
@@ -77,6 +76,8 @@ initGame <- function(i){
                                                                              streetHouses, 
                                                                              streetOther, 
                                                                              streetHousesOther))
+  
+
   
   source('functions v0.5.1.R')
   source('ai training v0.5.1.R')
