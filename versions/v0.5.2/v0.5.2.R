@@ -41,7 +41,7 @@ initGame <- function(i){
   jailDays <- rep(0, times=N)               # Initializes remaining jail days variable to 0. 
   
   # Loads board from external data. 
-  board <<- read.csv("monopoly_data v0.5.1.csv") 
+  board <<- read.csv("monopoly_data v0.5.2.csv") 
   
   # Creates the players-dataframe from the variables listed above.
   players <<- data.frame(id, strategy, houseStrategy, fortune, active, position, jailDays, throws) 
