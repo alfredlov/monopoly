@@ -156,20 +156,18 @@ runHouseStrategy <- function(){                           # Handles running of h
 # function: runMortStrategy(x, y, z)
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 runMortStrategy <- function(x, y, z){                 # Mortgage strategy depends on player x, whether the player wants a 
-  setPlayer(x)                                        # ... variable y is not relevant for the final implementation.
+  setPlayer(x)                                       
   countFreq(stratPlayer)
   
-  if(missing(y)){                                     # If no cap-requirement is supplied the player mortgages until he has a fortune above 0. 
-     if(sum(streetColFreq) > 0){                      
-      if(M1(stratPlayer, "mortage") == FALSE){
-        return(FALSE)
-      }else{
-        gatherStat("pantsatt", 1)                    # Gather AI-data. 
-        return(TRUE)
-      }
-    }else{
+  if(sum(streetColFreq) > 0){                      
+    if(M1(stratPlayer, "mortage") == FALSE){
       return(FALSE)
+    }else{
+      gatherStat("pantsatt", 1)                    # Gather AI-data. 
+      return(TRUE)
     }
+  }else{
+    return(FALSE)
   }
 }
 
