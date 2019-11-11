@@ -4,7 +4,7 @@
 ##--------------------------------------------------------------------------------##
 
 #Importing of libraries and associated scripts.
-source('strategies v0.5.1.R')
+source('strategies v0.5.2.R')
 library(dplyr)
 
 

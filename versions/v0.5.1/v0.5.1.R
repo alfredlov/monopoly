@@ -48,7 +48,6 @@ initGame <- function(i){
   # Creates global vector containing all the propty colors.
   uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
 
-  ##SLETT?!
   logForNN4temp <<- data.frame(matrix(NA, 0, 44))
   colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
 
