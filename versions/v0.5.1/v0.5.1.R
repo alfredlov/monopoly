@@ -6,10 +6,16 @@
 #Importing of libraries and associated scripts.
 library(ggplot2)
 library(reshape2)
-
-
+library(dplyr)
+library(readr)
+# Imports data about the game board from .csv file. 
+board <<- read.csv("monopoly_data v0.5.1.csv") 
+# Creates global vector containing all the propty colors.
+uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
+source('functions v0.5.1.R')
+source('ai training v0.5.1.R')
 initGame <- function(i){
-  #------------------------------  Settings  ------------------------------ 
+  #------------------------------ Settings ------------------------------ 
   version <- 5                              # Sets game version.
   setwd("../v0.5.1")                          # Set working directory to correct version number
   strategy <- c(i, 107)                       # Set player strategies, first parameter sets strategy for player 1, etc...
@@ -42,17 +48,10 @@ initGame <- function(i){
   # Creates the players-dataframe fmor the variables listed above.
   players <<- data.frame(id, strategy, houseStrategy, fortune, active, position, jailDays, throws) 
 
-  # Imports data about the game board from .csv file. 
-  board <<- read.csv("monopoly_data v0.5.1.csv") 
-  
-  # Creates global vector containing all the propty colors.
-  uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
-
   ##SLETT?!
   logForNN4temp <<- data.frame(matrix(NA, 0, 44))
   colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
-  logForNN5temp <<- data.frame(matrix(NA, 0, 2))
-  colnames(logForNN5temp) <- c("iS", "iiS")
+
   logForNN6temp <<- data.frame(matrix(NA, 0, 44))
   colnames(logForNN6temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "mortagedSelf", "liftMortageSelf" , "mortagedOther", "liftMortageOthers",  "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "win")
 
@@ -77,9 +76,6 @@ initGame <- function(i){
                                                                              streetHouses, 
                                                                              streetOther, 
                                                                              streetHousesOther))
-  
-  source('functions v0.5.1.R')
-  source('ai training v0.5.1.R')
 }
 
 # Main-function.

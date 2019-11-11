@@ -306,11 +306,8 @@ checkGameOver <- function(){                            # Checks to see if game 
     roundWinner <<- players$id[players$active==TRUE]    # Finds round winner and his strategy.
     winnerStrategy <<- players$strategy[players$active==TRUE]
     
-    
-    #SLETT?! AI-stuff??
     countFreq(1)
     colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
-    logForNN6temp <<- rbind(logForNN6temp, c(players$throws[players$id == 1],players$fortune[players$id == 1],streetColFreq, houseColFreq, sum(logForNN4temp$mortage[logForNN4temp$id == 1]), sum(logForNN4temp$liftmortage[logForNN4temp$id == 1]), sum(logForNN4temp$mortage[logForNN4temp$id != 1]),sum(logForNN4temp$liftmortage[logForNN4temp$id != 1]), sum(players$fortune[players$id != 1]),streetColFreqOthers,houseColFreqOthers, ifelse(roundWinner == 1, 1, 0)))
     logForNN7temp[1,] <<- c(players$throws[players$id == 1],
                            players$fortune[players$id == 1],
                            purchasedLogDF,
