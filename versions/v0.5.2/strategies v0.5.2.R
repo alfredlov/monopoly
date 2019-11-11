@@ -156,12 +156,7 @@ runHouseStrategy <- function(){                           # Handles running of h
 # function: runMortStrategy(x, y, z)
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 runMortStrategy <- function(x, y, z){                 # Mortgage strategy depends on player x, whether the player wants a 
-  if(!missing(x)){                                    # ... variable y is not relevant for the final implementation.
-    stratPlayer <<- x
-  }else{
-    stratPlayer <<- cur_player
-  }
-  
+  setPlayer(x)                                        # ... variable y is not relevant for the final implementation.
   countFreq(stratPlayer)
   
   if(missing(y)){                                     # If no cap-requirement is supplied the player mortgages until he has a fortune above 0. 
@@ -234,6 +229,7 @@ mayLiftMortage <- function(){                           # Function for the buyin
     }
   }
 }
+
 
 
 # function: setPlayer()
@@ -371,11 +367,7 @@ strategy9 <- function(x, y){
 ##-----------------------------------------------------------------------------------
 strategy10 <- function(x, y){
   setPlayer(x)
-  if(!missing(x)){
-    stratPlayer <<- x
-  }else{
-    stratPlayer <<- cur_player
-  }
+
   curFortune <- players$fortune[players$id == stratPlayer]
   currentThrow <- players$throws[players$id == stratPlayer]
   factor <- 1.001

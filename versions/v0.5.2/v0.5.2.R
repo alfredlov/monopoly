@@ -30,6 +30,7 @@ initGame <- function(i){
   printGame <<- FALSE                       # Turn printlog of game on/off.
   #--------------------------------------------------------------------------------
 
+  
   #-------------------------- Initiate game variables -----------------------------
   
   id <- c(1:N)                              # Creates unique player ID.
@@ -51,6 +52,7 @@ initGame <- function(i){
   # Creates global vector containing all the propty colors.
   uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
   #--------------------------------------------------------------------------------
+  
   
   #--------------------------- Initiate AI Framework ------------------------------
   if(enableAiData==TRUE){
@@ -78,9 +80,10 @@ initGame <- function(i){
                                                                                streetOther, 
                                                                                streetHousesOther))
   }
+  #--------------------------------------------------------------------------------
+  
   source('functions v0.5.2.R')
   source('ai training v0.5.2.R')
-  #--------------------------------------------------------------------------------
 }
 
 
