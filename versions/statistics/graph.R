@@ -40,14 +40,28 @@ render_graph(graph)
 
 
 grViz("
-digraph boxes_and_circles {
+digraph dot {
       
       # a 'graph' statement
-      graph [overlap = true, fontsize = 10]
+      graph [
+      layout = dot,
+      overlap = TRUE, 
+      fontsize = 2
+      font = Helvetica]
 
-      node [shape = square,
+      node [
+      shape = square,
       fixedsize = true,
-      width = 0.9]
+      width = 0.9, 
+      color = coral,
+      penwidth = 3, 
+      ]
+      
+      edge [
+      color=grey,
+      arrowhead = vee
+      ]
+      
       1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11
       
       # several 'edge' statements
