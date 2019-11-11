@@ -11,6 +11,7 @@ library(readr)
 
 
 initGame <- function(i){
+  
   #--------------------------------- Settings -----------------------------------
   version <- 5                              # Sets game version.
   setwd("../v0.5.2")                        # Set working directory to correct version number
@@ -226,7 +227,7 @@ printRoundResult <- function(){              # Creates ggplots og relevent post-
 
 
 k <- 50
-winners <- 1:50
+winners <- 1:50*0
 
 for (i in 1:50) {
     startGame()
@@ -236,7 +237,7 @@ for (i in 1:50) {
 
 
 table(winners)
-# pbinom(38, 50, prob=0.5)
+
 
 ################################################################
 

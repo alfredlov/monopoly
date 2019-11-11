@@ -396,7 +396,6 @@ strategy11 <- function(x, y){
     } else if(-7 %in% (players$position[players$id != stratPlayer] - propPos)){
       return(TRUE)
     } else if(propCol %in% streetColFreq){
-      #print("lololol")
       if(propCol %in% streetColFreqOthers){
         return(FALSE)
       }else{
