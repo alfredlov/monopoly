@@ -43,15 +43,15 @@ grViz("
 digraph boxes_and_circles {
       
       # a 'graph' statement
-      graph [overlap = true, fontsize = 10]
-
+      graph [overlap = true, fontsize = 10, fontname = 'Comic Sans']
+      graph [layout = dot]
       node [shape = square,
       fixedsize = true,
       width = 0.9]
       1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11
       
       # several 'edge' statements
-      1 -> {2 4 6 7 8 10 11}
+      1 -> {2 4 6 7 8 10 11 107}
       2 -> {6 7 8 11}
       3 -> {2 4 5 6 7 8 9 11}
       4 -> {2 11 5 6 7 8}
@@ -62,6 +62,10 @@ digraph boxes_and_circles {
       9 -> {6 7 8 11}
       10 -> {2 6 7 8 9 11}
       11 -> {6 7 8}
-      }
+      107 -> {6 7 8}
+      107 [label = '@@1']
+
+}
+[1]: 'AI'
       ")
 
