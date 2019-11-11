@@ -3,6 +3,8 @@
 ## Contains the game-functions.                                                   ##
 ##--------------------------------------------------------------------------------##
 
+
+
 #Importing of libraries and associated scripts.
 source('strategies v0.5.1.R')
 library(dplyr)
