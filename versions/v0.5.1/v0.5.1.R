@@ -8,6 +8,7 @@ library(ggplot2)
 library(reshape2)
 library(dplyr)
 library(readr)
+
 # Imports data about the game board from .csv file. 
 board <<- read.csv("monopoly_data v0.5.1.csv") 
 # Creates global vector containing all the propty colors.
@@ -16,9 +17,8 @@ initGame <- function(i){
   #------------------------------ Settings ------------------------------ 
   version <- 5                              # Sets game version.
   setwd("../v0.5.1")                        # Set working directory to correct version number
-  strategy <- c(i, 107)                     # Set player strategies, first parameter sets strategy for player 1, etc...
-  houseStrategy <- c(sample(c("H1", "H2"), 1), "H107")            # Set player house-buying strategies
-
+  strategy <- c(1, 1)                      # Set player strategies, first parameter sets strategy for player 1, etc...
+  houseStrategy <- c("H1", "H1")            # Set player house-buying strategies
   mortageStrategy <- c("M1", "M1")          # Set player mortgage strategies
   N <<- length(strategy)                    # N = Number of player
   startCap <<- 1500                         # Sets start capital for all players.
@@ -27,7 +27,7 @@ initGame <- function(i){
   bid_Active <<- TRUE                       # Turn bidding on and off.
   mort_Active <<- TRUE                      # Turn mortage on and off.
   collectStats <<- TRUE                     # Turns collecting stats on and off. 
-  printResult <<- FALSE                     # Turns printing result on and off.
+  printResult <<- TRUE                     # Turns printing result on and off.
   enableAiData <<- FALSE                    # Turn AI on/off.
   enableTransLog <<- FALSE                  # Turn transaction log on/off.
   printGame <<- FALSE                       # Turn printlog of game on/off.
@@ -220,20 +220,26 @@ printRoundResult <- function(){              # Creates ggplots og relevent post-
 
 ## SLETT FØR INNLEVERING
 
-k <- 100
-a <- 11
+k <- 50
 winners = 1:(k*a)*0
-winners <- 1:15
+winners <- 1:k*0
 numberOfRounds <- 1:(k*a)*0
 z <- 0
-for (i in 1:a) {
-  for (j in 1:k) {
-    z <- z + 1
+# for (i in 1:a) {
+#   for (j in 1:k) {
+#     z <- z + 1
+#     startGame(i)
+#     cat(sprintf("Round: %s, winnner %s", j, winnerStrategy))
+#     winners[z] <- winnerStrategy
+#   }
+# }
+for (i in 1:50) {
     startGame(i)
     cat(sprintf("Round: %s, winnner %s", j, winnerStrategy))
-    winners[z] <- winnerStrategy
-  }
+    winners[i] <- winnerStrategy
+  
 }
+
 
 #hist(winners)
 table(winners)
