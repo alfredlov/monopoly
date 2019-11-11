@@ -167,28 +167,11 @@ runMortStrategy <- function(x, y, z){                 # Mortgage strategy depend
   
   if(missing(y)){                                     # If no cap-requirement is supplied the player mortgages until he has a fortune above 0. 
      if(sum(streetColFreq) > 0){                      
-      strategyName <- paste("strategy", players$strategy[stratPlayer], sep="")
-      if(players$strategy[stratPlayer] > 100){
-        if(M1(stratPlayer, "mortage") == FALSE){
-          #gatherStat("pantsatt", 0)
-          return(FALSE)
-        }
-        
-        else{                                        
-          gatherStat("pantsatt", 1)                    # Gather AI-data. 
-          return(TRUE)
-        }
-      }
-      
-      else{
-        if(M1(stratPlayer, "mortage") == FALSE){
-          return(FALSE)
-        }
-        
-        else{
-          gatherStat("pantsatt", 1)                    # Gather AI-data. 
-          return(TRUE)
-        }
+      if(M1(stratPlayer, "mortage") == FALSE){
+        return(FALSE)
+      }else{
+        gatherStat("pantsatt", 1)                    # Gather AI-data. 
+        return(TRUE)
       }
     }else{
       return(FALSE)
