@@ -88,6 +88,7 @@ initGame <- function(i){
   source('ai training v0.5.1.R')
 }
 
+
 # Main-function.
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 startGame <- function(i){

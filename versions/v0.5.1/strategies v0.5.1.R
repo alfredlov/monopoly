@@ -468,8 +468,6 @@ strategyH3 <- function(){
 
 M1 <- function(x,y){
   setPlayer()
-  
-  #denne strategien prøver å pantsette minst verdifulle eiendommer
   countFreq(stratPlayer)
   allOfCol <- c()
   for(i in 1:length(uniqueC)){
@@ -491,19 +489,20 @@ M1 <- function(x,y){
       board$mortaged[board$position == firtStreet] <<- 1
       return(TRUE)
     }else{
-      print("banken har ikke råd til pantsetting")
+      print("The bank can't afford mortgaging the property.")
       return(FALSE)
     }
-  }else{
-    if(bankMoney - (board$housePrice[board$position == firtStreet])/2 > 0){
+  }
+  
+  else{                                                                            # The player attempts to sell the house 
+    if(bankMoney - (board$housePrice[board$position == firtStreet])/2 > 0){        # ... to the bank.
       updateBalance(stratPlayer, "pluss", (board$housePrice[board$position == firtStreet])/2, "sold house")
       board$houses[board$position == firtStreet] <<- board$houses[board$position == firtStreet] - 1
-      return(TRUE)
-    }else{
-      print("banken har ikke råd til kjøpe hus")
+      return(TRUE)                                                                 # If the bank can pay for the house, it's sold...
+    }else{                                                                         # the players balance and the bank balance is updated.
+      print("The bank can't afford to buy back houses.")                           # Otherwise nothing happens and event is printed.
       return(FALSE)
     }
-    #selg hus til banken for halve prisen
   }
 }
 
