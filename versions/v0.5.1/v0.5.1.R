@@ -10,7 +10,6 @@ library(dplyr)
 library(readr)
 
 initGame <- function(i){
-  board <<- read.csv("monopoly_data v0.5.1.csv") 
   #------------------------------ Settings ------------------------------ 
   version <- 5                              # Sets game version.
   setwd("../v0.5.1")                        # Set working directory to correct version number
@@ -28,8 +27,8 @@ initGame <- function(i){
   enableAiData <<- FALSE                    # Turn AI on/off.
   enableTransLog <<- FALSE                  # Turn transaction log on/off.
   printGame <<- FALSE                       # Turn printlog of game on/off.
+  #--------------------------------------------------------------------------------
 
-  #---------------------------------------------------------------------------
   id <- c(1:N)                              # Creates unique player ID.
   throws <<- rep(0, times=N)                # Sets number of throws per player to initial value 0. 
   fortune <<- rep(startCap, times=N)        # Sets initial fortune for each player to startCap (e.g. 200)
@@ -39,6 +38,9 @@ initGame <- function(i){
   active <- rep(1, times=N)                 # Initially sets all players to be active. 
   position <- rep(1, times=N)               # Sets start position for each player to 1 (i.e. 'Go'). 
   jailDays <- rep(0, times=N)               # Initializes remaining jail days variable to 0. 
+  
+  # Loads board from external data. 
+  board <<- read.csv("monopoly_data v0.5.1.csv") 
   
   # Creates the players-dataframe from the variables listed above.
   players <<- data.frame(id, strategy, houseStrategy, fortune, active, position, jailDays, throws) 
@@ -169,8 +171,6 @@ collectRoundStatistics <- function(){                             # Collects sta
   nProps <<- cbind(nProps, curProps)                              # Appends new properties-data.
   nHouses <<- cbind(nHouses, curHouses)                           # Appends new houses-data.
 }
-
-#newVARS <- rbind(fortune, liquidity)
 
 
 # function: printRoundResult()
