@@ -9,6 +9,11 @@ library(reshape2)
 library(dplyr)
 library(readr)
 
+<<<<<<< HEAD
+# Imports data about the game board from .csv file. 
+board <<- read.csv("monopoly_data v0.5.1.csv") 
+=======
+>>>>>>> sync
 # Creates global vector containing all the propty colors.
 uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
 initGame <- function(i){
@@ -17,9 +22,14 @@ initGame <- function(i){
   #------------------------------ Settings ------------------------------ 
   version <- 5                              # Sets game version.
   setwd("../v0.5.1")                        # Set working directory to correct version number
+<<<<<<< HEAD
+  strategy <- c(1, 1)                      # Set player strategies, first parameter sets strategy for player 1, etc...
+  houseStrategy <- c("H1", "H1")            # Set player house-buying strategies
+=======
   strategy <- c(1, 11)                     # Set player strategies, first parameter sets strategy for player 1, etc...
   houseStrategy <- c("H1", "H1")            # Set player house-buying strategies
 
+>>>>>>> sync
   mortageStrategy <- c("M1", "M1")          # Set player mortgage strategies
   N <<- length(strategy)                    # N = Number of player
   startCap <<- 1500                         # Sets start capital for all players.
@@ -221,10 +231,9 @@ printRoundResult <- function(){              # Creates ggplots og relevent post-
 
 ## SLETT FØR INNLEVERING
 
-k <- 100
-a <- 11
+k <- 50
 winners = 1:(k*a)*0
-winners <- 1:15
+winners <- 1:k*0
 numberOfRounds <- 1:(k*a)*0
 z <- 0
 for (i in 1:a) {
@@ -232,9 +241,10 @@ for (i in 1:a) {
     z <- z + 1
     startGame()
     cat(sprintf("Round: %s, winnner %s", j, winnerStrategy))
-    winners[z] <- winnerStrategy
-  }
+    winners[i] <- winnerStrategy
+  
 }
+
 
 #hist(winners)
 table(winners)
