@@ -175,7 +175,6 @@ runMortStrategy <- function(x, y, z){                 # Mortgage strategy depend
     }else{
       return(FALSE)
     }
-  }else if (y == TRUE){
   }
 }
 
