@@ -100,27 +100,27 @@ runStrategy <- function(){                                           # Helper fu
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 runHouseStrategy <- function(){                           # Handles running of house strategies.
   housesAvailable <- TRUE
-  
-  if(!is.na(sum(board$houses))){                          # Checks to see if there are houses avaliable in bank. 
-    if(sum(board$houses) > 32){
-      housesAvailable <- FALSE
-    }
+                          
+  if(sum(board$houses[!is.na(board$houses)]) > 32){ # Checks to see if there are houses avaliable in bank. 
+    housesAvailable <- FALSE
   }
   
-  if(housesAvailable == TRUE){                            # If there are houses avaliable...
-    ownsAll <<- c()                                       # ... create list of properties where players owns all of the same color.
-    for (i in 1:length(uniqueC)) {
-      if(checkStreetPer(uniqueC[i], cur_player) == TRUE){
-        ownsAll <<- c(ownsAll, uniqueC[i])
-      }
-    } 
-    
-    strategyName <- paste("strategy", players$houseStrategy[cur_player], sep="")
-    
-    if(length(ownsAll) > 0){                              # If the current player owns all properties of at least 1 color...
-      considerBuy <<- TRUE                                # Initially set considering buying houses to TRUE. 
-      
-      while(considerBuy == TRUE){                         # While still considering buying houses...
+  ownsAll <<- c()                                       # ... create list of properties where players owns all of the same color.
+  for (i in 1:length(uniqueC)) {
+    if(checkStreetPer(uniqueC[i], cur_player) == TRUE){
+      ownsAll <<- c(ownsAll, uniqueC[i])
+    }
+  } 
+  
+  strategyName <- paste("strategy", players$houseStrategy[cur_player], sep="")
+  
+  if(length(ownsAll) > 0){                              # If the current player owns all properties of at least 1 color...
+    considerBuy <<- TRUE                                # Initially set considering buying houses to TRUE. 
+  }
+  if(housesAvailable == TRUE && considerBuy == TRUE){     # If there are houses avaliable & player is interested
+    if(sum(board$houses[!is.na(board$houses)]) > 32){ # Checks to see if there are houses avaliable in bank. 
+      housesAvailable <- FALSE
+    }
           placesToBuy <<- board %>%                       # ... find candidates for house buying.
             filter(owner == cur_player & color %in% ownsAll & housePrice < players$fortune[cur_player] & houses < 5 & mortaged != 1) %>%
             select(name, color, houses, housePrice)
@@ -148,8 +148,7 @@ runHouseStrategy <- function(){                           # Handles running of h
             considerBuy <<- FALSE
           }
         }
-      }
-    }
+      
   }
 }
 
@@ -259,7 +258,7 @@ setPlayer <- function(x){
 ##  Simple naïve strategy which involves buying all properties the player lands on. 
 ##-----------------------------------------------------------------------------------
 strategy1 <- function(x, y){
-  setPlayer()
+  setPlayer(x)
   return(TRUE)
 }
 
@@ -268,7 +267,7 @@ strategy1 <- function(x, y){
 ##  Simple strategy of buying all properties the player lands on with probability 0.5.
 ##-----------------------------------------------------------------------------------
 strategy2 <- function(x, y){
-  setPlayer()
+  setPlayer(x)
   if(sample(0:1, prob = c(0.5, 0.5), 1) == 1){
     return(TRUE)
   }else{
@@ -281,7 +280,7 @@ strategy2 <- function(x, y){
 ##  Buys all properties as long as price < 50% of total income.
 ##-----------------------------------------------------------------------------------
 strategy3 <- function(x, y){
-  setPlayer()
+  setPlayer(x)
   playerLiq <- players$fortune[players$id==stratPlayer] + sum(board$price[board$owner==stratPlayer & board$mortaged == 0 & !is.na(board$owner)]*1/2)
   if(propPrice/playerLiq <= 0.3){
     return(TRUE)
@@ -306,7 +305,7 @@ strategy4 <- function(x, y){
 ##  Strategy 5: Red & Orange
 ##-----------------------------------------------------------------------------------
 strategy5 <- function(x, y){
-  setPlayer()
+  setPlayer(x)
   if(propCol == 'orange' || propCol == 'red'){
     return(TRUE)
   }else{
@@ -319,7 +318,7 @@ strategy5 <- function(x, y){
 ##  Strategy 6: Railroads
 ##-----------------------------------------------------------------------------------
 strategy6 <- function(x, y){
-  setPlayer()
+  setPlayer(x)
   if(propType == 3){
     return(TRUE)
   }else{
@@ -331,7 +330,7 @@ strategy6 <- function(x, y){
 ##  Strategy 7: Utilities
 ##-----------------------------------------------------------------------------------
 strategy7 <- function(x, y){
-  setPlayer()
+  setPlayer(x)
   if(propType == 2){
     return(TRUE)
   }else{
@@ -343,7 +342,7 @@ strategy7 <- function(x, y){
 ##  Strategy 8: Railroads + Utilities
 ##-----------------------------------------------------------------------------------
 strategy8 <- function(x, y){
-  setPlayer()
+  setPlayer(x)
   if(propType == 2 | propType== 3){
     return(TRUE)
   }else{
@@ -355,7 +354,7 @@ strategy8 <- function(x, y){
 ##  Strategy 9: Railroads + Utilities, then Buy-all
 ##-----------------------------------------------------------------------------------
 strategy9 <- function(x, y){
-  setPlayer()
+  setPlayer(x)
   if(propType == 2 | propType == 3){
     return(TRUE)
   }else{
@@ -373,7 +372,7 @@ strategy9 <- function(x, y){
 ##  Strategy 10: Solid
 ##-----------------------------------------------------------------------------------
 strategy10 <- function(x, y){
-  setPlayer()
+  setPlayer(x)
   if(!missing(x)){
     stratPlayer <<- x
   }else{
@@ -399,16 +398,11 @@ strategy10 <- function(x, y){
 ##  Strategy 11: Best Practice
 ##-----------------------------------------------------------------------------------
 strategy11 <- function(x, y){
-  setPlayer()
-  if(!missing(x)){
-    stratPlayer <<- x
-  }else{
-    stratPlayer <<- cur_player
-  }
+  setPlayer(x)
   curFortune <- players$fortune[players$id == stratPlayer]
   currentThrow <- players$throws[players$id == stratPlayer]
   countFreq(stratPlayer)
-  if(curFortune - propPrice < 400){
+  if(curFortune - propPrice < 200){
     return(FALSE)
   }else{
     if(propType %in% c(2,3)){
@@ -432,16 +426,6 @@ strategy11 <- function(x, y){
   }
 }
 
-
-##-----------------------------------------------------------------------------------
-##  Strategy 12: Hotel-seeker
-##-----------------------------------------------------------------------------------
-strategy11 <- function(x, y){
-  setPlayer()
-  #if throws < N then set selected hotell property to FALSE
-  #after person gets all of one colors, put all money into houses tehre in order to clinch win. 
-  
-}
 #####################################################################################
 #                               HOUSE-STRATEGIES                                    #
 #####################################################################################
