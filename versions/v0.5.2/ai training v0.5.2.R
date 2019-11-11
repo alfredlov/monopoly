@@ -6,7 +6,7 @@
 
 require(neuralnet)
 gatherStat <- function(x, y, z){                         # Collects game stats for use in AI-agent. 
-  if(collectStats == TRUE){
+  if(enableAiData == TRUE){
     countFreq(cur_player)
     wola <- cur_player
     if(x == "house"){
