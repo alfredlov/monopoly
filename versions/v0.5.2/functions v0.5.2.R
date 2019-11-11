@@ -125,11 +125,6 @@ processJail <- function(){                            # If the player lands on '
         cat(sprintf("Player %s got out of jail by throw two dice with same face.\n",cur_player))
       }
     }
-    ##SLETT?!
-    #cat(sprintf("Player %s KOM ikkkkke UT AV FENGSEL PGA TERNINGKAST",cur_player))
-     #teleporter til jail
-    #for å holde spilleren i jail trenger vi et element i df for å se om just visiting eller i jail
-    #  og for å se hvor mange kast spilleren har forsøkt å komme ut
   }
 }
 
