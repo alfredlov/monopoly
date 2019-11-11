@@ -113,7 +113,7 @@ runHouseStrategy <- function(){                           # Handles running of h
   } 
   
   strategyName <- paste("strategy", players$houseStrategy[cur_player], sep="")
-  
+  considerBuy <<- FALSE
   if(length(ownsAll) > 0){                                # If the current player owns all properties of at least 1 color...
     considerBuy <<- TRUE                                  # Initially set considering buying houses to TRUE. 
   }

@@ -4,16 +4,17 @@
 ##--------------------------------------------------------------------------------##
 
 #Importing of libraries and associated scripts.
-library(ggplot2)
-library(reshape2)
-library(dplyr)
-library(readr)
+library(ggplot2) 
+library(reshape2) 
+library(dplyr) 
+library(readr) 
+
 
 initGame <- function(i){
   #--------------------------------- Settings -----------------------------------
   version <- 5                              # Sets game version.
   setwd("../v0.5.2")                        # Set working directory to correct version number
-  strategy <- c(4, 8)                       # Set player strategies, first parameter sets strategy for player 1, etc...
+  strategy <- c(5, 6)                       # Set player strategies, first parameter sets strategy for player 1, etc...
   houseStrategy <- c("H1", "H1")            # Set player house-buying strategies
   mortageStrategy <- c("M1", "M1")          # Set player mortgage strategies
   N <<- length(strategy)                    # N = Number of player
@@ -226,7 +227,7 @@ winners <- 1:k*0
 for (i in 1:50) {
     startGame()
     cat(sprintf("Round: %s, winnner %s", i, winnerStrategy))
-    winners[i] <- roundWinner
+    winners[i] <- winnerStrategy
 
 }
 
