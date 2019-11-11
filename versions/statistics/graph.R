@@ -1,5 +1,6 @@
 library(DiagrammeR)
 library(visNetwork)
+
 from1 <- rep("1", 7)
 from2 <- rep("2", 4)
 from3 <- rep("3", 8)
@@ -29,9 +30,9 @@ to<-c(to1, to2, to3, to4, to5, to6, to7, to8, to9, to10, to11)
 
 
 nodesd <- unique(c(to, from))
-
-nodes <- create_node_df(  n=length(nodesd), label=nodesd,  width=0.3) 
+nodes <- create_node_df(n=length(nodesd), label=nodesd,  width=7.8) 
 edges <- create_edge_df(from = factor(from, levels=nodesd), to = factor(to, levels=nodesd), rel = "leading_to")   
+
 graph <- create_graph(nodes_df = nodes, edges_df = edges) %>%
   #add_balanced_tree( k = 4, h = 4) %>%
   render_graph(layout = "tree")
@@ -63,3 +64,4 @@ digraph boxes_and_circles {
       11 -> {6 7 8}
       }
       ")
+
