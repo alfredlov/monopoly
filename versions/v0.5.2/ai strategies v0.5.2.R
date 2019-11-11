@@ -353,13 +353,8 @@ strategy104 <- function(x, y){
     predictFunc(test)
     
     if(Predict$net.result[1] >= Predict$net.result[2]){
-      print("AI KJØPTE IKKKKKE GATE")
-      if(!missing(x)){
-        print("på auksjonnn")
-      }
       return(FALSE)
     }else{
-      print("AI KJØPTE GATE")
       return(TRUE)
     }
   }
