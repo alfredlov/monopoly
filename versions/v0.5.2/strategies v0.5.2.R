@@ -105,7 +105,7 @@ runHouseStrategy <- function(){                           # Handles running of h
     housesAvailable <- FALSE
   }
   
-  ownsAll <<- c()                                       # ... create list of properties where players owns all of the same color.
+  ownsAll <<- c()                                         # ... create list of properties where players owns all of the same color.
   for (i in 1:length(uniqueC)) {
     if(checkStreetPer(uniqueC[i], cur_player) == TRUE){
       ownsAll <<- c(ownsAll, uniqueC[i])
@@ -114,11 +114,11 @@ runHouseStrategy <- function(){                           # Handles running of h
   
   strategyName <- paste("strategy", players$houseStrategy[cur_player], sep="")
   considerBuy <<- FALSE
-  if(length(ownsAll) > 0){                              # If the current player owns all properties of at least 1 color...
-    considerBuy <<- TRUE                                # Initially set considering buying houses to TRUE. 
+  if(length(ownsAll) > 0){                                # If the current player owns all properties of at least 1 color...
+    considerBuy <<- TRUE                                  # Initially set considering buying houses to TRUE. 
   }
   if(housesAvailable == TRUE && considerBuy == TRUE){     # If there are houses avaliable & player is interested
-    if(sum(board$houses[!is.na(board$houses)]) > 32){ # Checks to see if there are houses avaliable in bank. 
+    if(sum(board$houses[!is.na(board$houses)]) > 32){     # Checks to see if there are houses avaliable in bank. 
       housesAvailable <- FALSE
     }
           placesToBuy <<- board %>%                       # ... find candidates for house buying.
@@ -156,7 +156,7 @@ runHouseStrategy <- function(){                           # Handles running of h
 # function: runMortStrategy(x, y, z)
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 runMortStrategy <- function(x, y, z){                 # Mortgage strategy depends on player x, whether the player wants a 
-  if(!missing(x)){                                    # variable y is not relevant for the final implementation.
+  if(!missing(x)){                                    # ... variable y is not relevant for the final implementation.
     stratPlayer <<- x
   }else{
     stratPlayer <<- cur_player
@@ -175,8 +175,6 @@ runMortStrategy <- function(x, y, z){                 # Mortgage strategy depend
     }else{
       return(FALSE)
     }
-  }else if (y == TRUE){
-    #SLETT?! spilleren prøver å få z kapital
   }
 }
 
