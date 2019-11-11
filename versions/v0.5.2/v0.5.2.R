@@ -23,7 +23,6 @@ initGame <- function(i){
   bankMoney <<- 15140 - startCap*N          # Sets bank cash limit. 
   bid_Active <<- TRUE                       # Turn bidding on and off.
   mort_Active <<- TRUE                      # Turn mortage on and off.
-  collectStats <<- TRUE                     # Turns collecting stats on and off. 
   printResult <<- TRUE                      # Turns printing result on and off.
   enableAiData <<- FALSE                    # Turn AI on/off.
   enableTransLog <<- FALSE                  # Turn transaction log on/off.
@@ -32,7 +31,6 @@ initGame <- function(i){
 
   
   #-------------------------- Initiate game variables -----------------------------
-  
   id <- c(1:N)                              # Creates unique player ID.
   throws <<- rep(0, times=N)                # Sets number of throws per player to initial value 0. 
   fortune <<- rep(startCap, times=N)        # Sets initial fortune for each player to startCap (e.g. 200)
