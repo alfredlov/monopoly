@@ -3,7 +3,7 @@
 ## Version 0.5                                                                    ##
 ##--------------------------------------------------------------------------------##
 
-source('ai strategies v0.5.1.R')
+source('ai strategies v0.5.2.R')
 
 
 # function: runStrategy()
