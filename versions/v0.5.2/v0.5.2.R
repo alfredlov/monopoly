@@ -4,7 +4,6 @@
 ##--------------------------------------------------------------------------------##
 
 #Importing of libraries and associated scripts.
-
 library(ggplot2)
 library(reshape2)
 library(dplyr)
@@ -31,6 +30,8 @@ initGame <- function(i){
   printGame <<- FALSE                       # Turn printlog of game on/off.
   #--------------------------------------------------------------------------------
 
+  #-------------------------- Initiate game variables -----------------------------
+  
   id <- c(1:N)                              # Creates unique player ID.
   throws <<- rep(0, times=N)                # Sets number of throws per player to initial value 0. 
   fortune <<- rep(startCap, times=N)        # Sets initial fortune for each player to startCap (e.g. 200)
@@ -49,33 +50,37 @@ initGame <- function(i){
   
   # Creates global vector containing all the propty colors.
   uniqueC <<- c(as.character(unique(board$color[board$color != "" & board$color != "grey"])))
-
-  ##SLETT?!
-  logForNN4temp <<- data.frame(matrix(NA, 0, 44))
-  colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
+  #--------------------------------------------------------------------------------
   
-  streetNames <- as.character(board$name[board$name != "Start" & board$color != "" & board$color != "grey"])
-  streetHouses <- paste(streetNames, "Houses")
-  streetOther <- paste(streetNames, "Other")
-  streetHousesOther <- paste(streetNames, "Other Houses")
-  logForNN7temp <<- setNames(data.frame(matrix(0,ncol = 120, nrow = 1)), c("throws",
-                                                                           "fortune", 
-                                                                           streetNames, 
-                                                                            streetHouses, 
-                                                                            streetOther, 
-                                                                            streetHousesOther,
-                                                                           "mortagedSelf", 
-                                                                           "liftMortageSelf", 
-                                                                           "mortagedOther", 
-                                                                           "liftMortageOthers",  
-                                                                           "fortuneOthers", 
-                                                                           "win"))
-  purchasedLogDF <<- setNames(data.frame(matrix(NA,ncol = 112, nrow = 1)), c(streetNames, 
-                                                                             streetHouses, 
-                                                                             streetOther, 
-                                                                             streetHousesOther))
+  #--------------------------- Initiate AI Framework ------------------------------
+  if(enableAiData==TRUE){
+    logForNN4temp <<- data.frame(matrix(NA, 0, 44))
+    colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
+    
+    streetNames <- as.character(board$name[board$name != "Start" & board$color != "" & board$color != "grey"])
+    streetHouses <- paste(streetNames, "Houses")
+    streetOther <- paste(streetNames, "Other")
+    streetHousesOther <- paste(streetNames, "Other Houses")
+    logForNN7temp <<- setNames(data.frame(matrix(0,ncol = 120, nrow = 1)), c("throws",
+                                                                             "fortune", 
+                                                                             streetNames, 
+                                                                              streetHouses, 
+                                                                              streetOther, 
+                                                                              streetHousesOther,
+                                                                             "mortagedSelf", 
+                                                                             "liftMortageSelf", 
+                                                                             "mortagedOther", 
+                                                                             "liftMortageOthers",  
+                                                                             "fortuneOthers", 
+                                                                             "win"))
+    purchasedLogDF <<- setNames(data.frame(matrix(NA,ncol = 112, nrow = 1)), c(streetNames, 
+                                                                               streetHouses, 
+                                                                               streetOther, 
+                                                                               streetHousesOther))
+  }
   source('functions v0.5.2.R')
   source('ai training v0.5.2.R')
+  #--------------------------------------------------------------------------------
 }
 
 
@@ -190,13 +195,6 @@ printRoundResult <- function(){              # Creates ggplots og relevent post-
     labs(title="Results", x="Throws", y="Fortune", color="Players", tag = 'For')+
     geom_hline(yintercept=0, linetype="dashed")
   
-                                              # Plotting liquidity development.
-  ggplot(data=liq_data, aes(x=1:lThrows, y=value, group=Var1, color=as.factor(Var1)))+
-    geom_line()+
-    theme_classic()+
-    labs(title="Results", x="Throws", y="Fortune", color="Players", tag = 'Liq')+
-    geom_hline(yintercept=0, linetype="dashed")
-  
                                               # Plotting number of properties development.
   ggplot(data=prop_data, aes(x=1:pThrows, y=value, group=Var1, color=as.factor(Var1)))+
     geom_line()+
@@ -210,6 +208,13 @@ printRoundResult <- function(){              # Creates ggplots og relevent post-
     theme_classic()+
     labs(title="Results", x="Throws", y="Fortune", color="Players", tag = 'House')+
     geom_hline(yintercept=0, linetype="dashed")
+  
+                                              # Plotting liquidity development.
+  ggplot(data=liq_data, aes(x=1:lThrows, y=value, group=Var1, color=as.factor(Var1)))+
+    geom_line()+
+    theme_classic()+
+    labs(title="Results", x="Throws", y="Fortune", color="Players", tag = 'Liq')+
+    geom_hline(yintercept=0, linetype="dashed")
 }
 
 
@@ -218,31 +223,17 @@ printRoundResult <- function(){              # Creates ggplots og relevent post-
 #                         TEST-SUITE                           #
 ################################################################
 
-## SLETT FØR INNLEVERING
-# 
+
 k <- 50
-winners = 1:(k*a)*0
 winners <- 1:50
-# numberOfRounds <- 1:(k*a)*0
-# z <- 0
-# # for (i in 1:a) {
-# #   for (j in 1:k) {
-# #     z <- z + 1
-# #     startGame(i)
-# #     cat(sprintf("Round: %s, winnner %s", j, winnerStrategy))
-# #     winners[z] <- winnerStrategy
-# #   }
-# # }
+
 for (i in 1:50) {
     startGame()
     #cat(sprintf("Round: %s, winnner %s", winner, winnerStrategy))
-    winners[i] <- roundWinner
-
-
+    winners[i] <- winnerStrategy
 }
-# 
-# 
-# #hist(winners)
+
+
 table(winners)
 # pbinom(38, 50, prob=0.5)
 

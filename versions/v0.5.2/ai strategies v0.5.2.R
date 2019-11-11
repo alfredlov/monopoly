@@ -365,6 +365,40 @@ strategy104 <- function(x, y){
   }
 }
 
+
+##-----------------------------------------------------------------------------------
+##  Strategy 105: AI-strategy 5
+##-----------------------------------------------------------------------------------
+
+
+strategy105 <- function(x, y){
+  if(!missing(x)){
+    stratPlayer <<- x
+  }else{
+    stratPlayer <<- cur_player
+  }
+  predictFunc <- function(x){
+    colnames(x) <- c("iS", "iiS")
+    Predict<<-neuralnet::compute(nn2,x)
+    for (i in 1:length(Predict$net.result)) {
+      if(is.na(Predict$net.result[i])){
+        Predict$net.result[i] <<- 0
+      }
+    }
+  }
+  test<-data.frame(matrix(NA, 0, 41))
+  for (i in 1:11) {
+    test<- rbind(test, c(i, players$strategy[players$id != stratPlayer]))
+  }
+  predictFunc(test)
+  
+  stratToDo <- max(which(Predict$net.result == max(Predict$net.result)))
+  strategyName <- paste("strategy", stratToDo, sep="")
+  return(get(strategyName)())
+}
+
+
+
 ##-----------------------------------------------------------------------------------
 ##  Strategy 106: AI-strategy 6
 ##-----------------------------------------------------------------------------------
@@ -471,7 +505,11 @@ strategy106 <- function(x, y){
   }
 }
 
-######107
+
+##-----------------------------------------------------------------------------------
+##  Strategy 107: AI-strategy 7
+##-----------------------------------------------------------------------------------
+
 strategy107 <- function(x, y){
   colnames(logForNN4temp) <<- c("throws", 
                                 "fortune", 
@@ -589,9 +627,19 @@ strategy107 <- function(x, y){
   }
 }
 
-######################################################################################
-##  AI - House-Strategy
-######################################################################################
+
+
+
+
+#####################################################################################
+#                             AI HOUSE-STRATEGIES                                   #
+#####################################################################################
+
+
+##-----------------------------------------------------------------------------------
+##  Strategy H107: House AI-strategy 7
+##-----------------------------------------------------------------------------------
+
 strategyH107 <- function(x){
   if(!missing(x)){
     stratPlayer <<- x
@@ -668,29 +716,4 @@ strategyH107 <- function(x){
   }
 }
 
-strategy105 <- function(x, y){
-  if(!missing(x)){
-    stratPlayer <<- x
-  }else{
-    stratPlayer <<- cur_player
-  }
-  predictFunc <- function(x){
-    colnames(x) <- c("iS", "iiS")
-    Predict<<-neuralnet::compute(nn2,x)
-    for (i in 1:length(Predict$net.result)) {
-      if(is.na(Predict$net.result[i])){
-        Predict$net.result[i] <<- 0
-      }
-    }
-  }
-  test<-data.frame(matrix(NA, 0, 41))
-  for (i in 1:11) {
-    test<- rbind(test, c(i, players$strategy[players$id != stratPlayer]))
-  }
-  predictFunc(test)
-  
-  stratToDo <- max(which(Predict$net.result == max(Predict$net.result)))
-  strategyName <- paste("strategy", stratToDo, sep="")
-  return(get(strategyName)())
-}
 
