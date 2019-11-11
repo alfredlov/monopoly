@@ -32,5 +32,34 @@ nodesd <- unique(c(to, from))
 
 nodes <- create_node_df(  n=length(nodesd), label=nodesd,  width=0.3) 
 edges <- create_edge_df(from = factor(from, levels=nodesd), to = factor(to, levels=nodesd), rel = "leading_to")   
-graph <- create_graph(nodes_df = nodes, edges_df = edges)
+graph <- create_graph(nodes_df = nodes, edges_df = edges) %>%
+  #add_balanced_tree( k = 4, h = 4) %>%
+  render_graph(layout = "tree")
 render_graph(graph)
+
+
+grViz("
+digraph boxes_and_circles {
+      
+      # a 'graph' statement
+      graph [overlap = true, fontsize = 10]
+
+      node [shape = square,
+      fixedsize = true,
+      width = 0.9]
+      1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11
+      
+      # several 'edge' statements
+      1 -> {2 4 6 7 8 10 11}
+      2 -> {6 7 8 11}
+      3 -> {2 4 5 6 7 8 9 11}
+      4 -> {2 11 5 6 7 8}
+      5 -> {6 7 8 9 11}
+      6 -> {7}
+      7 -> {}
+      8 -> {6}
+      9 -> {6 7 8 11}
+      10 -> {2 6 7 8 9 11}
+      11 -> {6 7 8}
+      }
+      ")
