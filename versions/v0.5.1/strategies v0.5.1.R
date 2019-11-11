@@ -259,7 +259,7 @@ setPlayer <- function(x){
 ##  Simple naïve strategy which involves buying all properties the player lands on. 
 ##-----------------------------------------------------------------------------------
 strategy1 <- function(x, y){
-  setPlayer()
+  setPlayer(x)
   return(TRUE)
 }
 
@@ -268,7 +268,7 @@ strategy1 <- function(x, y){
 ##  Simple strategy of buying all properties the player lands on with probability 0.5.
 ##-----------------------------------------------------------------------------------
 strategy2 <- function(x, y){
-  setPlayer()
+  setPlayer(x)
   if(sample(0:1, prob = c(0.5, 0.5), 1) == 1){
     return(TRUE)
   }else{
@@ -281,7 +281,7 @@ strategy2 <- function(x, y){
 ##  Buys all properties as long as price < 50% of total income.
 ##-----------------------------------------------------------------------------------
 strategy3 <- function(x, y){
-  setPlayer()
+  setPlayer(x)
   playerLiq <- players$fortune[players$id==stratPlayer] + sum(board$price[board$owner==stratPlayer & board$mortaged == 0 & !is.na(board$owner)]*1/2)
   if(propPrice/playerLiq <= 0.3){
     return(TRUE)
@@ -306,7 +306,7 @@ strategy4 <- function(x, y){
 ##  Strategy 5: Red & Orange
 ##-----------------------------------------------------------------------------------
 strategy5 <- function(x, y){
-  setPlayer()
+  setPlayer(x)
   if(propCol == 'orange' || propCol == 'red'){
     return(TRUE)
   }else{
@@ -319,7 +319,7 @@ strategy5 <- function(x, y){
 ##  Strategy 6: Railroads
 ##-----------------------------------------------------------------------------------
 strategy6 <- function(x, y){
-  setPlayer()
+  setPlayer(x)
   if(propType == 3){
     return(TRUE)
   }else{
@@ -331,7 +331,7 @@ strategy6 <- function(x, y){
 ##  Strategy 7: Utilities
 ##-----------------------------------------------------------------------------------
 strategy7 <- function(x, y){
-  setPlayer()
+  setPlayer(x)
   if(propType == 2){
     return(TRUE)
   }else{
@@ -343,7 +343,7 @@ strategy7 <- function(x, y){
 ##  Strategy 8: Railroads + Utilities
 ##-----------------------------------------------------------------------------------
 strategy8 <- function(x, y){
-  setPlayer()
+  setPlayer(x)
   if(propType == 2 | propType== 3){
     return(TRUE)
   }else{
@@ -355,7 +355,7 @@ strategy8 <- function(x, y){
 ##  Strategy 9: Railroads + Utilities, then Buy-all
 ##-----------------------------------------------------------------------------------
 strategy9 <- function(x, y){
-  setPlayer()
+  setPlayer(x)
   if(propType == 2 | propType == 3){
     return(TRUE)
   }else{
@@ -373,12 +373,7 @@ strategy9 <- function(x, y){
 ##  Strategy 10: Solid
 ##-----------------------------------------------------------------------------------
 strategy10 <- function(x, y){
-  setPlayer()
-  if(!missing(x)){
-    stratPlayer <<- x
-  }else{
-    stratPlayer <<- cur_player
-  }
+  setPlayer(x)
   curFortune <- players$fortune[players$id == stratPlayer]
   currentThrow <- players$throws[players$id == stratPlayer]
   factor <- 1.001
@@ -399,12 +394,7 @@ strategy10 <- function(x, y){
 ##  Strategy 11: Best Practice
 ##-----------------------------------------------------------------------------------
 strategy11 <- function(x, y){
-  setPlayer()
-  if(!missing(x)){
-    stratPlayer <<- x
-  }else{
-    stratPlayer <<- cur_player
-  }
+  setPlayer(x)
   curFortune <- players$fortune[players$id == stratPlayer]
   currentThrow <- players$throws[players$id == stratPlayer]
   countFreq(stratPlayer)
@@ -431,16 +421,6 @@ strategy11 <- function(x, y){
   }
 }
 
-
-##-----------------------------------------------------------------------------------
-##  Strategy 12: Hotel-seeker
-##-----------------------------------------------------------------------------------
-strategy11 <- function(x, y){
-  setPlayer()
-  #if throws < N then set selected hotell property to FALSE
-  #after person gets all of one colors, put all money into houses tehre in order to clinch win. 
-  
-}
 #####################################################################################
 #                               HOUSE-STRATEGIES                                    #
 #####################################################################################
