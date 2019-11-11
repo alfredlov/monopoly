@@ -10,7 +10,7 @@ library(dplyr)
 library(readr)
 
 initGame <- function(i){
-  #------------------------------ Settings ------------------------------ 
+  #--------------------------------- Settings -----------------------------------
   version <- 5                              # Sets game version.
   setwd("../v0.5.1")                        # Set working directory to correct version number
   strategy <- c(4, 8)                       # Set player strategies, first parameter sets strategy for player 1, etc...
@@ -51,10 +51,6 @@ initGame <- function(i){
   ##SLETT?!
   logForNN4temp <<- data.frame(matrix(NA, 0, 44))
   colnames(logForNN4temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "buyStreet", "buyHouse", "mortage", "liftmortage", "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "id")
-
-  logForNN6temp <<- data.frame(matrix(NA, 0, 44))
-  colnames(logForNN6temp) <- c("throws", "fortune", as.character(uniqueC), as.character(paste(uniqueC, "houses", sep = '')), "mortagedSelf", "liftMortageSelf" , "mortagedOther", "liftMortageOthers",  "fortuneOthers", as.character(paste(uniqueC, "Others", sep = '')), as.character(paste(uniqueC, "housesOthers", sep = '')), "win")
-
   
   streetNames <- as.character(board$name[board$name != "Start" & board$color != "" & board$color != "grey"])
   streetHouses <- paste(streetNames, "Houses")
