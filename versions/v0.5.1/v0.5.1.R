@@ -224,7 +224,7 @@ printRoundResult <- function(){              # Creates ggplots og relevent post-
 # 
 k <- 50
 winners = 1:(k*a)*0
-winners <- 1:k*0
+winners <- 1:50
 # numberOfRounds <- 1:(k*a)*0
 # z <- 0
 # # for (i in 1:a) {
@@ -238,7 +238,7 @@ winners <- 1:k*0
 for (i in 1:50) {
     startGame()
     #cat(sprintf("Round: %s, winnner %s", winner, winnerStrategy))
-    winners[i] <- winnerStrategy
+    winners[i] <- roundWinner
 
 }
 # 
