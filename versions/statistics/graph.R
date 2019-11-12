@@ -43,11 +43,30 @@ grViz("
 digraph boxes_and_circles {
       
       # a 'graph' statement
-      graph [overlap = true, fontsize = 10, fontname = 'Comic Sans']
-      graph [layout = dot]
+      graph [overlap = true, fontsize = 15]
+      graph [layout = dot, rankdir = TD]
+      
+      
       node [shape = square,
-      fixedsize = true,
-      width = 0.9]
+      fixedsize = false,
+      penwidth = 2.2, 
+      width = 1.2,
+      fontname = Times,
+      fontsize = 25,
+      color = Coral]
+      
+      node [fillcolor = green]
+      1; 3; 4
+        
+      node [fillcolor = orange]
+      2; 9; 10; 11; 107
+      
+      node [fillcolor = red]
+      
+      
+      edge[
+      color = DimGrey
+      ]
       1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11
       
       # several 'edge' statements
