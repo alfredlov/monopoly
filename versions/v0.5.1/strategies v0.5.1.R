@@ -116,6 +116,8 @@ runHouseStrategy <- function(){                           # Handles running of h
   
   if(length(ownsAll) > 0){                              # If the current player owns all properties of at least 1 color...
     considerBuy <<- TRUE                                # Initially set considering buying houses to TRUE. 
+  }else{
+    considerBuy <<- FALSE 
   }
   if(housesAvailable == TRUE && considerBuy == TRUE){     # If there are houses avaliable & player is interested
     if(sum(board$houses[!is.na(board$houses)]) > 32){ # Checks to see if there are houses avaliable in bank. 
@@ -260,6 +262,15 @@ setPlayer <- function(x){
 strategy1 <- function(x, y){
   setPlayer(x)
   return(TRUE)
+}
+
+strategy12 <- function(x, y){
+  setPlayer(x)
+  if(!(propType %in% c(2,3))){
+    return(TRUE)
+  }else{
+    return(FALSE)
+  }
 }
 
 ##-----------------------------------------------------------------------------------

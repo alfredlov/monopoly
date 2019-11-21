@@ -345,8 +345,8 @@ setNextPlayer <- function(){                            # Changes current player
     cur_player <<- cur_player + 1
   }
   
-  if(printGame==TRUE){                                  # Print event.
-    cat(sprintf("It's no player %s's turn. \n",cur_player))
+  if(printGame==TRUE & game_over != TRUE){                                  # Print event.
+    cat(sprintf("It's now player %s's turn. \n",cur_player))
   }
 }
 

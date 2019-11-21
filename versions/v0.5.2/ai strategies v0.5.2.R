@@ -536,7 +536,7 @@ strategy107 <- function(x, y){
   test <- data.frame()
   
   predictFunc <- function(x){
-    colnames(x) <-  c(#"throws",
+    colnames(x) <-  c("throws",
                               "fortune", 
                               streetNames, 
                               streetHouses, 
@@ -564,7 +564,7 @@ strategy107 <- function(x, y){
   if(!missing(y)){
     if(y == "liftmortagestart"){
       test <- data.frame()
-      test <- rbind(test, c(#players$throws[players$id == 1],
+      test <- rbind(test, c(players$throws[players$id == 1],
                               players$fortune[players$id == stratPlayer],
                               purchasedLogDF,
                               sum(logForNN4temp$mortage[logForNN4temp$id == stratPlayer]),
@@ -576,7 +576,7 @@ strategy107 <- function(x, y){
       return(Predict$net.result)
     }else if(y == "liftmortage"){
       test <- data.frame()
-      test <- rbind(test, c(#players$throws[players$id == stratPlayer],
+      test <- rbind(test, c(players$throws[players$id == stratPlayer],
                      players$fortune[players$id == stratPlayer] - board$mortageval[board$position == propPos]*1.1,
                      purchasedLogDF,
                      sum(logForNN4temp$mortage[logForNN4temp$id == stratPlayer]),
@@ -589,7 +589,8 @@ strategy107 <- function(x, y){
     }
   }else{
     test <-data.frame()
-    test <- rbind(test, c(players$fortune[players$id == stratPlayer],
+    test <- rbind(test, c(players$throws[players$id == stratPlayer],
+                          players$fortune[players$id == stratPlayer],
                     purchasedLogDF,
                    sum(logForNN4temp$mortage[logForNN4temp$id == stratPlayer]),
                    sum(logForNN4temp$liftmortage[logForNN4temp$id == stratPlayer]),
@@ -600,7 +601,8 @@ strategy107 <- function(x, y){
     testPurchLog <- purchasedLogDF
     testPurchLog[[propName]] <- 1
     test <- unname(test)
-    test <- rbind(test, c(players$fortune[players$id == stratPlayer] - board$price[board$name == propName],
+    test <- rbind(test, c(players$throws[players$id == stratPlayer],
+                          players$fortune[players$id == stratPlayer] - board$price[board$name == propName],
                           testPurchLog,
                            sum(logForNN4temp$mortage[logForNN4temp$id == stratPlayer]),
                            sum(logForNN4temp$liftmortage[logForNN4temp$id == stratPlayer]),

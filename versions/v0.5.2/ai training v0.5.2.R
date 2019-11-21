@@ -103,19 +103,29 @@ initAI <- function(){
   logForNN72 <- logForNN72 %>%
     mutate_at(n[!n %in% c("win", "fortune", "throws", "mortagedSelf", "liftMortageSelf", "liftMortageOthers", "fortuneOthers")], scale2) #change values for properties from throws bought @ to if bought or not
   
-  a<-paste("win ~", paste(n[!n %in% c("win",
-                                      #"fortune",
-                                      "throws")], collapse = " + "))
+  a<-paste("win ~", paste(n[!n %in% c("win"
+                                      #,"fortune"
+                                      #,"throws"
+                                      )], collapse = " + "))
   f <- as.formula(a)
   
-  nn=neuralnet(f,data=logForNN72,hidden=c(118, 118, 118, 118, 118, 118, 118),
+  nn=neuralnet(f,data=logForNN72,hidden=c(117, 117, 117, 117, 117),
                linear.output = FALSE,
                stepmax=1e6,
                lifesign="full",
-               threshold=0.001)
+               threshold=1e-19)
+  #write.csv(logForNN72,'logForNN72.csv')
+  # plot(nn, rep = NULL, x.entry = NULL, x.out = NULL,
+  #      radius = 0.15, arrow.length = 0.05, intercept = FALSE,
+  #      intercept.factor = 100, information = TRUE, information.pos = 0.1,
+  #      col.entry.synapse = "black", col.entry = "black",
+  #      col.hidden = "black", col.hidden.synapse = "black",
+  #      col.out = "black", col.out.synapse = "black",
+  #      col.intercept = "blue", fontsize = 12, dimension = 20,
+  #      show.weights = FALSE, file = NULL)
 }
 
-if(enableAiData == TRUE){
+if(enableAiData == "TRUuE"){
   streetNames <- as.character(board$name[board$name != "Start" & board$color != "" & board$color != "grey"])
   streetHouses <- paste(streetNames, "Houses")
   streetOther <- paste(streetNames, "Other")
