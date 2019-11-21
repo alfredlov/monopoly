@@ -15,9 +15,9 @@ initGame <- function(i){
   #--------------------------------- Settings -----------------------------------
   version <- 5                              # Sets game version.
   setwd("../v0.5.2")                        # Set working directory to correct version number
-  strategy <- c(8, 9)                       # Set player strategies, first parameter sets strategy for player 1, etc...
-  houseStrategy <- c("H1", "H1")            # Set player house-buying strategies
-  mortageStrategy <- c("M1", "M1")          # Set player mortgage strategies
+  strategy <- c(3, 9, 1)                       # Set player strategies, first parameter sets strategy for player 1, etc...
+  houseStrategy <- c("H1", "H1", "H1")            # Set player house-buying strategies
+  mortageStrategy <- c("M1", "M1", "M1")          # Set player mortgage strategies
   N <<- length(strategy)                    # N = Number of player
   startCap <<- 1500                         # Sets start capital for all players.
   roundCap <<- 200                          # Capital gained from passing 'Go'.
